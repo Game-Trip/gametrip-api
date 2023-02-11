@@ -1,1 +1,0 @@
-# gametrip-api
