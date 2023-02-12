@@ -1,5 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
-using GameTrip.API.Data;
+using GameTrip.EFCore;
 using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider;
@@ -19,7 +19,6 @@ internal class Startup
         Configuration = configuration;
     }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
         AddServices(services);
@@ -41,7 +40,7 @@ internal class Startup
                 Title = API_NAME,
                 Description = "Fifty Cent API",
             });
-            //c.IncludeXmlComments(xmlPath);
+            c.IncludeXmlComments(xmlPath);
         });
     }
 
