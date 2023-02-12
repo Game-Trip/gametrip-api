@@ -16,4 +16,5 @@ public interface IUnitOfWork : IDisposable
     IPictureRepository Pictures { get; }
 
     int Complet();
+    Task<int> CompletAsync();
 }

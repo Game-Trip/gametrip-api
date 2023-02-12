@@ -21,7 +21,7 @@ namespace GameTrip.API.Controllers
 
         [HttpGet]
         [Route("ping")]
-        public ActionResult<string> Ping() => Ok();
+        public ActionResult<string> Ping() => Ok(_startupPlatform.ping());
 
     }
 }
