@@ -1,5 +1,5 @@
-﻿using GameTrip.Platform.IPlatform;
-using Microsoft.AspNetCore.Http;
+﻿using GameTrip.Domain.Interfaces;
+using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameTrip.API.Controllers
@@ -10,16 +10,18 @@ namespace GameTrip.API.Controllers
     {
 
         private readonly IStartupPlatform _startupPlatform;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public StartupController(IStartupPlatform startupPlatform)
+        public StartupController(IStartupPlatform startupPlatform, IUnitOfWork unitOfWork)
         {
             _startupPlatform = startupPlatform;
+            _unitOfWork = unitOfWork;
         }
 
 
         [HttpGet]
         [Route("ping")]
-        public ActionResult<string> Ping() => Ok(_startupPlatform.ping());
+        public ActionResult<string> Ping() => Ok();
 
     }
 }

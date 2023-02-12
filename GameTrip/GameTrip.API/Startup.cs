@@ -1,11 +1,15 @@
 ﻿using FluentValidation.AspNetCore;
+using GameTrip.Domain.Interfaces;
 using GameTrip.EFCore;
+using GameTrip.EFCore.Repository;
+using GameTrip.EFCore.UnitOfWork;
 using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider;
 using GameTrip.Provider.IProvider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace GameTrip.API;
@@ -52,6 +56,21 @@ internal class Startup
 
     private void AddServices(IServiceCollection services)
     {
+        #region UnitOfWork
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        #endregion
+
+        #region Repository
+        services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddTransient<ICommentRepository, CommentRepository>();
+        services.AddTransient<IGameRepository, GameRepository>();
+        services.AddTransient<ILikedGameRepository, LikedGameRepository>();
+        services.AddTransient<ILikedLocationRepository, LikedLocationRepository>();
+        services.AddTransient<ILocationRepository, LocationRepository>();
+        services.AddTransient<IPictureRepository, PictureRepository>();
+
+        #endregion
+
         #region Platform
 
         services.AddScoped<IStartupPlatform, StartupPlatform>();

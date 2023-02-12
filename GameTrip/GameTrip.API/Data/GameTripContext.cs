@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Data;
-using System.Reflection.Emit;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.API.Data;
 
@@ -10,7 +6,7 @@ public class GameTripContext : DbContext
 {
     #region Properties
 
-    public DbSet<Comment> Comment{ get; set; }
+    public DbSet<Comment> Comment { get; set; }
     public DbSet<Game> Game { get; set; }
     public DbSet<GameTripUser> GameTripUser { get; set; }
     public DbSet<LikedLocation> LikedLocation { get; set; }
@@ -53,7 +49,7 @@ public class GameTripContext : DbContext
             g.Property(g => g.Name).HasMaxLength(255);
             g.Property(g => g.Description).HasMaxLength(255);
             g.Property(g => g.Editor).HasMaxLength(255);
-            
+
             g.HasMany(g => g.Pictures).WithOne(p => p.Game).HasForeignKey(p => p.GameId).OnDelete(DeleteBehavior.Cascade);
             g.HasMany(g => g.LikedGames).WithOne(lg => lg.Game).HasForeignKey(lg => lg.GameId).OnDelete(DeleteBehavior.Cascade);
         });
@@ -74,8 +70,8 @@ public class GameTripContext : DbContext
 
             l.Property(l => l.Name).HasMaxLength(255);
             l.Property(l => l.Description).HasMaxLength(255);
-            l.Property(l => l.Latitude).HasPrecision(18,12);
-            l.Property(l => l.Longitude).HasPrecision(18,12);
+            l.Property(l => l.Latitude).HasPrecision(18, 12);
+            l.Property(l => l.Longitude).HasPrecision(18, 12);
 
             l.HasMany(l => l.Comments).WithOne(c => c.Location).HasForeignKey(c => c.LocationId).OnDelete(DeleteBehavior.Cascade);
             l.HasMany(l => l.Pictures).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
@@ -95,7 +91,7 @@ public class GameTripContext : DbContext
         builder.Entity<GameTripUser>(u =>
         {
             u.HasKey(u => u.Id);
-            
+
             u.HasMany(u => u.Comments).WithOne(c => c.User).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
             u.HasMany(u => u.LikedLocations).WithOne(lg => lg.User).HasForeignKey(lg => lg.UserId).OnDelete(DeleteBehavior.Cascade);
             u.HasMany(u => u.LikedGames).WithOne(ll => ll.User).HasForeignKey(ll => ll.UserId).OnDelete(DeleteBehavior.Cascade);

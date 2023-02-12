@@ -11,6 +11,6 @@ public class Location
 
     public ICollection<Picture>? Pictures { get; set; }
     public ICollection<Game>? Games { get; set; }
-    public ICollection<Comment>? Comments{ get; set; }
+    public ICollection<Comment>? Comments { get; set; }
     public ICollection<LikedLocation>? LikedLocations { get; set; }
 }
