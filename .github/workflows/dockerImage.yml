@@ -15,6 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         
+      - name: Setup DotNet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+                 
       - name: Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
