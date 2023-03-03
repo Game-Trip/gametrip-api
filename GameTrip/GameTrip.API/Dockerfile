@@ -11,7 +11,7 @@ COPY ["GameTrip/GameTrip.API/GameTrip.API.csproj", "GameTrip.API/"]
 RUN dotnet restore "GameTrip.API/GameTrip.API.csproj"
 COPY . .
 WORKDIR "/src/GameTrip.API"
-RUN dotnet build "GameTrip.API.csproj" -c Release -o /app/build
+RUN dotnet build "GameTrip/GameTrip.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "GameTrip.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
