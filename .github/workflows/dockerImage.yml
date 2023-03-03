@@ -32,6 +32,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: .GameTrip.API/Dockerfile
+          file: GameTrip.API/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USER}}/gametrip-api:latest
