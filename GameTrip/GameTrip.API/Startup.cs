@@ -9,7 +9,6 @@ using GameTrip.Provider;
 using GameTrip.Provider.IProvider;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.ComponentModel;
 using System.Reflection;
 
 namespace GameTrip.API;
@@ -44,7 +43,7 @@ internal class Startup
                 Title = API_NAME,
                 Description = "Fifty Cent API",
             });
-            c.IncludeXmlComments(xmlPath);
+            //c.IncludeXmlComments(xmlPath);
         });
     }
 
@@ -57,10 +56,13 @@ internal class Startup
     private void AddServices(IServiceCollection services)
     {
         #region UnitOfWork
+
         services.AddTransient<IUnitOfWork, UnitOfWork>();
-        #endregion
+
+        #endregion UnitOfWork
 
         #region Repository
+
         services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddTransient<ICommentRepository, CommentRepository>();
         services.AddTransient<IGameRepository, GameRepository>();
@@ -69,7 +71,7 @@ internal class Startup
         services.AddTransient<ILocationRepository, LocationRepository>();
         services.AddTransient<IPictureRepository, PictureRepository>();
 
-        #endregion
+        #endregion Repository
 
         #region Platform
 
@@ -82,9 +84,7 @@ internal class Startup
         services.AddScoped<IStartupProvider, StartupProvider>();
 
         #endregion Provider
-
     }
-
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
