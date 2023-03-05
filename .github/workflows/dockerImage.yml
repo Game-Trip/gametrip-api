@@ -18,9 +18,7 @@ jobs:
       - name: Setup DotNet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: |
-            6.0.x
-            7.0.x
+          dotnet-version: 7.0.x
                  
       - name: Buildx
         id: buildx
@@ -34,6 +32,12 @@ jobs:
         with:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
+          
+      - name: Restore dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --no-restore
 
       - name: Build and push
         uses: docker/build-push-action@v2
