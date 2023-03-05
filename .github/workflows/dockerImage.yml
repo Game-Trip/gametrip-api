@@ -34,6 +34,7 @@ jobs:
           password: $DOCKER_PASSWORD
           
       - name: Restore dependencies
+        working-directory: ./GameTrip/
         run: dotnet restore
         
       - name: Build
