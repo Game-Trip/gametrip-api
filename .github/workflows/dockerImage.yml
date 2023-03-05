@@ -38,6 +38,7 @@ jobs:
         run: dotnet restore
         
       - name: Build
+        working-directory: ./GameTrip/
         run: dotnet build --no-restore
 
       - name: Build and push
