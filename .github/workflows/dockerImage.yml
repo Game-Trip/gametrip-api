@@ -42,6 +42,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Build Docker Image
+        working-directory: ./GameTrip/
         run: docker build --file ./Dockerfile --tag dercraker0/gametrip-api:latest ../
         
       - name: Push DokerImage To Registry
