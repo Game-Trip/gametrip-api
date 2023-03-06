@@ -31,8 +31,8 @@ jobs:
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
         with:
-          url: 'http://game-trip.ddns.net:52345/api/stacks/2?endpointId=2'
+          url: '${{ secrets.PORTAINER_UPDATE_STACK_API_URL }}'
           method: 'PUT'
           timeout: 20000
-          customHeaders: '{"x-api-key": "ptr_Y49LBAOy7D4Wn5GNcOXT6h+Qektum8B5pQD13wLOV1Y="}'
-          data: '{"prune":true,"pullImage":true,"stackFileContent":"{\"version\":\"3.9\",\"services\":{\"db\":{\"container_name\":\"GameTrip-SQL\",\"image\":\"mcr.microsoft.com/mssql/server:2022-latest\",\"restart\":\"always\",\"environment\":{\"SA_PASSWORD\":\"ci4cwUFW6daAw2gLKhnQ1pf8OVYy0VC8QT8f3wdn7xQSp1adabZLo4O2NgAdt2RWrYV9UEesYD3QDb54WT35ZC4xDpmOgcSBJ6htB65sE3IsG2jBKL3ECN9cEvrkiZr8\",\"ACCEPT_EULA\":\"Y\",\"PID\":\"Express\"},\"user\":\"root\",\"ports\":[\"21331:1433\"],\"volumes\":[\"GameTrip_db_data:/var/opt/mssql/data\",\"GameTrip_db_log:/var/opt/mssql/log\",\"GameTrip_db_backup:/var/opt/mssql/backup\"]},\"api\":{\"container_name\":\"GameTrip-API\",\"image\":\"dercraker0/gametrip-api:latest\",\"ports\":[\"62014:80\",\"42582:443\"]}},\"volumes\":{\"GameTrip_db_data\":null,\"GameTrip_db_log\":null,\"GameTrip_db_backup\":null}}"}'
+          customHeaders: '{"x-api-key": "${{ secrets.PORTAINER_X_API_KEY }}"}'
+          data: '${{ vars.PORTAINER_UPDATE_STACK_DATA }}'
