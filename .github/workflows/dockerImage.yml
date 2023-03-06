@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
-        run: docker build --file GameTrip.API\Dockerfile --tag dercraker0/gametrip-api:latest ./ --progress=plain --no-cache
+        run: docker build --file ./GameTrip.API/Dockerfile --tag dercraker0/gametrip-api:latest ./ --progress=plain --no-cache
       
       - name: Push Docker Image to Registry
         run: docker push dercraker0/gametrip-api:latest
