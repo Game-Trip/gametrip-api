@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["GameTrip/GameTrip.API/GameTrip.API.csproj", "GameTrip.API/"]
-RUN dotnet restore "GameTrip.API/GameTrip.API.csproj"
-COPY . .
-WORKDIR "/src/GameTrip.API"
+#COPY ["GameTrip.API/GameTrip.API.csproj", "GameTrip/GameTrip.API/"]
+COPY . ./GameTrip
+#RUN dotnet restore "GameTrip.API/GameTrip.API.csproj"
+WORKDIR "/src/GameTrip/GameTrip.API"
 RUN dotnet build "GameTrip.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
