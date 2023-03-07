@@ -35,4 +35,4 @@ jobs:
           method: 'PUT'
           timeout: 20000
           customHeaders: '{"x-api-key": "${{ secrets.PORTAINER_X_API_KEY }}"}'
-          data: '${{ vars.PORTAINER_UPDATE_STACK_DATA }}'
+          data: '${{ vars.PORTAINER_UPDATE_STACK_PROD_DATA }}'
