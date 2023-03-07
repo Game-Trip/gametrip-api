@@ -31,8 +31,8 @@ jobs:
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
         with:
-          url: '${{ secrets.PORTAINER_UPDATE_STACK_API_URL }}'
+          url: '${{ secrets.PORTAINER_UPDATE_STACK_PROD_API_URL }}'
           method: 'PUT'
           timeout: 20000
           customHeaders: '{"x-api-key": "${{ secrets.PORTAINER_X_API_KEY }}"}'
-          data: '${{ vars.PORTAINER_UPDATE_STACK_DATA }}'
+          data: '${{ vars.PORTAINER_UPDATE_STACK_PROD }}'
