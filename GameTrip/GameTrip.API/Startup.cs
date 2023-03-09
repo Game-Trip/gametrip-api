@@ -105,6 +105,8 @@ internal class Startup
             });
         }
 
+        ConfigureExceptionHandler(app);
+
         app.UseHttpsRedirection();
 
         app.UseRouting();
@@ -213,7 +215,7 @@ internal class Startup
 
     private void AddIdentity(IServiceCollection services)
     {
-        services.AddIdentity<GameTripUser, IdentityRole>(options =>
+        services.AddIdentity<GameTripUser, IdentityRole<Guid>>(options =>
         {
             options.SignIn.RequireConfirmedAccount = true;
 
@@ -241,7 +243,7 @@ internal class Startup
             options.User.RequireUniqueEmail = true;
         })
         .AddDefaultTokenProviders()
-        .AddRoles<IdentityRole>()
+        .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<GameTripContext>();
 
 

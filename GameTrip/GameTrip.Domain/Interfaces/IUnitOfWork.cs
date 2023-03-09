@@ -15,6 +15,7 @@ public interface IUnitOfWork : IDisposable
     ILocationRepository Locations { get; }
     IPictureRepository Pictures { get; }
 
+
     int Complet();
     Task<int> CompletAsync();
 }
