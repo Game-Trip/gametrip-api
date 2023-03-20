@@ -31,8 +31,8 @@ jobs:
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
         with:
-          url: '${{ secrets.PORTAINER_UPDATE_STACK_STAGING_API_URL }}'
+          url: 'https://portainer.game-trip.fr/api/stacks/36?endpointId=2'
           method: 'PUT'
-          timeout: 2000000
-          customHeaders: '{"x-api-key": "${{ secrets.PORTAINER_X_API_KEY }}"}'
+          timeout: 20000
+          customHeaders: '{"x-api-key": "ptr_Y49LBAOy7D4Wn5GNcOXT6h+Qektum8B5pQD13wLOV1Y="}'
           data: '${{ vars.PORTAINER_UPDATE_STACK_STAGING }}'
