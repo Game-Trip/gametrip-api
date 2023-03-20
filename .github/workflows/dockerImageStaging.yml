@@ -1,4 +1,4 @@
-name: Docker Image CI Staging
+name: Docker Image CI/CD Staging
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  CI:
+  CICD:
     name: Building and deploy Image gametrip-api
     runs-on: ubuntu-latest
     steps:
@@ -27,3 +27,12 @@ jobs:
       
       - name: Push Docker Image to Registry
         run: docker push dercraker0/gametrip-api:staging
+        
+      - name: PUT Request Action to update Stack
+        uses: fjogeleit/http-request-action@v1.13.0
+        with:
+          url: '${{ secrets.PORTAINER_UPDATE_STACK_STAGING_API_URL }}'
+          method: 'PUT'
+          timeout: 20000
+          customHeaders: '{"x-api-key": "${{ secrets.PORTAINER_X_API_KEY }}"}'
+          data: '${{ vars.PORTAINER_UPDATE_STACK_STAGING }}'
