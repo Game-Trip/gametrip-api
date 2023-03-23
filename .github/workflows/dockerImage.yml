@@ -26,7 +26,7 @@ jobs:
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:prod ./
       
       - name: Push Docker Image to Registry
-        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:latest
+        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:prod
       
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
