@@ -94,7 +94,9 @@ internal class Startup
             context.Database.EnsureCreated();
         }
 
-        if (env.IsDevelopment())
+        
+
+        if (Configuration.GetValue<bool>("UseSwagger"))
         {
             app.UseStaticFiles();
             app.UseSwagger();
@@ -130,10 +132,14 @@ internal class Startup
         {
             options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins(originsAllowed.ToArray())
+                    builder.AllowAnyOrigin()
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .Build();
+                    //builder.WithOrigins(originsAllowed.ToArray())
+                    //       .AllowAnyHeader()
+                    //       .AllowAnyMethod()
+                    //       .Build();
                 });
         });
     }
