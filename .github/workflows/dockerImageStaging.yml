@@ -64,6 +64,7 @@ jobs:
           echo "chibrax 2000"
           echo $PWD
           ls
+        working-directory: ./GameTrip
         
       - name: Generate Swagger.json
         run : dotnet swagger tofile --output ./ ./GameTrip.API.dll swagger.json
