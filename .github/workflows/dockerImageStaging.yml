@@ -61,7 +61,7 @@ jobs:
         run : dotnet tool install Swashbuckle.AspNetCore.Cli
         
       - name: Generate Swagger.json
-        run : dotnet swagger tofile --output swagger.json ./GameTrip.API.dll
+        run : dotnet swagger tofile --output ./GameTrip.API.dll swagger.json
         
       - uses: actions/setup-node@v3
         with:
