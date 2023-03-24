@@ -1,5 +1,8 @@
 ﻿using FluentValidation.AspNetCore;
+using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Settings;
+using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
 using GameTrip.EFCore.Repository;
 using GameTrip.EFCore.UnitOfWork;
@@ -7,28 +10,43 @@ using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider;
 using GameTrip.Provider.IProvider;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net;
 using System.Reflection;
+using System.Security.Claims;
+using System.Text;
 
 namespace GameTrip.API;
 
 internal class Startup
 {
+    #region Properties
     public IConfiguration Configuration { get; }
+    #endregion
 
+    #region Constructor
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
-    }
+    } 
+    #endregion
 
+    #region Public Methods
     public void ConfigureServices(IServiceCollection services)
     {
         AddServices(services);
 
+
         services.AddControllers();
         services.AddFluentValidation();
-
+        AddCORS(services);
+        AddJWT(services);
         AddDatabase(services);
 
         services.AddEndpointsApiExplorer();
@@ -43,9 +61,124 @@ internal class Startup
                 Title = API_NAME,
                 Description = "Fifty Cent API",
             });
-            //c.IncludeXmlComments(xmlPath);
+            c.IncludeXmlComments(xmlPath);
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme.",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Scheme = "bearer",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT"
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    new string [] {}
+                }
+            });
+        });
+
+        AddIdentity(services);
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        using (var serviceScope = app.ApplicationServices.CreateScope())
+        {
+            var context = serviceScope.ServiceProvider.GetService<GameTripContext>();
+            context.Database.EnsureCreated();
+        }
+
+        
+
+        if (Configuration.GetValue<bool>("UseSwagger"))
+        {
+            app.UseStaticFiles();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.InjectStylesheet("/swagger-ui/SwaggerDark.css"); //Get Swagger in dark mode
+                options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+            });
+        }
+
+        ConfigureExceptionHandler(app);
+
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+
+        var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
+    }
+    #endregion
+
+    #region Private Methods
+    private void AddCORS(IServiceCollection services)
+    {
+        List<string>? originsAllowed = Configuration.GetSection("CallsOrigins").Get<List<string>>();
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .Build();
+                    //builder.WithOrigins(originsAllowed.ToArray())
+                    //       .AllowAnyHeader()
+                    //       .AllowAnyMethod()
+                    //       .Build();
+                });
         });
     }
+
+    private void AddJWT(IServiceCollection services)
+    {
+        var jwtSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>();
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireAudience = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+                ValidateLifetime = true,
+                RoleClaimType = "Roles",
+                NameClaimType = "Name",
+
+            };
+        });
+        services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("Bearer")
+                .Build();
+        });
+    }
+
 
     private void AddDatabase(IServiceCollection services)
     {
@@ -86,36 +219,78 @@ internal class Startup
         #endregion Provider
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    private void AddIdentity(IServiceCollection services)
     {
-        using (var serviceScope = app.ApplicationServices.CreateScope())
+        services.AddIdentity<GameTripUser, IdentityRole<Guid>>(options =>
         {
-            var context = serviceScope.ServiceProvider.GetService<GameTripContext>();
-            context.Database.EnsureCreated();
-        }
+            options.SignIn.RequireConfirmedAccount = true;
 
-        if (env.IsDevelopment())
+            options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+            options.ClaimsIdentity.UserIdClaimType = "Id";
+            options.ClaimsIdentity.UserNameClaimType = "UserName";
+            options.ClaimsIdentity.EmailClaimType = ClaimTypes.Email;
+
+            //Password requirement
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 4; //Determine le nombre de caract�re unnique minimum requis
+
+
+            //Lockout si mdp fail 5 fois alors compte bloquer 10 min
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
+            options.Lockout.AllowedForNewUsers = true;
+
+            //User
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddDefaultTokenProviders()
+        .AddRoles<IdentityRole<Guid>>()
+        .AddEntityFrameworkStores<GameTripContext>();
+
+
+        services.ConfigureApplicationCookie(options =>
         {
-            app.UseStaticFiles();
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            options.Events.OnRedirectToLogin = context =>
             {
-                options.InjectStylesheet("/swagger-ui/SwaggerDark.css"); //Get Swagger in dark mode
-                options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-            });
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseRouting();
-
-        app.UseAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
         });
-
-        var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
+
+
+    void ConfigureExceptionHandler(IApplicationBuilder app)
+    {
+        app.UseExceptionHandler(appError =>
+        {
+            appError.Run(async context =>
+            {
+                var contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
+                if (contextFeatures == null) return;
+
+                context.Response.ContentType = "text/html; charset=utf-8";
+                string message = string.Empty;
+                var user = context?.User?.Identity?.Name ?? "Unknow User";
+                if (contextFeatures.Error is ServiceException se)
+                {
+                    context.Response.StatusCode = (int)se.StatusCode;
+                    message = se.Message;
+
+                }
+                else
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    message = "Internal Server Error";
+                }
+
+                await context.Response.WriteAsync(message);
+            });
+        });
+    }
+    #endregion
 }

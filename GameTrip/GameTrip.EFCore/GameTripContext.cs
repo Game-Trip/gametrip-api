@@ -25,6 +25,7 @@ public class GameTripContext : DbContext
 
     public GameTripContext(DbContextOptions<GameTripContext> options) : base(options)
     {
+        Database.Migrate();
     }
 
     #endregion Constructor
