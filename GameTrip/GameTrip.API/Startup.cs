@@ -27,21 +27,25 @@ namespace GameTrip.API;
 internal class Startup
 {
     #region Properties
+
     public IConfiguration Configuration { get; }
-    #endregion
+
+    #endregion Properties
 
     #region Constructor
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
-    } 
-    #endregion
+    }
+
+    #endregion Constructor
 
     #region Public Methods
+
     public void ConfigureServices(IServiceCollection services)
     {
         AddServices(services);
-
 
         services.AddControllers();
         services.AddFluentValidation();
@@ -94,8 +98,6 @@ internal class Startup
             context.Database.EnsureCreated();
         }
 
-        
-
         if (Configuration.GetValue<bool>("UseSwagger"))
         {
             app.UseStaticFiles();
@@ -122,9 +124,11 @@ internal class Startup
 
         var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
-    #endregion
+
+    #endregion Public Methods
 
     #region Private Methods
+
     private void AddCORS(IServiceCollection services)
     {
         List<string>? originsAllowed = Configuration.GetSection("CallsOrigins").Get<List<string>>();
@@ -167,7 +171,6 @@ internal class Startup
                 ValidateLifetime = true,
                 RoleClaimType = "Roles",
                 NameClaimType = "Name",
-
             };
         });
         services.AddAuthorization(options =>
@@ -178,7 +181,6 @@ internal class Startup
                 .Build();
         });
     }
-
 
     private void AddDatabase(IServiceCollection services)
     {
@@ -238,7 +240,6 @@ internal class Startup
             options.Password.RequiredLength = 8;
             options.Password.RequiredUniqueChars = 4; //Determine le nombre de caract�re unnique minimum requis
 
-
             //Lockout si mdp fail 5 fois alors compte bloquer 10 min
             options.Lockout.MaxFailedAccessAttempts = 5;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
@@ -252,7 +253,6 @@ internal class Startup
         .AddRoles<IdentityRole<Guid>>()
         .AddEntityFrameworkStores<GameTripContext>();
 
-
         services.ConfigureApplicationCookie(options =>
         {
             options.Events.OnRedirectToLogin = context =>
@@ -263,8 +263,7 @@ internal class Startup
         });
     }
 
-
-    void ConfigureExceptionHandler(IApplicationBuilder app)
+    private void ConfigureExceptionHandler(IApplicationBuilder app)
     {
         app.UseExceptionHandler(appError =>
         {
@@ -280,7 +279,6 @@ internal class Startup
                 {
                     context.Response.StatusCode = (int)se.StatusCode;
                     message = se.Message;
-
                 }
                 else
                 {
@@ -292,5 +290,6 @@ internal class Startup
             });
         });
     }
-    #endregion
+
+    #endregion Private Methods
 }
