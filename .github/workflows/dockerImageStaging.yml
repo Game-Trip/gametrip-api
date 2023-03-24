@@ -54,6 +54,9 @@ jobs:
         with:
           path: ./GameTrip/GameTrip.API/
         
+      - name: Restor Tools
+        run: dotnet tool restore
+        
       - name: Create .Net Manifest
         run: dotnet new tool-manifest
         
