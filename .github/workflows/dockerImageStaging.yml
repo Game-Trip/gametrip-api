@@ -19,7 +19,7 @@ jobs:
         name: Change AppSettings
         id: new-settings
         with:
-          pathToTemplate: "./GameTrip/GameTrip.API/appsettings.tmpl.json"
+          pathToTemplate: "{root}/${repo_name}/GameTrip/GameTrip.API/appsettings.tmpl.json"
           renameTo: "appsettings.json"
           removeOtherSettingsFiles: false
           secrets: "${{ toJSON(secrets) }}"
