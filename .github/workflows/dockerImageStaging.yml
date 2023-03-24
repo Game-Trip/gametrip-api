@@ -20,17 +20,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
-      - name: Change AppSettings
-        uses: DEMGroup/dotnet-settings-templator@v1.1.0
-        id: new-settings
-        with:
-          working-directory: ./GameTrip/
-          pathToTemplate: "./GameTrip.API/appsettings.tmpl.json"
-          renameTo: "appsettings.json"
-          removeOtherSettingsFiles: false
-          secrets: "${{ toJSON(secrets) }}"
-          vars: "${{ toJSON(vars) }}"
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
