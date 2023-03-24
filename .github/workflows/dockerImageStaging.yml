@@ -60,6 +60,10 @@ jobs:
       - name: Install Nuget Package
         run : dotnet tool install Swashbuckle.AspNetCore.Cli
         
+      - run: echo "chibrax 2000"
+      - run: echo $PWD
+      - run: ls
+        
       - name: Generate Swagger.json
         run : dotnet swagger tofile --output ./ ./GameTrip.API.dll swagger.json
         
