@@ -70,7 +70,7 @@ jobs:
         working-directory: ./GameTrip/GameTrip.API/bin/Release/net7.0/
         
       - name: Generate Swagger.json
-        run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll swagger.json
+        run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
       - uses: actions/setup-node@v3
         with:
