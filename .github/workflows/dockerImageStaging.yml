@@ -14,22 +14,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - uses: DEMGroup/dotnet-settings-templator@v1.1.0
-        name: Change AppSettings
-        id: new-settings
-        with:
-          pathToTemplate: "{root}/${repo_name}/GameTrip/GameTrip.API/appsettings.tmpl.json"
-          renameTo: "appsettings.json"
-          removeOtherSettingsFiles: false
-          secrets: "${{ toJSON(secrets) }}"
-          vars: "${{ toJSON(vars) }}"
           
       - name: DockerHub login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Change AppSettings
+        uses: DEMGroup/dotnet-settings-templator@v1.1.0
+        id: new-settings
+        with:
+          working-directory: ./GameTrip/
+          pathToTemplate: "./GameTrip.API/appsettings.tmpl.json"
+          renameTo: "appsettings.json"
+          removeOtherSettingsFiles: false
+          secrets: "${{ toJSON(secrets) }}"
+          vars: "${{ toJSON(vars) }}"
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
