@@ -85,6 +85,7 @@ jobs:
         run: |
           echo $PWD
           ls
+        working-directory: ./gametrip-api-client
         
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "Game-Trip" --git-repo-id "gametrip-api-client"
