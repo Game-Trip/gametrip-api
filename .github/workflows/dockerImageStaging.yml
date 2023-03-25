@@ -100,7 +100,6 @@ jobs:
 
       - name: Push changes to other repository
         run: |
-          cd other-repo
           git config --global user.email "antoine.capitain@gmail.com"
           git config --global user.name "Dercraker"
           git add .
