@@ -80,6 +80,14 @@ jobs:
           repository: Game-Trip/gametrip-api-client
           ref: master
           path: ./gametrip-api-client
+          
+      - name: Clone other repository
+        uses: actions/checkout@v2
+        with:
+          repository: Game-Trip/gametrip-api-client
+          ref: master
+          path: ./gametrip-api-client
+          token: ${{ secrets.DERCRAKER_TOKEN }}
         
       - name: Display Information
         run: |
@@ -90,12 +98,15 @@ jobs:
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
 
-      - name: Push changes to target repository
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.DERCRAKER_TOKEN }}
-          branch: master
-          repository: Game-Trip/gametrip-api-client
+      - name: Push changes to other repository
+        run: |
+          cd other-repo
+          git config --global user.email "antoine.capitain@gmail.com"
+          git config --global user.name "Dercraker"
+          git add .
+          git commit -m "Update files"
+          git push origin main
+        working-directory: ./gametrip-api-client/
       
       - name: Display Information
         run: |
