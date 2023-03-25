@@ -54,7 +54,7 @@ jobs:
         with:
           path: ./GameTrip/GameTrip.API/
         
-      - name: Restor Tools
+      - name: Restore Tools
         run: dotnet tool restore
         
       - name: Create .Net Manifest
@@ -73,6 +73,13 @@ jobs:
         
       - name: install Open Api Tool CLI
         run : npm install @openapitools/openapi-generator-cli -g
+        
+      - name: Clone target repository
+        uses: actions/checkout@v2
+        with:
+          repository: Game-Trip/gametrip-api-client
+          ref: master
+          path: ./gametrip-api-client
         
       - name: Display Information
         run: |
