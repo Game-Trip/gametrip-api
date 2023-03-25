@@ -63,16 +63,11 @@ jobs:
       - name: Install Nuget Package
         run : dotnet tool install Swashbuckle.AspNetCore.Cli
         
-      - run: |
-          echo "chibrax 2000"
-          echo $PWD
-          ls
-        working-directory: ./GameTrip/GameTrip.API/bin/Release/net7.0/
-        
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
-      - uses: actions/setup-node@v3
+      - name: Install Node LTS
+        uses: actions/setup-node@v3
         with:
           node-version: lts/*
         
@@ -81,4 +76,9 @@ jobs:
         
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "123300539" --git-repo-id "R_kgDOJNuD-g"
+        
+      - name: Push on repository
+        run: |
+          cd ./ClientAPI/
+          /bin/sh ./git_push.sh 
       
