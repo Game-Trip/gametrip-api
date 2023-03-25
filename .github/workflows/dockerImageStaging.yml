@@ -74,6 +74,11 @@ jobs:
       - name: install Open Api Tool CLI
         run : npm install @openapitools/openapi-generator-cli -g
         
+      - name: Display Information
+        run: |
+          echo $PWD
+          ls
+        
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "Game-Trip" --git-repo-id "gametrip-api-client"
         
