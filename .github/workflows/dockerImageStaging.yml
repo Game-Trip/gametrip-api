@@ -23,7 +23,7 @@ jobs:
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
-        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:staging ./
+        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ github.sha }}-Staging ./
       
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:staging
