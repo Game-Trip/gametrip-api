@@ -75,7 +75,7 @@ jobs:
         run : npm install @openapitools/openapi-generator-cli -g
         
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "123300539" --git-repo-id "R_kgDOJNuD-g"
+        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "Game-Trip" --git-repo-id "gametrip-api-client"
         
       - name: Push on repository
         run: |
