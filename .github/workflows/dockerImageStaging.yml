@@ -97,3 +97,9 @@ jobs:
           branch: master
           repository: Game-Trip/gametrip-api-client
       
+      - name: Display Information
+        run: |
+          echo $PWD
+          ls
+        working-directory: ./gametrip-api-client
+      
