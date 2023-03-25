@@ -44,15 +44,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
+      - name: Checkout GameTrip Client Api Repo
+        uses: actions/checkout@v2
+        with:
+          repository: Game-Trip/gametrip-api-client
+          ref: Develop
+          path: ./gametrip-api-client
+          token: ${{ secrets.DERCRAKER_TOKEN }}
+        
       - name: Install .Net 7
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.x.x'
-      
-      - name: .Net Build
-        uses: EasyDesk/action-dotnet-build@v1.0.0
-        with:
-          path: ./GameTrip/GameTrip.API/
         
       - name: Restore Tools
         run: dotnet tool restore
@@ -63,9 +66,6 @@ jobs:
       - name: Install Nuget Package
         run : dotnet tool install Swashbuckle.AspNetCore.Cli
         
-      - name: Generate Swagger.json
-        run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
-        
       - name: Install Node LTS
         uses: actions/setup-node@v3
         with:
@@ -73,27 +73,14 @@ jobs:
         
       - name: install Open Api Tool CLI
         run : npm install @openapitools/openapi-generator-cli -g
-        
-      - name: Clone target repository
-        uses: actions/checkout@v2
-        with:
-          repository: Game-Trip/gametrip-api-client
-          ref: Develop
-          path: ./gametrip-api-client
           
-      - name: Clone other repository
-        uses: actions/checkout@v2
+      - name: .Net Build
+        uses: EasyDesk/action-dotnet-build@v1.0.0
         with:
-          repository: Game-Trip/gametrip-api-client
-          ref: Develop
-          path: ./gametrip-api-client
-          token: ${{ secrets.DERCRAKER_TOKEN }}
+          path: ./GameTrip/GameTrip.API/
         
-      - name: Display Information
-        run: |
-          echo $PWD
-          ls
-        working-directory: ./gametrip-api-client
+      - name: Generate Swagger.json
+        run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
@@ -106,10 +93,4 @@ jobs:
           git commit -m "Update GameTrip Client Api By Github Action"
           git push origin Develop
         working-directory: ./gametrip-api-client/
-      
-      - name: Display Information
-        run: |
-          echo $PWD
-          ls
-        working-directory: ./gametrip-api-client
       
