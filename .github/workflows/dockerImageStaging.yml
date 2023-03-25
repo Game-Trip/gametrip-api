@@ -88,10 +88,12 @@ jobs:
         working-directory: ./gametrip-api-client
         
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./ClientAPI/ --git-user-id "Game-Trip" --git-repo-id "gametrip-api-client"
-        
-      - name: Push on repository
-        run: |
-          cd ./ClientAPI/
-          /bin/sh ./git_push.sh 
+        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
+
+      - name: Push changes to target repository
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.DERCRAKER_TOKEN }}
+          branch: master
+          repository: Game-Trip/gametrip-api-client
       
