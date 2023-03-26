@@ -35,8 +35,8 @@ jobs:
           method: 'PUT'
           timeout: 20000
           customHeaders: '${{ secrets.CUSTOM_HEADERS }}'
-          data: '{"prune": true,"pullImage": true,"stackFileContent": "{version: "3.9", services: {api: {container_name: GameTrip-API-Staging, image: "registry.game-trip.fr/gametrip-api:${{ github.sha }}-Staging", restart: always, environment: {ASPNETCORE_ENVIRONMENT: Production}, ports: ["55380:80"]}}}"}'
-          
+          data: '${{ vars.PORTAINER_UPDATE_STACK_API_STAGING }}'          
+  
   ClientAPI:
     name: Build Create And Push Client API
     runs-on: ubuntu-latest
