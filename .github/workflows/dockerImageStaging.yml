@@ -23,10 +23,10 @@ jobs:
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
-        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ github.sha }}-Staging ./
+        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging ./
       
       - name: Push Docker Image to Registry
-        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ github.sha }}-Staging
+        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging
         
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
