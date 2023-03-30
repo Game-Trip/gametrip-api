@@ -22,13 +22,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           
       - name: Display information docker
-        run: | 
-          docker ps -a
-          docker images 
+        run: docker images 
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging ./
+        
+      - name: Display information docker
+        run: docker images 
       
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging
@@ -40,62 +41,4 @@ jobs:
           method: 'PUT'
           timeout: 20000
           customHeaders: '${{ secrets.CUSTOM_HEADERS }}'
-          data: '${{ vars.PORTAINER_UPDATE_STACK_API_STAGING }}'          
-  
-  ClientAPI:
-    name: Build Create And Push Client API
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        
-      - name: Checkout GameTrip Client Api Repo
-        uses: actions/checkout@v2
-        with:
-          repository: Game-Trip/gametrip-api-client
-          ref: Develop
-          path: ./gametrip-api-client
-          token: ${{ secrets.DERCRAKER_TOKEN }}
-        
-      - name: Install .Net 7
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '7.x.x'
-        
-      - name: Restore Tools
-        run: dotnet tool restore
-        
-      - name: Create .Net Manifest
-        run: dotnet new tool-manifest
-        
-      - name: Install Nuget Package
-        run : dotnet tool install Swashbuckle.AspNetCore.Cli
-        
-      - name: Install Node LTS
-        uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-        
-      - name: install Open Api Tool CLI
-        run : npm install @openapitools/openapi-generator-cli -g
-          
-      - name: .Net Build
-        uses: EasyDesk/action-dotnet-build@v1.0.0
-        with:
-          path: ./GameTrip/GameTrip.API/
-        
-      - name: Generate Swagger.json
-        run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
-        
-      - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
-
-      - name: Push changes to other repository
-        run: |
-          git config --global user.email "antoine.capitain@gmail.com"
-          git config --global user.name "Dercraker"
-          git add .
-          git commit -m "Update GameTrip Client Api By Github Action"
-          git push origin Develop
-        working-directory: ./gametrip-api-client/
-      
+          data: '${{ vars.PORTAINER_UPDATE_STACK_API_STAGING }}'
