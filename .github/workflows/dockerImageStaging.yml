@@ -20,6 +20,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Display information docker
+        run: | 
+          docker ps -a
+          docker images 
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
