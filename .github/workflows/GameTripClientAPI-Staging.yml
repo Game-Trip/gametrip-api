@@ -58,10 +58,8 @@ jobs:
 
       - name: Push changes to other repository
         run: |
-          git config --global user.email "antoine.capitain@gmail.com"
-          git config --global user.name "Dercraker"
-          git add .
+          git add -A
           git commit -m "Update GameTrip Client Api By Github Action"
-          git push origin develop
+          git push origin HEAD:develop
         working-directory: ./gametrip-api-client/
       
