@@ -55,13 +55,13 @@ jobs:
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
       - name: Get Variable value
-        run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $NPM_PACKAGE_VERSION
+        run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $GITHUB_ENV
         
       - name: Display Variable value
-        run: echo ${{ NPM_PACKAGE_VERSION }}
+        run: echo ${{ env.NPM_PACKAGE_VERSION }}
       
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ NPM_PACKAGE_VERSION }}
+        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}
 
       - name: Push changes to other repository
         run: |          
