@@ -57,7 +57,7 @@ jobs:
       - name: Create API Client
         run : |
           NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")
-          openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ NPM_PACKAGE_VERSION }}
+          openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=$NPM_PACKAGE_VERSION
 
       - name: Push changes to other repository
         run: |          
