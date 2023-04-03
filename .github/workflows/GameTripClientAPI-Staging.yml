@@ -53,16 +53,18 @@ jobs:
         
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
-        
+      
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
+        run : |
+          NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")
+          openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ NPM_PACKAGE_VERSION }}
 
       - name: Push changes to other repository
         run: |          
           git config --global user.email "antoine.capitain@gmail.com"
           git config --global user.name "Dercraker"
           git add -A
-          git commit -m "Update GameTrip Client Api By Github Action"
+          git commit -m "Update GameTrip Client V${{ NPM_PACKAGE_VERSION }}"
           git push origin HEAD:develop
         working-directory: ./gametrip-api-client/
       
