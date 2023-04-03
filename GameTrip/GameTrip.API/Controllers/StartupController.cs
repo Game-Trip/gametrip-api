@@ -1,4 +1,5 @@
 ﻿using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,10 @@ namespace GameTrip.API.Controllers
 
         [HttpGet]
         [Route("ping")]
-        public ActionResult<string> Ping() => Ok(_startupPlatform.ping());
+        public ActionResult<TestModel> Ping() => new TestModel()
+        {
+            Test = _startupPlatform.ping()
+        };
 
     }
 }
