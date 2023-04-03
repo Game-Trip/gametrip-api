@@ -58,7 +58,9 @@ jobs:
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/
 
       - name: Push changes to other repository
-        run: |
+        run: |          
+          git config --global user.email "antoine.capitain@gmail.com"
+          git config --global user.name "Dercraker"
           git add -A
           git commit -m "Update GameTrip Client Api By Github Action"
           git push origin HEAD:develop
