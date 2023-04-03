@@ -56,9 +56,6 @@ jobs:
         
       - name: Get Variable value
         run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $GITHUB_ENV
-        
-      - name: Display Variable value
-        run: echo ${{ env.NPM_PACKAGE_VERSION }}
       
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }} --additional-properties=npmRepository=https://npm.pkg.github.com
