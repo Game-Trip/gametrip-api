@@ -61,7 +61,7 @@ jobs:
         run: echo ${{ env.NPM_PACKAGE_VERSION }}
       
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}
+        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }} --additional-properties=npmRepository=https://npm.pkg.github.com
 
       - name: Push changes to other repository
         run: |          
