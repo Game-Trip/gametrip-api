@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: Game-Trip/gametrip-api-client
-          ref: Develop
+          ref: develop
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
         
