@@ -22,6 +22,7 @@ jobs:
           ref: develop
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
+          persist-credentials: true
         
       - name: Install .Net 7
         uses: actions/setup-dotnet@v3
