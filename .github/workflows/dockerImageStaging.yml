@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           
       - name: Branch name
-        run: echo running on branch ${{ github.head_ref }}
+        run: echo running on branch ${{ github.ref_name }}
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
