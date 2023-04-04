@@ -21,7 +21,7 @@ jobs:
       - name: Change dockerTag to Staging
         run: |
           echo ${{ env.dockerTag }}
-          if [[ ${GITHUB_REF##*/} == 'develop' ]]; then
+          if [[ ${{ github.head_ref }} == 'develop' ]]; then
             echo "staging" >> ${{env.dockerTag}}
           else
             echo "latest" >> ${{env.dockerTag}}
