@@ -20,11 +20,7 @@ jobs:
         
       - name: Setup dockerTag to Staging
         if: github.ref_name == 'develop'
-        run: |
-          echo ${{ env.dockerTag }}
-          echo "dockerTag=staging" >> $GITHUB_ENV
-
-      - run: echo ${{ env.dockerTag }} 
+        run: echo "dockerTag=staging" >> $GITHUB_ENV
           
       - name: DockerHub login
         uses: docker/login-action@v1
@@ -37,11 +33,11 @@ jobs:
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
-        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging ./
+        run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }}  ./
 
       
       - name: Push Docker Image to Registry
-        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging
+        run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }} 
         
       - name: PUT Request Action to update Stack
         uses: fjogeleit/http-request-action@v1.13.0
