@@ -22,7 +22,7 @@ jobs:
         if: github.ref_name == 'develop'
         run: |
           echo ${{ env.dockerTag }}
-          echo "::set-env name=dockerTag::'staging'"
+          echo "dockerTag=staging" >> $GITHUB_ENV
           echo ${{ env.dockerTag }}
           
       - name: DockerHub login
