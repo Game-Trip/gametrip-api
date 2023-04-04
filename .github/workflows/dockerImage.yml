@@ -1,4 +1,4 @@
-name: Docker Image CI/CD Staging
+name: Docker Image CI/CD
 
 on:
   push:
