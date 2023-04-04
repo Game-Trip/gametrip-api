@@ -23,7 +23,8 @@ jobs:
         run: |
           echo ${{ env.dockerTag }}
           echo "dockerTag=staging" >> $GITHUB_ENV
-          echo ${{ env.dockerTag }}
+
+      - run: echo ${{ env.dockerTag }} 
           
       - name: DockerHub login
         uses: docker/login-action@v1
