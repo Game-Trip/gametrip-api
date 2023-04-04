@@ -19,10 +19,13 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Change dockerTag to Staging
-        if: ${{GITHUB_REF##*/}} == 'develop'
         run: |
           echo ${{ env.dockerTag }}
-          ${{ env.dockerTag }} = staging
+          if [[ ${GITHUB_REF##*/} == 'develop' ]]; then
+            echo "staging" >> ${{env.dockerTag}}
+          else
+            echo "latest" >> ${{env.dockerTag}}
+          fi
           echo ${{ env.dockerTag }}
           
       - name: DockerHub login
