@@ -35,12 +35,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           
       - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+        run: echo running on branch ${{ github.head_ref }}
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging ./
-        if: ${GITHUB_REF##*/} == 'develop'
+
       
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:Staging
