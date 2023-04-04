@@ -18,7 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-
+      - name: Setup dockerTag to Staging
+        if: github.ref_name == 'develop'
+        run: |
+          echo ${{ env.dockerTag }}
+          echo 'staging' >> ${{ env.dockerTag }}
+          echo ${{ env.dockerTag }}
           
       - name: DockerHub login
         uses: docker/login-action@v1
