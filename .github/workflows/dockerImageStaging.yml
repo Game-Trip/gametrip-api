@@ -27,19 +27,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
-      - name: Branch name
-        run: echo running on branch ${{ github.ref_name }}
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }}  ./
 
-      
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }} 
         
-      - name: PUT Request Action to update Stack
+      - name: PUT Request Action to update Stack - STAGING
+        if: github.ref_name == 'develop'
         uses: fjogeleit/http-request-action@v1.13.0
         with:
           url: '${{ secrets.PORTAINER_UPDATE_STACK_API_STAGING_URL }}'
@@ -47,3 +44,13 @@ jobs:
           timeout: 20000
           customHeaders: '${{ secrets.CUSTOM_HEADERS }}'
           data: '${{ vars.PORTAINER_UPDATE_STACK_API_STAGING }}'
+          
+      - name: PUT Request Action to update Stack - PROD
+        if: github.ref_name == 'master'
+        uses: fjogeleit/http-request-action@v1.13.0
+        with:
+          url: '${{ secrets.PORTAINER_UPDATE_STACK_API_PROD_URL }}'
+          method: 'PUT'
+          timeout: 20000
+          customHeaders: '${{ secrets.CUSTOM_HEADERS }}'
+          data: '${{ vars.PORTAINER_UPDATE_STACK_API_PROD }}'
