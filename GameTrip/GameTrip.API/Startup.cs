@@ -90,13 +90,9 @@ internal class Startup
         AddIdentity(services);
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GameTripContext context)
     {
-        using (var serviceScope = app.ApplicationServices.CreateScope())
-        {
-            var context = serviceScope.ServiceProvider.GetService<GameTripContext>();
-            context.Database.EnsureCreated();
-        }
+        context.Database.EnsureCreated();
 
         if (Configuration.GetValue<bool>("UseSwagger"))
         {
@@ -104,16 +100,23 @@ internal class Startup
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.InjectStylesheet("/swagger-ui/SwaggerDark.css"); //Get Swagger in dark mode
+                options.InjectStylesheet("/swagger-ui/SwaggerDark.css");
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+                options.EnablePersistAuthorization();
+                options.DisplayRequestDuration();
+                options.EnableFilter();
+                options.EnableTryItOutByDefault();
             });
         }
 
         ConfigureExceptionHandler(app);
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors();
+        //app.UseCorsMiddleware();
 
         app.UseAuthorization();
 
@@ -131,19 +134,16 @@ internal class Startup
 
     private void AddCORS(IServiceCollection services)
     {
-        List<string>? originsAllowed = Configuration.GetSection("CallsOrigins").Get<List<string>>();
+        List<string> originsAllowed = Configuration.GetSection("CallsOrigins").Get<List<string>>()!;
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder
+                           .WithOrigins(originsAllowed.ToArray())
+                           .WithMethods("PUT", "DELETE", "GET", "OPTIONS", "POST")
                            .AllowAnyHeader()
-                           .AllowAnyMethod()
                            .Build();
-                    //builder.WithOrigins(originsAllowed.ToArray())
-                    //       .AllowAnyHeader()
-                    //       .AllowAnyMethod()
-                    //       .Build();
                 });
         });
     }
