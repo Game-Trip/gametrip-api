@@ -18,16 +18,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
+      - run: echo ${{ env.npmTag }}
       - name: Setup npmTag to -Beta
         if: github.ref_name == 'develop'
         run: echo "npmTag=-Beta" >> $GITHUB_ENV
       - run: echo ${{ env.npmTag }}
+      - run: echo ${{ github.ref_name }}
       
       - name: Checkout GameTrip Client Api Repo
         uses: actions/checkout@v2
         with:
           repository: Game-Trip/gametrip-api-client
-          ref: github.ref_name
+          ref: ${{ github.ref_name }}
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
           persist-credentials: true
@@ -80,6 +82,6 @@ jobs:
           git config --global user.name "Dercraker"
           git add -A
           git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
-          git push origin HEAD:github.ref_name
+          git push origin HEAD:${{ github.ref_name }}
         working-directory: ./gametrip-api-client/
       
