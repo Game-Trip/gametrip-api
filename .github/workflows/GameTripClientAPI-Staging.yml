@@ -75,6 +75,8 @@ jobs:
         with:
           json: '{"file": "dist/"}'
           filename: 'package.json'
+          working-directory: ./gametrip-api-client/
+        
 
       - name: Push changes to other repository
         run: |          
