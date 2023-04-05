@@ -2,9 +2,9 @@ name: Create GameTrip Api Client
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ develop ]
+    branches: [ master, develop ]
 
 jobs:
   
@@ -15,11 +15,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         
-      - name: Checkout GameTrip Client Api Repo
+      - name: Checkout GameTrip Client Api Repo on DEVELOP
+        if: github.ref_name == 'develop'
         uses: actions/checkout@v2
         with:
           repository: Game-Trip/gametrip-api-client
           ref: develop
+          path: ./gametrip-api-client
+          token: ${{ secrets.DERCRAKER_TOKEN }}
+          persist-credentials: true
+      - name: Checkout GameTrip Client Api Repo on MASTER
+        if: github.ref_name == 'master'
+        uses: actions/checkout@v2
+        with:
+          repository: Game-Trip/gametrip-api-client
+          ref: master
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
           persist-credentials: true
@@ -54,13 +64,20 @@ jobs:
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
-      - name: Get Variable value
-        run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $GITHUB_ENV
+      - name: Get Variable NPM_PACKAGE_VERSION
+        id: npm_package_version
+        uses: zoexx/github-action-json-file-properties@release
+        with:
+          file_path: "npmVersion.json"
+          prop_path: "version"
+          
+      - run: echo ${{steps.npm_package_version.outputs.value}}
       
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }} --additional-properties=npmRepository=https://npm.pkg.github.com
 
       - name: Push changes to other repository
+        if: github.ref_name == 'devefcxvxwcvlop'
         run: |          
           git config --global user.email "antoine.capitain@gmail.com"
           git config --global user.name "Dercraker"
