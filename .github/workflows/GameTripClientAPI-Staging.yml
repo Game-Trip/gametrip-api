@@ -5,6 +5,9 @@ on:
     branches: [ master, develop ]
   pull_request:
     branches: [ master, develop ]
+    
+env:
+  npmTag: ''
 
 jobs:
   
@@ -14,22 +17,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Checkout GameTrip Client Api Repo on DEVELOP
+      
+      - name: Setup npmTag to -Beta
         if: github.ref_name == 'develop'
+        run: echo "npmTag=-Beta" >> $GITHUB_ENV
+      - run: echo ${{ env.npmTag }}
+      
+      - name: Checkout GameTrip Client Api Repo
         uses: actions/checkout@v2
         with:
           repository: Game-Trip/gametrip-api-client
-          ref: develop
-          path: ./gametrip-api-client
-          token: ${{ secrets.DERCRAKER_TOKEN }}
-          persist-credentials: true
-      - name: Checkout GameTrip Client Api Repo on MASTER
-        if: github.ref_name == 'master'
-        uses: actions/checkout@v2
-        with:
-          repository: Game-Trip/gametrip-api-client
-          ref: master
+          ref: github.ref_name
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
           persist-credentials: true
@@ -64,25 +62,24 @@ jobs:
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
         
-      - name: Get Variable NPM_PACKAGE_VERSION
-        id: npm_package_version
-        uses: zoexx/github-action-json-file-properties@release
-        with:
-          file_path: "npmVersion.json"
-          prop_path: "version"
-          
-      - run: echo ${{steps.npm_package_version.outputs.value}}
+      - name: Get Variable value
+        run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $GITHUB_ENV
       
       - name: Create API Client
-        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }} --additional-properties=npmRepository=https://npm.pkg.github.com
+        run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }} --additional-properties=npmRepository=https://npm.pkg.github.com
+
+      - name : Add File To Packagejson
+        uses: devops-actions/json-to-file@v1.0.0
+        with:
+          json: '{"file": "dist/"}'
+          filename: 'package.json'
 
       - name: Push changes to other repository
-        if: github.ref_name == 'devefcxvxwcvlop'
         run: |          
           git config --global user.email "antoine.capitain@gmail.com"
           git config --global user.name "Dercraker"
           git add -A
-          git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}"
-          git push origin HEAD:develop
+          git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
+          git push origin HEAD:github.ref_name
         working-directory: ./gametrip-api-client/
       
