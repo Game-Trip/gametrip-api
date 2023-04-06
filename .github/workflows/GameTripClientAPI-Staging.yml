@@ -75,21 +75,13 @@ jobs:
           
       - name: check for changes
         run: |
-          if [[ $(git status --porcelain | grep "^[MAD]" | wc -l) == 0 ]]; then
-            echo "changes_exist=false" >> $GITHUB_ENV
+          if [[ $(git status --porcelain | grep "^[MAD]" | wc -l) != 0 ]]; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add -A
+            git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
+            git push origin HEAD:${{ github.ref_name }}
           else
-            echo "changes_exist=true" >> $GITHUB_ENV
+            echo "No Change Up To Date"
           fi
-      - run: echo ${{ env.changes_exist }}
-
-
-      - name: commit changes to other repository
-        if: ${{env.changes_exist}} == 0
-        run: |          
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add -A
-          git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
-          git push origin HEAD:${{ github.ref_name }}
-        working-directory: ./gametrip-api-client/
       
