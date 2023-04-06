@@ -72,10 +72,10 @@ jobs:
         with:
           file: ./gametrip-api-client/package.json
           fields: "{\"files\": [\"dist\"]}"
-      - run: echo git status --porcelain | grep "^[MAD]" | wc -l
+          
       - name: check for changes
         run: |
-          if git status --porcelain | grep "^[MAD]" | wc -l == 0; then
+          if [[ git status --porcelain | grep "^[MAD]" | wc -l == 0; ]] then
             echo "changes_exist=false" >> $GITHUB_ENV
           else
             echo "changes_exist=true" >> $GITHUB_ENV
@@ -84,7 +84,7 @@ jobs:
 
 
       - name: commit changes to other repository
-        if: ${{env.changes_exist == true}}
+        if: ${{env.changes_exist}} == true
         run: |          
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
