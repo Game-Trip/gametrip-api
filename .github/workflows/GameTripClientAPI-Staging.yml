@@ -84,7 +84,7 @@ jobs:
 
 
       - name: commit changes to other repository
-        if: ${{env.changes_exist}} == true
+        if: ${{env.changes_exist}}
         run: |          
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
