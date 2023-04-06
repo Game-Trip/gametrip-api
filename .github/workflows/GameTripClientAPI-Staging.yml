@@ -72,10 +72,10 @@ jobs:
         with:
           file: ./gametrip-api-client/package.json
           fields: "{\"files\": [\"dist\"]}"
-      - run: echo git diff --exit-code
+      - run: echo git status --porcelain | grep "^[MAD]" | wc -l == 0
       - name: check for changes
         run: |
-          if git diff --exit-code; then
+          if git status --porcelain | grep "^[MAD]" | wc -l == 0; then
             echo "changes_exist=false" >> $GITHUB_ENV
           else
             echo "changes_exist=true" >> $GITHUB_ENV
