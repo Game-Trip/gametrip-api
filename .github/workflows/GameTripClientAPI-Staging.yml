@@ -76,6 +76,10 @@ jobs:
           file: ./gametrip-api-client/package.json
           field: file
           value: \["dist"\]
+        uses: restackio/update-json-file-action@v2.0
+        with:
+          file: ./gametrip-api-client/package.json
+          fields: "{\"files\": [\"dist\"]}"
 
 
       - name: Push changes to other repository
