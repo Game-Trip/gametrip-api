@@ -75,7 +75,7 @@ jobs:
         with:
           file: ./gametrip-api-client/package.json
           field: file
-          value: "[dist]"
+          value: \["dist"\]
 
 
       - name: Push changes to other repository
