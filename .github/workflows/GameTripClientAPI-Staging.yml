@@ -18,12 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
-      - run: echo ${{ env.npmTag }}
       - name: Setup npmTag to -Beta
         if: github.ref_name == 'develop'
         run: echo "npmTag=-Beta" >> $GITHUB_ENV
-      - run: echo ${{ env.npmTag }}
-      - run: echo ${{ github.ref_name }}
       
       - name: Checkout GameTrip Client Api Repo
         uses: actions/checkout@v2
@@ -79,9 +76,9 @@ jobs:
       - name: check for changes
         run: |
           if git diff --exit-code; then
-            echo "::set-env name=changes_exist::false"
+            echo "changes_exist=true" >> $GITHUB_ENV
           else
-            echo "::set-env name=changes_exist::true"
+            echo "changes_exist=false" >> $GITHUB_ENV
           fi
 
 
