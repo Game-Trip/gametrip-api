@@ -75,7 +75,7 @@ jobs:
           
       - name: check for changes
         run: |
-          if [[ $(git status --porcelain | grep "^[MAD]" | wc -l) == 0; ]] then
+          if [[ $(git status --porcelain | grep "^[MAD]" | wc -l) == 0 ]] then
             echo "changes_exist=false" >> $GITHUB_ENV
           else
             echo "changes_exist=true" >> $GITHUB_ENV
