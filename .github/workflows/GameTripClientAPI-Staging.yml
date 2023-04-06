@@ -79,10 +79,9 @@ jobs:
 
       - name: Push changes to other repository
         run: |          
-          git config --global user.email "antoine.capitain@gmail.com"
-          git config --global user.name "Dercraker"
-          git add -A
-          git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
           git push origin HEAD:${{ github.ref_name }}
         working-directory: ./gametrip-api-client/
       
