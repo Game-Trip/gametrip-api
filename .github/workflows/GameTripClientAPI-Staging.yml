@@ -77,12 +77,15 @@ jobs:
           fields: "{\"files\": [\"dist\"]}"
 
 
-      - name: Push changes to other repository
+      - name: commit changes to other repository
         run: |          
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add -A
           git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
-          git push origin HEAD:${{ github.ref_name }}
+        working-directory: ./gametrip-api-client/
+        
+      - name: Push changes to other repository
+        run: git push origin HEAD:${{ github.ref_name }}
         working-directory: ./gametrip-api-client/
       
