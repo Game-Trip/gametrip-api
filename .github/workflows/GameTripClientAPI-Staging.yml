@@ -78,17 +78,12 @@ jobs:
 
 
       - name: commit changes to other repository
+        if: contains(git status --porcelain | grep "^[MAD]" | wc -l, 0)
         run: |          
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add -A
-        working-directory: ./gametrip-api-client/
-        
-      - name: commit changes to other repository
-        run: git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
-        working-directory: ./gametrip-api-client/
-        
-      - name: Push changes to other repository
-        run: git push origin HEAD:${{ github.ref_name }}
+          git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
+          git push origin HEAD:${{ github.ref_name }}
         working-directory: ./gametrip-api-client/
       
