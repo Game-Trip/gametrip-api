@@ -72,7 +72,7 @@ jobs:
         with:
           file: ./gametrip-api-client/package.json
           fields: "{\"files\": [\"dist\"]}"
-      - run: echo git status --porcelain | grep "^[MAD]" | wc -l == 0
+      - run: echo git status --porcelain | grep "^[MAD]" | wc -l
       - name: check for changes
         run: |
           if git status --porcelain | grep "^[MAD]" | wc -l == 0; then
