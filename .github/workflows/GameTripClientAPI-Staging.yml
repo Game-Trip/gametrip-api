@@ -71,12 +71,12 @@ jobs:
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }} --additional-properties=npmRepository=https://npm.pkg.github.com
 
       - name : Add File To Packagejson
-        uses: jossef/action-set-json-field@v2.1
+        uses: kiyosoft/action-set-json-field@v1
         with:
           file: ./gametrip-api-client/package.json
           field: file
-          value: [dist]
-        
+          value: "[dist]"
+
 
       - name: Push changes to other repository
         run: |          
