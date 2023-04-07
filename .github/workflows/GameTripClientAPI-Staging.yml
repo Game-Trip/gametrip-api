@@ -73,14 +73,14 @@ jobs:
 
       - run: git diff --name-status | grep "^[MARD]" | wc -l
         working-directory: ./gametrip-api-client
-        
+      
+      - name: Check if there are changes
+        id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+      
       - name: check for changes
-        run: |
-          if [ "$(git diff --name-status | grep "^[MARD]" | wc -l)" -ne 0 ]; then
-            echo 'aaaaaaaaaaaaaaa'
-          else
-            echo "No Change Up To Date"
-          fi
+        if: steps.changes.outputs.changed == 1
+        run: echo 'aaaaaaaaaaaaaaa'
 
       - name : Add File To Packagejson
         uses: restackio/update-json-file-action@v2.0
