@@ -77,7 +77,7 @@ jobs:
       - name: Check if there are changes
         id: changes
         uses: UnicornGlobal/has-changes-action@v1.0.11
-      
+      - run: echo ${{ steps.changes.outputs.changed }}
       - name: check for changes
         if: steps.changes.outputs.changed == 1
         run: echo 'aaaaaaaaaaaaaaa'
