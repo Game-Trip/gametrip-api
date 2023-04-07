@@ -91,9 +91,10 @@ jobs:
           
       - name: Push to Gametrip-api-client if have modification
         if: steps.countChange.outputs.nbChange != 0
+        working-directory: ./gametrip-api-client
         run: |
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
             git config --local user.name "github-actions[bot]"
             git add -A
             git commit -m "Update GameTrip Client V${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }}"
-            git push origin HEAD:${{ github.ref_name }}
+            git push origin HEAD:${{ github.ref_name }} 
