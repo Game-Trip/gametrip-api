@@ -75,6 +75,15 @@ jobs:
         working-directory: ./gametrip-api-client
       - run: git status -s -uno | wc -l
         working-directory: ./gametrip-api-client
+
+        
+        
+      - run: git diff --name-status
+        working-directory: ./gametrip-api-client
+      - run: git diff --name-status | grep "^[mard]"
+        working-directory: ./gametrip-api-client
+      - run: git diff --name-status | wc -l
+        working-directory: ./gametrip-api-client
       - run: git diff --name-status | grep "^[mard]" | wc -l
         working-directory: ./gametrip-api-client
 
