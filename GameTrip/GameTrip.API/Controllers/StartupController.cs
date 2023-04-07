@@ -1,10 +1,12 @@
 ﻿using GameTrip.Domain.Interfaces;
 using GameTrip.Platform.IPlatform;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameTrip.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
+    [Authorize]
     [ApiController]
     public class StartupController : ControllerBase
     {

@@ -9,9 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTrip.Provider", "GameTr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTrip.Platform", "GameTrip.Platform\GameTrip.Platform.csproj", "{2EA000FE-77F9-4215-A926-CDE8608EDC10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTrip.Domain", "GameTrip.Domain\GameTrip.Domain.csproj", "{FB30701A-E041-4E73-A421-6B947B78908A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTrip.Domain", "GameTrip.Domain\GameTrip.Domain.csproj", "{FB30701A-E041-4E73-A421-6B947B78908A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTrip.EFCore", "GameTrip.EFCore\GameTrip.EFCore.csproj", "{838173F0-4B3A-449C-94F8-48447D97998B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTrip.EFCore", "GameTrip.EFCore\GameTrip.EFCore.csproj", "{838173F0-4B3A-449C-94F8-48447D97998B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{21946B25-4CC7-4BB7-8B77-CC217E79205C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

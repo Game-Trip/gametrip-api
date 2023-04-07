@@ -1,4 +1,5 @@
-﻿using GameTrip.Domain.Entities;
+﻿using GameTrip.API.Models.Login;
+using GameTrip.Domain.Entities;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore;
 using GameTrip.EFCore.Data;
@@ -6,10 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace GameTrip.API.Controllers
 {
-    [Route("")]
+    [Route("[controller]")]
+    [Authorize]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -32,7 +38,6 @@ namespace GameTrip.API.Controllers
         /// Initialise les table avec les rôles et l'utilisateur Admin
         /// </summary>
         /// <response code="200 + Message"></response>
-        [AllowAnonymous]
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
@@ -42,6 +47,98 @@ namespace GameTrip.API.Controllers
 
             return Ok(resultMessage);
         }
+
+        /// <summary>
+        /// Permet de login un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de login d'un user</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="401">Erreur de mdp ou username</response>
+        /// <response code="200">Token + date d'expiration</response>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
+            if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
+            {
+                IList<string>? userRoles = await _userManager.GetRolesAsync(user);
+
+                List<Claim> authClaims = new List<Claim>
+                {
+                    new Claim("User", user.UserName),
+                    new Claim("Email", user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+                foreach (var userRole in userRoles)
+                {
+                    authClaims.Add(new Claim("Roles", userRole));
+                }
+
+                SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
+
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Expires = DateTime.UtcNow.AddHours(_jwtSettings.DurationTime),
+                    Issuer = _jwtSettings.ValidIssuer,
+                    Audience = _jwtSettings.ValidAudience,
+                    SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return Ok(new
+                {
+                    token = tokenHandler.WriteToken(token),
+                    exipration = token.ValidTo
+                });
+            }
+            else return Unauthorized();
+        }
+
+
+        /// <summary>
+        /// Teste la validiter d'un token
+        /// </summary>
+        /// <param name="token">token a check</param>
+        /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
+        /// <response code="200">Token valide</response>
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("TokenTest")]
+        public async Task<IActionResult> TokenTest([FromBody] string token)
+        {
+            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidIssuer = _jwtSettings.ValidIssuer,
+                    ValidAudience = _jwtSettings.ValidAudience,
+                    IssuerSigningKey = authSigningKey
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return Unauthorized();
+            }
+            return Ok();
+        }
+
+
+
+
 
         ///// <summary>
         ///// Permet de register un user dans la DB
@@ -102,100 +199,5 @@ namespace GameTrip.API.Controllers
         //    return Ok("L'utilisateur a été crée et est en attente de validation");
         //}
 
-
-        ///// <summary>
-        ///// Permet de login un user dans la DB
-        ///// </summary>
-        ///// <param name="dto">Model de login d'un user</param>
-        ///// <response code="400 + Message"></response>
-        ///// <response code="401">Erreur de mdp ou id</response>
-        ///// <response code="200">Token + date d'expiration</response>
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("Login")]
-        //public async Task<IActionResult> Login([FromBody] LoginDTO dto)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        //    ApiUser? user = await userManager.FindByNameAsync(dto.Username);
-        //    if (user != null && await userManager.CheckPasswordAsync(user, dto.Password))
-        //    {
-        //        IList<string>? userRoles = await userManager.GetRolesAsync(user);
-
-        //        List<Claim> authClaims = new List<Claim>
-        //        {
-        //            new Claim("Name", user.UserName),
-        //            new Claim("DiscordId", user.Email),
-        //            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //        };
-
-        //        foreach (var userRole in userRoles)
-        //        {
-        //            authClaims.Add(new Claim("Roles", userRole));
-        //        }
-
-        //        SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
-
-        //        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-        //        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-        //        {
-        //            Subject = new ClaimsIdentity(authClaims),
-        //            Expires = DateTime.UtcNow.AddMinutes(jwtSettings.DurationTime),
-        //            Issuer = jwtSettings.ValidIssuer,
-        //            Audience = jwtSettings.ValidAudience,
-        //            SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
-        //        };
-
-        //        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
-        //        //JwtSecurityToken token = new JwtSecurityToken(
-        //        //    issuer: JWTSettings.ValidIssuer,
-        //        //    audience: JWTSettings.ValidAudience,
-        //        //    expires: DateTime.Now.AddMinutes(jwtSettings.DurationTime),
-        //        //    claims: authClaims,
-        //        //    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        //        //);
-
-        //        return Ok(new
-        //        {
-        //            token = tokenHandler.WriteToken(token),
-        //            exipration = token.ValidTo
-        //        });
-        //    }
-        //    else return Unauthorized();
-        //}
-
-
-        ///// <summary>
-        ///// Teste la validiter d'un token
-        ///// </summary>
-        ///// <param name="token">token a check</param>
-        ///// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
-        ///// <response code="200">Token valide</response>
-        //[HttpPost]
-        //[Route("TokenTest")]
-        //public async Task<IActionResult> TokenTest([FromBody] string token)
-        //{
-        //    SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret));
-
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    try
-        //    {
-        //        tokenHandler.ValidateToken(token, new TokenValidationParameters
-        //        {
-        //            ValidateIssuerSigningKey = true,
-        //            ValidateIssuer = false,
-        //            ValidateAudience = false,
-        //            ValidIssuer = jwtSettings.ValidIssuer,
-        //            ValidAudience = jwtSettings.ValidAudience,
-        //            IssuerSigningKey = authSigningKey
-        //        }, out SecurityToken validatedToken);
-        //    }
-        //    catch
-        //    {
-        //        return Unauthorized();
-        //    }
-        //    return Ok();
-        //}
     }
 }
