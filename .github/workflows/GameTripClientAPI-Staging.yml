@@ -66,31 +66,24 @@ jobs:
       
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }} --additional-properties=npmRepository=https://npm.pkg.github.com
-  
-      - run: git status 
-        working-directory: ./gametrip-api-client
-      - run: git status --porcelain | grep "^[MARD]" | wc -l 
-        working-directory: ./gametrip-api-client
-      - run: git status -s -uno | grep "^[MARD]" | wc -l 
-        working-directory: ./gametrip-api-client
-      - run: git status -s -uno | wc -l
-        working-directory: ./gametrip-api-client
-
-        
+     
         
       - run: git diff --name-status
         working-directory: ./gametrip-api-client
-      - run: git diff --name-status | grep "^[MARD]"
-        working-directory: ./gametrip-api-client
-      - run: git diff --name-status | wc -l
-        working-directory: ./gametrip-api-client
+
       - run: git diff --name-status | grep "^[MARD]" | wc -l
+        working-directory: ./gametrip-api-client
+      - run: $(git diff --name-status | grep "^[MARD]" | wc -l)
+        working-directory: ./gametrip-api-client
+      - run: $(git diff --name-status | grep "^[MARD]" | wc -l) != 0
+        working-directory: ./gametrip-api-client
+      - run: git diff --name-status | grep "^[MARD]" | wc -l != 0
         working-directory: ./gametrip-api-client
 
         
       - name: check for changes
         run: |
-          if [[ $(git diff --name-status | grep "^[MARD]" | wc -l) != 0 ]]; then
+          if [[ git diff --name-status | grep "^[MARD]" | wc -l != 0 ]]; then
             echo 'aaaaaaaaaaaaaaa'
           else
             echo "No Change Up To Date"
