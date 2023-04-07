@@ -69,11 +69,19 @@ jobs:
   
       - run: git status 
         working-directory: ./gametrip-api-client
-      - run: git status --porcelain | grep "^[MAD]" | wc -l 
+      - run: git status --porcelain | grep "^[madr]" | wc -l 
         working-directory: ./gametrip-api-client
+      - run: git status -s -uno | grep "^[madr]" | wc -l 
+        working-directory: ./gametrip-api-client
+      - run: git status -s -uno | wc -l
+        working-directory: ./gametrip-api-client
+      - run: git diff --name-status | grep "^[mard]" | wc -l
+        working-directory: ./gametrip-api-client
+
+        
       - name: check for changes
         run: |
-          if [[ $(git status --porcelain | grep "^[mad]" | wc -l) != 0 ]]; then
+          if [[ $(git diff --name-status | grep "^[mard]" | wc -l) != 0 ]]; then
             echo 'aaaaaaaaaaaaaaa'
           else
             echo "No Change Up To Date"
@@ -87,7 +95,7 @@ jobs:
           
       - name: check for changes
         run: |
-          if [[ $(git status --porcelain | grep "^[mad]" | wc -l) != 0 ]]; then
+          if [[ $(git diff --name-status | grep "^[mard]" | wc -l) != 0 ]]; then
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
             git config --local user.name "github-actions[bot]"
             git add -A
