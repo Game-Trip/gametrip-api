@@ -73,10 +73,7 @@ jobs:
 
       - run: git diff --name-status | grep "^[MARD]" | wc -l
         working-directory: ./gametrip-api-client
-      - run: $(git diff --name-status | grep "^[MARD]" | wc -l)
-        working-directory: ./gametrip-api-client
-      - run: $(git diff --name-status | grep "^[MARD]" | wc -l) != 0
-        working-directory: ./gametrip-api-client
+
       - run: git diff --name-status | grep "^[MARD]" | wc -l != 0
         working-directory: ./gametrip-api-client
 
