@@ -1,4 +1,4 @@
-﻿using GameTrip.API.Models.Login;
+﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore;
@@ -6,11 +6,11 @@ using GameTrip.EFCore.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
 
 namespace GameTrip.API.Controllers
 {
@@ -32,12 +32,10 @@ namespace GameTrip.API.Controllers
             _jwtSettings = jwtSettings;
         }
 
-
-
         /// <summary>
         /// Initialise les table avec les rôles et l'utilisateur Admin
         /// </summary>
-        /// <response code="200 + Message"></response>
+        /// <response code="200 + Message"></response
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
@@ -63,6 +61,8 @@ namespace GameTrip.API.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
+            if (user == null) user = await _userManager.FindByEmailAsync(dto.Username);
+
             if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
             {
                 IList<string>? userRoles = await _userManager.GetRolesAsync(user);
@@ -102,7 +102,6 @@ namespace GameTrip.API.Controllers
             else return Unauthorized();
         }
 
-
         /// <summary>
         /// Teste la validiter d'un token
         /// </summary>
@@ -136,68 +135,47 @@ namespace GameTrip.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Permet de register un user dans la DB
+        /// </summary>
+        /// <param name="dto">Model de l'utilisateur</param>
+        /// <response code="400 + Message"></response>
+        /// <response code="200 + Message"></response>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Register")]
+        public async Task<ActionResult<GameTripUserDTO>> Register([FromBody] RegisterDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
+            if (userExists != null) return BadRequest("This mail is already taken");
 
+            GameTripUser user = new GameTripUser
+            {
+                UserName = dto.Username,
+                Email = dto.Email,
+                EmailConfirmed = true
+            };
 
+            IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
+            if (result.Succeeded == false) return BadRequest(result.Errors);
 
-        ///// <summary>
-        ///// Permet de register un user dans la DB
-        ///// </summary>
-        ///// <param name="discordId">id discord de l'utilisateur</param>
-        ///// <param name="dto">Model de l'utilisateur</param>
-        ///// <response code="400 + Message"></response>
-        ///// <response code="200 + Message"></response>
-        //[AllowAnonymous]
-        //[HttpPost]
-        //[Route("register/{discordId}")]
-        //public async Task<IActionResult> Register([FromRoute] string discordId, [FromBody] RegisterDTO dto)
-        //{
-        //    if (!ModelState.IsValid) return BadRequest(ModelState);
+            string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            registrationToken = HttpUtility.UrlEncode(registrationToken);
 
+            //EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
 
-        //    ApiUser userExists = await userManager.FindByNameAsync($"{dto.Prenom}{dto.Nom}");
-        //    if (userExists != null) return BadRequest("L'utilisateur existe déjà");
+            ////discord valide token stp :D
+            ////var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
+            //var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
+            //HttpClient client = new();
+            //string json = JsonSerializer.Serialize(tokenDTO);
+            //StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        //    Stage? stage = await _context.Stage.FirstOrDefaultAsync(s => s.Name == StageName.NA);
-        //    ApiUser user = new ApiUser
-        //    {
-        //        UserName = $"{dto.Prenom}_{dto.Nom}",
-        //        Email = dto.DiscordId,
-        //        EmailConfirmed = false,
-        //        Prenom = dto.Prenom,
-        //        Nom = dto.Nom,
-        //        Sexe = dto.Sexe,
-        //        IdStage = stage.StageId,
-        //        Argent = registrationSettings.defaultMoney,
-        //        CreatedAt = DateTime.Now,
-        //        Permis = PermisName.NA,
-        //        Points = 0,
-        //        NbSessions = 0,
-        //        NbSessionsPermis = 0,
-        //        NbSessionsPolice = 0,
-        //    };
+            //HttpResponseMessage response = await client.PostAsync(url, data);
 
-        //    IdentityResult? result = await userManager.CreateAsync(user, dto.Password);
-        //    if (result.Succeeded == false) return BadRequest(result.Errors);
-
-
-
-        //    string registrationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
-        //    registrationToken = HttpUtility.UrlEncode(registrationToken);
-
-        //    EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
-
-        //    //discord valide token stp :D
-        //    //var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
-        //    var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
-        //    HttpClient client = new();
-        //    string json = JsonSerializer.Serialize(tokenDTO);
-        //    StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-
-        //    HttpResponseMessage response = await client.PostAsync(url, data);
-
-        //    return Ok("L'utilisateur a été crée et est en attente de validation");
-        //}
-
+            return Ok(user.ToDTO());
+        }
     }
 }

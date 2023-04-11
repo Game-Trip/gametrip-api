@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GameTrip.API.Models.Login;
+namespace GameTrip.API.Models.Auth;
 
 public class LoginDTO
 {
