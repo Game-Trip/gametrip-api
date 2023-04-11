@@ -1,15 +1,12 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
-using GameTrip.Domain.Settings;
-using GameTrip.EFCore;
 using GameTrip.EFCore.Data;
+using GameTrip.Platform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Web;
 
 namespace GameTrip.API.Controllers
@@ -19,17 +16,13 @@ namespace GameTrip.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly GameTripContext _context;
         private readonly UserManager<GameTripUser> _userManager;
-        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        private readonly JWTSettings _jwtSettings;
+        private readonly AuthPlatform _authPlatform;
 
-        public AuthController(GameTripContext context, UserManager<GameTripUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, JWTSettings jwtSettings)
+        public AuthController(UserManager<GameTripUser> userManager, AuthPlatform authPlatform)
         {
-            _context = context;
             _userManager = userManager;
-            _roleManager = roleManager;
-            _jwtSettings = jwtSettings;
+            _authPlatform = authPlatform;
         }
 
         /// <summary>
@@ -56,7 +49,7 @@ namespace GameTrip.API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -65,39 +58,9 @@ namespace GameTrip.API.Controllers
 
             if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                IList<string>? userRoles = await _userManager.GetRolesAsync(user);
-
-                List<Claim> authClaims = new List<Claim>
-                {
-                    new Claim("User", user.UserName),
-                    new Claim("Email", user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim("Roles", userRole));
-                }
-
-                SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
-
                 JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(authClaims),
-                    Expires = DateTime.UtcNow.AddHours(_jwtSettings.DurationTime),
-                    Issuer = _jwtSettings.ValidIssuer,
-                    Audience = _jwtSettings.ValidAudience,
-                    SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
-                return Ok(new
-                {
-                    token = tokenHandler.WriteToken(token),
-                    exipration = token.ValidTo
-                });
+                SecurityToken token = await _authPlatform.CreateTokenAsync(user);
+                return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
             }
             else return Unauthorized();
         }
@@ -111,28 +74,13 @@ namespace GameTrip.API.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] string token)
+        public async Task<IActionResult> TokenTest([FromBody] TokenDTO dto)
         {
-            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidIssuer = _jwtSettings.ValidIssuer,
-                    ValidAudience = _jwtSettings.ValidAudience,
-                    IssuerSigningKey = authSigningKey
-                }, out SecurityToken validatedToken);
-            }
-            catch
-            {
+            bool isValid = _authPlatform.TestToken(dto.Token);
+            if (isValid)
+                return Ok();
+            else
                 return Unauthorized();
-            }
-            return Ok();
         }
 
         /// <summary>
@@ -176,6 +124,21 @@ namespace GameTrip.API.Controllers
             //HttpResponseMessage response = await client.PostAsync(url, data);
 
             return Ok(user.ToDTO());
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null) return BadRequest("No account has been created with this email");
+
+            IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok("The password has been successfully changed");
         }
     }
 }

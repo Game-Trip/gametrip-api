@@ -215,6 +215,7 @@ internal class Startup
         #region Platform
 
         services.AddScoped<IStartupPlatform, StartupPlatform>();
+        services.AddScoped<IAuthPlatform, AuthPlatform>();
 
         #endregion Platform
 
@@ -225,9 +226,11 @@ internal class Startup
         #endregion Provider
 
         #region Settings
+
         services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
         services.AddScoped<DBInitializer>();
-        #endregion
+
+        #endregion Settings
     }
 
     private void AddIdentity(IServiceCollection services)
