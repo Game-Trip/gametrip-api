@@ -60,6 +60,8 @@ jobs:
         
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
         
       - name: Get Variable value
         run: echo "NPM_PACKAGE_VERSION=$(node -p "require('./npmVersion.json').version")" >> $GITHUB_ENV
