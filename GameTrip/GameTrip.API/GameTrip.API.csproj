@@ -7,7 +7,12 @@
     <UserSecretsId>35cb7aac-d4ef-441a-90a5-31f4ad65edb7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	 
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.5.1" />
@@ -34,6 +39,10 @@
     <ProjectReference Include="..\GameTrip.EFCore\GameTrip.EFCore.csproj" />
     <ProjectReference Include="..\GameTrip.Platform\GameTrip.Platform.csproj" />
     <ProjectReference Include="..\GameTrip.Provider\GameTrip.Provider.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

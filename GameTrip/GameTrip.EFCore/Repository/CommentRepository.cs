@@ -7,6 +7,5 @@ public class CommentRepository : GenericRepository<Comment>, ICommentRepository
 {
     public CommentRepository(GameTripContext context) : base(context)
     {
-
     }
 }

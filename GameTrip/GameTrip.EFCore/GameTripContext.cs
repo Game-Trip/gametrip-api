@@ -1,9 +1,11 @@
 ﻿using GameTrip.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore;
 
-public class GameTripContext : DbContext
+public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid>, Guid>
 {
     #region Properties
 

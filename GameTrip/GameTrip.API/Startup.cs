@@ -4,6 +4,7 @@ using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
+using GameTrip.EFCore.Data;
 using GameTrip.EFCore.Repository;
 using GameTrip.EFCore.UnitOfWork;
 using GameTrip.Platform;
@@ -63,7 +64,7 @@ internal class Startup
             {
                 Version = "v1",
                 Title = API_NAME,
-                Description = "Fifty Cent API",
+                Description = "GameTrip API",
             });
             c.IncludeXmlComments(xmlPath);
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -100,7 +101,6 @@ internal class Startup
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.InjectStylesheet("/swagger-ui/SwaggerDark.css");
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
                 options.EnablePersistAuthorization();
                 options.DisplayRequestDuration();
@@ -170,7 +170,7 @@ internal class Startup
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                 ValidateLifetime = true,
                 RoleClaimType = "Roles",
-                NameClaimType = "Name",
+                NameClaimType = "User",
             };
         });
         services.AddAuthorization(options =>
@@ -211,6 +211,7 @@ internal class Startup
         #region Platform
 
         services.AddScoped<IStartupPlatform, StartupPlatform>();
+        services.AddScoped<IAuthPlatform, AuthPlatform>();
 
         #endregion Platform
 
@@ -219,6 +220,13 @@ internal class Startup
         services.AddScoped<IStartupProvider, StartupProvider>();
 
         #endregion Provider
+
+        #region Settings
+
+        services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
+        services.AddScoped<DBInitializer>();
+
+        #endregion Settings
     }
 
     private void AddIdentity(IServiceCollection services)

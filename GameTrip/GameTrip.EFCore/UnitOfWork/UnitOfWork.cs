@@ -1,11 +1,5 @@
 ﻿using GameTrip.Domain.Interfaces;
 using GameTrip.EFCore.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameTrip.EFCore.UnitOfWork;
 
@@ -31,8 +25,9 @@ public class UnitOfWork : IUnitOfWork
         Pictures = new PictureRepository(_context);
     }
 
-
     public int Complet() => _context.SaveChanges();
+
     public async Task<int> CompletAsync() => await _context.SaveChangesAsync();
+
     public void Dispose() => _context.Dispose();
 }
