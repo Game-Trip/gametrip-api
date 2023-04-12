@@ -45,4 +45,10 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Content Update="*.pdb" CopyToPublishDirectory="Never" />
+		<Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
+		<Content Update="appsettings.$(EnvironmentName).json" CopyToPublishDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>
