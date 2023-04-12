@@ -11,7 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\.editorconfig" Link=".editorconfig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -48,7 +50,17 @@
 	<ItemGroup>
 		<Content Update="*.pdb" CopyToPublishDirectory="Never" />
 		<Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
+		<Content Update="appsettings.Development.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+		  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="appsettings.$(EnvironmentName).json" CopyToPublishDirectory="PreserveNewest" />
+		<Content Update="appsettings.Production.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>
