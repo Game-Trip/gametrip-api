@@ -57,6 +57,10 @@ jobs:
         uses: EasyDesk/action-dotnet-build@v1.0.0
         with:
           path: ./GameTrip/GameTrip.API/
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          
+      - run: cat ./GameTrip/GameTrip.API/appsettings.Production.json
         
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
