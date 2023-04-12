@@ -223,7 +223,7 @@ internal class Startup
 
         #region Settings
 
-        services.AddScoped<JWTSettings>(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
+        services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
