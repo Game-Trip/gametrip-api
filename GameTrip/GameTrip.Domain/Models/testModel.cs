@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 namespace GameTrip.Domain.Models
 {
-    public class testModel
+    public class TestModel
     {
-        public string test { get; set; }
-
-        public testModel(string test)
-        {
-            this.test = test;
-        }
+        public string Test { get; set; }
     }
 }
