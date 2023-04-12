@@ -9,14 +9,15 @@ public class TokenDTO
         Token = token;
         ExpirationDate = expirationDate;
     }
-
-    [Required]
-    public string Token { get; }
-
     public TokenDTO(string token)
     {
         Token = token;
+        ExpirationDate = null;
     }
 
-    public DateTime? ExpirationDate { get; }
+    [Required]
+    public string Token { get; set; }
+
+
+    public DateTime? ExpirationDate { get; set; }
 }

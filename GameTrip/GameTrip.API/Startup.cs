@@ -174,7 +174,7 @@ internal class Startup
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                 ValidateLifetime = true,
                 RoleClaimType = "Roles",
-                NameClaimType = "Name",
+                NameClaimType = "User",
             };
         });
         services.AddAuthorization(options =>

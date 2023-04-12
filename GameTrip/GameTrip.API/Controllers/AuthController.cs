@@ -1,5 +1,6 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
+using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
 using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
@@ -74,11 +75,11 @@ namespace GameTrip.API.Controllers
         /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
         /// <response code="200">Token valide</response>
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = Roles.Admin)]
         [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] TokenDTO dto)
+        public async Task<IActionResult> TokenTest([FromBody] string token)
         {
-            bool isValid = _authPlatform.TestToken(dto.Token);
+            bool isValid = _authPlatform.TestToken(token);
             if (isValid)
                 return Ok();
             else
