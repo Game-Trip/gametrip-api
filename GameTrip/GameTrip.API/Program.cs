@@ -10,12 +10,9 @@ public class Program
     }
 
 
-    private static IWebHostBuilder CreateHostBuilder(string[] args)
-        {
-            IConfigurationRoot? config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("GameTrip.API/appsettings.json").Build();
-
-            return WebHost.CreateDefaultBuilder(args).UseConfiguration(config)
+    private static IWebHostBuilder CreateHostBuilder(string[] args) => 
+        
+        WebHost.CreateDefaultBuilder(args)
                     .UseStartup<Startup>();
-        }
 
 }

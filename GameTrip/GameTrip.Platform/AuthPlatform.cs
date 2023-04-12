@@ -2,6 +2,7 @@
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,17 +15,15 @@ namespace GameTrip.Platform
         #region Properties
 
         private readonly UserManager<GameTripUser> _userManager;
-        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly JWTSettings _jwtSettings;
 
         #endregion Properties
 
         #region Constructor
 
-        public AuthPlatform(UserManager<GameTripUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, JWTSettings jwtSettings)
+        public AuthPlatform(UserManager<GameTripUser> userManager, JWTSettings jwtSettings)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _jwtSettings = jwtSettings;
         }
 
