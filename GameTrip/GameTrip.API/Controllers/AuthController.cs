@@ -2,6 +2,7 @@
 using GameTrip.Domain.Entities;
 using GameTrip.EFCore.Data;
 using GameTrip.Platform;
+using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ namespace GameTrip.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<GameTripUser> _userManager;
-        private readonly AuthPlatform _authPlatform;
+        private readonly IAuthPlatform _authPlatform;
 
-        public AuthController(UserManager<GameTripUser> userManager, AuthPlatform authPlatform)
+        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform)
         {
             _userManager = userManager;
             _authPlatform = authPlatform;
@@ -28,7 +29,8 @@ namespace GameTrip.API.Controllers
         /// <summary>
         /// Initialise les table avec les rôles et l'utilisateur Admin
         /// </summary>
-        /// <response code="200 + Message"></response
+        /// <response code="200 + Message"></response>
+        [AllowAnonymous]
         [HttpPost]
         [Route("Initialize")]
         public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
