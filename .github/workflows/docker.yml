@@ -31,6 +31,8 @@ jobs:
       - name: Build Docker Image
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }}  ./
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
 
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }} 
