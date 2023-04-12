@@ -61,6 +61,7 @@ jobs:
           ASPNETCORE_ENVIRONMENT: Production
           
       - run: cat ./GameTrip/GameTrip.API/appsettings.Production.json
+      - run: ls ./GameTrip/GameTrip.API/bin/Release/net7.0/
         
       - name: Generate Swagger.json
         run: dotnet swagger tofile --output ./swagger.json ./GameTrip/GameTrip.API/bin/Release/net7.0/GameTrip.API.dll v1
