@@ -111,12 +111,9 @@ internal class Startup
 
         ConfigureExceptionHandler(app);
 
-        //app.UseHttpsRedirection();
-
         app.UseRouting();
 
         app.UseCors();
-        //app.UseCorsMiddleware();
 
         app.UseAuthorization();
 
@@ -223,7 +220,7 @@ internal class Startup
 
         #region Settings
 
-        
+        services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>());
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
