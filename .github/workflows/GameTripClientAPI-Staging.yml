@@ -100,7 +100,7 @@ jobs:
       - run : echo ${{ steps.countChange.outputs.nbChange != 0 }}
       
       - name: Push to Gametrip-api-client if have modification
-        if: ${{ steps.countChange.outputs.nbChange }} != 0
+        if: ${{ steps.countChange.outputs.nbChange != 0}} 
         working-directory: ./gametrip-api-client
         run: |
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
