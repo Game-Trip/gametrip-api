@@ -53,7 +53,7 @@ jobs:
       - name: install Open Api Tool CLI
         run : npm install @openapitools/openapi-generator-cli -g
         
-      - name: App Settings Variable Substitution
+      - name: App Settings Variable Substitution Staging
         uses: microsoft/variable-substitution@v1
         if: github.ref_name == 'develop'
         with:
@@ -61,13 +61,25 @@ jobs:
         env:
           ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL_STAGING}}
           
-      - name: App Settings Variable Substitution
+      - name: App Settings Variable Substitution Production
         uses: microsoft/variable-substitution@v1
         if: github.ref_name == 'master'
         with:
           files: './GameTrip/GameTrip.API/appsettings.Production.json'
         env:
           ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL}}
+
+      - name: App Settings Variable Substitution Global
+        uses: microsoft/variable-substitution@v1
+        if: github.ref_name == 'master'
+        with:
+          files: './GameTrip/GameTrip.API/appsettings.Production.json'
+        env:
+          JWTSettings.Secret: ${{secrets.JWT_KEY}}
+          MailSettings.Server: ${{secrets.MAIL_SERVER}}
+          MailSettings.Port: ${{secrets.MAIL_PORT}}
+          MailSettings.UserName: ${{secrets.MAIL_USERNAME}}
+          MailSettings.Password: ${{secrets.MAIL_PASSWORD}}
           
       - name: .Net Build
         uses: EasyDesk/action-dotnet-build@v1.0.0
