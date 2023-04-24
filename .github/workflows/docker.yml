@@ -23,19 +23,32 @@ jobs:
         if: github.ref_name == 'develop'
         run: |
           echo "dockerTag=staging" >> $GITHUB_ENV
-          echo "aspnet_Core=Staging" >> $GITHUB_ENV
           
       - name: DockerHub login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        if: github.ref_name == 'develop'
+        with:
+          files: './GameTrip/GameTrip.API/appsettings.Production.json'
+        env:
+          ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL_STAGING}}
+          
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        if: github.ref_name == 'master'
+        with:
+          files: './GameTrip/GameTrip.API/appsettings.Production.json'
+        env:
+          ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL}}
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }}  ./
-        env:
-          ASPNETCORE_ENVIRONMENT: ${{ env.aspnet_Core }}
 
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }} 
