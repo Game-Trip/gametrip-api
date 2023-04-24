@@ -219,8 +219,10 @@ internal class Startup
         #endregion Provider
 
         #region Settings
+        //génération du swagger.json from dll buger tkt 
         Console.WriteLine("Ma supper variable d'environement est  : " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
-        services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
+        JWTSettings JWTSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
+        services.AddSingleton(JWTSettings);
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
