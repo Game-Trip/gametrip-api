@@ -58,8 +58,7 @@ jobs:
         with:
           files: './GameTrip/GameTrip.API/appsettings.Production.json'
         env:
-          ConnectionStrings.GameTripSQL: ${{ secrets.secrets.GAMETRIPSQL_STAGING }}
-          App.ServerRootAddress: ${{ env.SERVER_ROOT_ADDRESS }}
+          ConnectionStrings.GameTripSQL: "AAAA"
           
       - name: .Net Build
         uses: EasyDesk/action-dotnet-build@v1.0.0
