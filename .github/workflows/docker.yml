@@ -33,10 +33,19 @@ jobs:
           
       - name: App Settings Variable Substitution
         uses: microsoft/variable-substitution@v1
+        if: github.ref_name == 'develop'
         with:
           files: './GameTrip/GameTrip.API/appsettings.Production.json'
         env:
           ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL_STAGING}}
+          
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
+        if: github.ref_name == 'master'
+        with:
+          files: './GameTrip/GameTrip.API/appsettings.Production.json'
+        env:
+          ConnectionStrings.GameTripSQL: ${{secrets.GAMETRIPSQL}}
 
       - name: Build Docker Image
         working-directory: ./GameTrip/
