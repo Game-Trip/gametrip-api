@@ -71,7 +71,6 @@ jobs:
 
       - name: App Settings Variable Substitution Global
         uses: microsoft/variable-substitution@v1
-        if: github.ref_name == 'master'
         with:
           files: './GameTrip/GameTrip.API/appsettings.Production.json'
         env:
