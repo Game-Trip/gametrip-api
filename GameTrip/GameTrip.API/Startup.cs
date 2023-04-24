@@ -209,20 +209,24 @@ internal class Startup
 
         services.AddScoped<IStartupPlatform, StartupPlatform>();
         services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<IMailPlatform, MailPlatform>();
 
         #endregion Platform
 
         #region Provider
 
         services.AddScoped<IStartupProvider, StartupProvider>();
+        services.AddScoped<IEmailProvider, EmailProvider>();
 
         #endregion Provider
 
         #region Settings
         //génération du swagger.json from dll buger tkt 
-        Console.WriteLine("Ma supper variable d'environement est  : " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
         JWTSettings JWTSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
         services.AddSingleton(JWTSettings);
+        //génération du swagger.json from dll buger tkt 
+        MailSettings MailSettings = Configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
+        services.AddSingleton(MailSettings);
         services.AddScoped<DBInitializer>();
 
         #endregion Settings

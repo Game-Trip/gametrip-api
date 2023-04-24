@@ -1,14 +1,18 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
+using GameTrip.Domain.Models.Email;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
 using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace GameTrip.API.Controllers
@@ -20,11 +24,13 @@ namespace GameTrip.API.Controllers
     {
         private readonly UserManager<GameTripUser> _userManager;
         private readonly IAuthPlatform _authPlatform;
+        private readonly IMailPlatform _mailPlatform;
 
-        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform)
+        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform)
         {
             _userManager = userManager;
             _authPlatform = authPlatform;
+            _mailPlatform = mailPlatform;
         }
 
         /// <summary>
@@ -114,6 +120,16 @@ namespace GameTrip.API.Controllers
 
             string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             registrationToken = HttpUtility.UrlEncode(registrationToken);
+
+            MailDTO mailDTO = new MailDTO
+            {
+                Name = user.UserName,
+                Email = user.Email,
+                Subject = "Bienvenue sur GameTrip",
+                Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
+            };
+
+            _mailPlatform.SendMail(mailDTO);
 
             //EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
 
