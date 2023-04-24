@@ -8,6 +8,7 @@ on:
 
 env:
   dockerTag: latest
+  aspnet_Core: Production
 
 jobs:
 
@@ -20,7 +21,9 @@ jobs:
         
       - name: Setup dockerTag to Staging
         if: github.ref_name == 'develop'
-        run: echo "dockerTag=staging" >> $GITHUB_ENV
+        run: |
+          echo "dockerTag=staging" >> $GITHUB_ENV
+          echo "aspnet_Core=Staging" >> $GITHUB_ENV
           
       - name: DockerHub login
         uses: docker/login-action@v1
@@ -32,7 +35,7 @@ jobs:
         working-directory: ./GameTrip/
         run: docker build --file ./GameTrip.API/Dockerfile --tag ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }}  ./
         env:
-          ASPNETCORE_ENVIRONMENT: Production
+          ASPNETCORE_ENVIRONMENT: ${{ env.aspnet_Core }}
 
       - name: Push Docker Image to Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/gametrip-api:${{ env.dockerTag }} 
