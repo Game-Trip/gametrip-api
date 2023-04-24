@@ -83,17 +83,17 @@ jobs:
       
       - name: Create API Client
         run : openapi-generator-cli generate -i ./swagger.json -g typescript -o ./gametrip-api-client/ --additional-properties=npmName=@game-trip/ts-api-client --additional-properties=npmVersion=${{ env.NPM_PACKAGE_VERSION }}${{ env.npmTag }} --additional-properties=npmRepository=https://npm.pkg.github.com
-        
-      - name: count nb change in api-client repo
-        run: echo "nbChange=$(git diff --name-status | grep "^[MARD]" | wc -l)" >> $GITHUB_OUTPUT
-        id: countChange
-        working-directory: ./gametrip-api-client
 
       - name : Add File To Packagejson
         uses: restackio/update-json-file-action@v2.0
         with:
           file: ./gametrip-api-client/package.json
           fields: "{\"files\": [\"dist\"]}"
+          
+      - name: count nb change in api-client repo
+        run: echo "nbChange=$(git diff --name-status | grep "^[MARD]" | wc -l)" >> $GITHUB_OUTPUT
+        id: countChange
+        working-directory: ./gametrip-api-client
          
       - run : echo git diff --name-status | grep "^[MARD]" | wc -l
       - run : echo ${{ steps.countChange.outputs.nbChange }}
