@@ -53,11 +53,13 @@ jobs:
       - name: install Open Api Tool CLI
         run : npm install @openapitools/openapi-generator-cli -g
         
-      - name : Add File To Packagejson
-        uses: restackio/update-json-file-action@v2.0
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitution@v1
         with:
-          file: ./GameTrip/GameTrip.API/appsettings.Production.json
-          fields: "{\"ConnectionStrings.GameTripSQL\": [\"${{ secrets.GAMETRIPSQL_STAGING }}"]}"
+          files: './GameTrip/GameTrip.API/appsettings.Production.json'
+        env:
+          ConnectionStrings.GameTripSQL: ${{ secrets.secrets.GAMETRIPSQL_STAGING }}
+          App.ServerRootAddress: ${{ env.SERVER_ROOT_ADDRESS }}
           
       - name: .Net Build
         uses: EasyDesk/action-dotnet-build@v1.0.0
