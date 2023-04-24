@@ -219,7 +219,7 @@ internal class Startup
         #endregion Provider
 
         #region Settings
-
+        Console.WriteLine("Ma supper variable d'environement est  : " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
         services.AddSingleton(Configuration.GetSection("JWTSettings").Get<JWTSettings>()!);
         services.AddScoped<DBInitializer>();
 

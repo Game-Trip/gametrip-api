@@ -43,10 +43,6 @@
     <ProjectReference Include="..\GameTrip.Provider\GameTrip.Provider.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<Content Update="*.pdb" CopyToPublishDirectory="Never" />
 		<Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
@@ -61,6 +57,10 @@
 		<Content Update="appsettings.Production.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
 	</ItemGroup>
 
 </Project>
