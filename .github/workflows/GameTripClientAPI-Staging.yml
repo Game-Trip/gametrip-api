@@ -94,7 +94,8 @@ jobs:
         with:
           file: ./gametrip-api-client/package.json
           fields: "{\"files\": [\"dist\"]}"
-          
+         
+      - run : echo git diff --name-status | grep "^[MARD]" | wc -l
       - name: Push to Gametrip-api-client if have modification
         if: steps.countChange.outputs.nbChange != 0
         working-directory: ./gametrip-api-client
