@@ -97,6 +97,8 @@ jobs:
          
       - run : echo git diff --name-status | grep "^[MARD]" | wc -l
       - run : echo ${{ steps.countChange.outputs.nbChange }}
+      - run : echo ${{ steps.countChange.outputs.nbChange != 0 }}
+      
       - name: Push to Gametrip-api-client if have modification
         if: ${{ steps.countChange.outputs.nbChange }} != 0
         working-directory: ./gametrip-api-client
