@@ -126,7 +126,7 @@ namespace GameTrip.API.Controllers
                 Name = user.UserName,
                 Email = user.Email,
                 Subject = "Bienvenue sur GameTrip",
-                Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
+                Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://staging-api.game-trip.fr/RegisterValidation/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
             };
 
             _mailPlatform.SendMail(mailDTO);
