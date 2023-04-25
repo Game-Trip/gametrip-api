@@ -1,10 +1,12 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.Email;
+using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
 using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
+using GameTrip.Provider.IProvider;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,12 +27,14 @@ namespace GameTrip.API.Controllers
         private readonly UserManager<GameTripUser> _userManager;
         private readonly IAuthPlatform _authPlatform;
         private readonly IMailPlatform _mailPlatform;
+        private readonly IEmailProvider _emailProvider;
 
-        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform)
+        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider)
         {
             _userManager = userManager;
             _authPlatform = authPlatform;
             _mailPlatform = mailPlatform;
+            _emailProvider = emailProvider;
         }
 
         /// <summary>
@@ -111,40 +115,51 @@ namespace GameTrip.API.Controllers
             GameTripUser user = new GameTripUser
             {
                 UserName = dto.Username,
-                Email = dto.Email,
-                EmailConfirmed = true
+                Email = dto.Email
             };
 
             IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
             if (result.Succeeded == false) return BadRequest(result.Errors);
 
             string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            registrationToken = HttpUtility.UrlEncode(registrationToken);
+            string confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token = registrationToken, email = user.Email }, Request.Scheme);
+
+            string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
+            if (emailTemplateText == null) throw new FileNotFoundException();
+
+            emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
+            emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
+
+
 
             MailDTO mailDTO = new MailDTO
             {
-                Name = user.UserName,
-                Email = user.Email,
+                Name = "Dercraker",
+                Email = "antoine.capitain@gmail.com",
                 Subject = "Bienvenue sur GameTrip",
-                Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://staging-api.game-trip.fr/RegisterValidation/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
+                Body = emailTemplateText
             };
 
-            _mailPlatform.SendMailAsync(mailDTO);
-
-            //EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
-
-            ////discord valide token stp :D
-            ////var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
-            //var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
-            //HttpClient client = new();
-            //string json = JsonSerializer.Serialize(tokenDTO);
-            //StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            //HttpResponseMessage response = await client.PostAsync(url, data);
+            await _mailPlatform.SendMailAsync(mailDTO);
 
             return Ok(user.ToDTO());
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            GameTripUser user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return BadRequest();
+
+            IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
+            return result.Succeeded ? Redirect("portainer.game-trip.fr/") : Unauthorized();
+        }
+        
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)

@@ -259,6 +259,9 @@ internal class Startup
             //User
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.User.RequireUniqueEmail = true;
+
+            //Sign
+            options.SignIn.RequireConfirmedAccount = true;
         })
         .AddDefaultTokenProviders()
         .AddRoles<IdentityRole<Guid>>()
