@@ -1,4 +1,5 @@
-﻿using GameTrip.Domain.Settings;
+﻿using GameTrip.Domain.Models.Email.Template;
+using GameTrip.Domain.Settings;
 using GameTrip.Provider.IProvider;
 using MailKit.Net.Smtp;
 using MimeKit;
@@ -14,14 +15,22 @@ public class EmailProvider : IEmailProvider
         _mailSettings = mailSettings;
     }
 
-    public void SendMail(MimeMessage email)
+
+    public async Task SendMailAsync(MimeMessage email)
     {
         using (SmtpClient smtpClient = new())
         {
-            smtpClient.Connect(_mailSettings.Server, _mailSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
-            smtpClient.Authenticate(_mailSettings.UserName, _mailSettings.Password);
-            smtpClient.Send(email);
+            await smtpClient.ConnectAsync(_mailSettings.Server, _mailSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await smtpClient.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
+            await smtpClient.SendAsync(email);
+            await smtpClient.DisconnectAsync(true);
             smtpClient.Dispose();
         }
+    }
+    public string? GetTemplate(TemplatePath path)
+    {
+        string filePath = Directory.GetCurrentDirectory() + @$"/models/Template/{path}";
+        if (File.Exists(filePath)) return File.ReadAllText(filePath);
+        else return null;
     }
 }

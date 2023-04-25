@@ -34,7 +34,7 @@ namespace GameTrip.Platform
         #endregion Constructor
 
         #region Public Methods
-        public void SendMail(MailDTO mailData)
+        public async Task SendMailAsync(MailDTO mailData)
         {
             MimeMessage email = new();
             MailboxAddress emailFrom = new MailboxAddress(_mailSettings.SenderName, _mailSettings.SenderMail);
@@ -45,11 +45,11 @@ namespace GameTrip.Platform
             email.Subject = mailData.Subject;
 
             BodyBuilder emailBodyBuilder = new BodyBuilder();
-            emailBodyBuilder.TextBody = mailData.Body;
+            emailBodyBuilder.HtmlBody = mailData.Body;
 
             email.Body = emailBodyBuilder.ToMessageBody();
 
-            _emailProvider.SendMail(email);
+            await _emailProvider.SendMailAsync(email);
         }
 
 

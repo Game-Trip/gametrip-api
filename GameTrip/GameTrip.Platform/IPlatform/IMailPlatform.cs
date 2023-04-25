@@ -4,6 +4,6 @@ namespace GameTrip.Platform.IPlatform
 {
     public interface IMailPlatform
     {
-        public void SendMail(MailDTO mailData);
+        public Task SendMailAsync(MailDTO mailData);
     }
 }

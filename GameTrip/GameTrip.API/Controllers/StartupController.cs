@@ -1,9 +1,14 @@
 ﻿using GameTrip.API.Models;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models;
+using GameTrip.Domain.Models.Email;
+using GameTrip.Domain.Models.Email.Template;
+using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
+using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS.Core;
 
 namespace GameTrip.API.Controllers
 {
@@ -14,11 +19,15 @@ namespace GameTrip.API.Controllers
     {
         private readonly IStartupPlatform _startupPlatform;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMailPlatform _mailPlatform;
+        private readonly IEmailProvider _emailProvider;
 
-        public StartupController(IStartupPlatform startupPlatform, IUnitOfWork unitOfWork)
+        public StartupController(IStartupPlatform startupPlatform, IUnitOfWork unitOfWork, IMailPlatform mailPlatform, IEmailProvider emailProvider)
         {
             _startupPlatform = startupPlatform;
             _unitOfWork = unitOfWork;
+            _mailPlatform = mailPlatform;
+            _emailProvider = emailProvider;
         }
 
         [HttpGet]
@@ -28,6 +37,38 @@ namespace GameTrip.API.Controllers
             Test = _startupPlatform.ping()
         };
 
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("sendMail")]
+        public async Task<IActionResult> SendMailAsync()
+        {
+            try
+            {
+                string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
+                if (emailTemplateText== null) throw new FileNotFoundException();
+
+                emailTemplateText = emailTemplateText.Replace("{0}", "Dercraker");
+                emailTemplateText = emailTemplateText.Replace("{1}", "Dercraker");
+
+
+
+                MailDTO mailDTO = new MailDTO
+                {
+                    Name = "Dercraker",
+                    Email = "antoine.capitain@gmail.com",
+                    Subject = "Bienvenue sur GameTrip",
+                    Body = emailTemplateText
+                };
+
+                await _mailPlatform.SendMailAsync(mailDTO);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.InnerException);
+                throw;
+            }            
+        }
         [HttpGet]
         [Route("locations")]
         public ActionResult<List<LocationDTO>> GetLocations()

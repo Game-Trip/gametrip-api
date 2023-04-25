@@ -129,7 +129,7 @@ namespace GameTrip.API.Controllers
                 Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://staging-api.game-trip.fr/RegisterValidation/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
             };
 
-            _mailPlatform.SendMail(mailDTO);
+            _mailPlatform.SendMailAsync(mailDTO);
 
             //EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
 
