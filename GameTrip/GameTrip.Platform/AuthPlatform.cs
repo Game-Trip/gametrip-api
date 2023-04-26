@@ -15,15 +15,17 @@ namespace GameTrip.Platform
 
         private readonly UserManager<GameTripUser> _userManager;
         private readonly JWTSettings _jwtSettings;
+        private readonly RegisterSettings _registerSettings;
 
         #endregion Properties
 
         #region Constructor
 
-        public AuthPlatform(UserManager<GameTripUser> userManager, JWTSettings jwtSettings)
+        public AuthPlatform(UserManager<GameTripUser> userManager, JWTSettings jwtSettings, RegisterSettings registerSettings)
         {
             _userManager = userManager;
             _jwtSettings = jwtSettings;
+            _registerSettings = registerSettings;
         }
 
         #endregion Constructor
@@ -61,13 +63,6 @@ namespace GameTrip.Platform
             return tokenHandler.CreateToken(tokenDescriptor); ;
         }
 
-        public async Task<IdentityResult?> ResetPasswordAsync(GameTripUser user, string password)
-        {
-            //TEMPORAIRE LE TEMPS DE SETUP LE SEND DE TOKEN PAR EMAIL
-            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            return await _userManager.ResetPasswordAsync(user, resetToken, password);
-        }
-
         public bool TestToken(string token)
         {
             SymmetricSecurityKey authSigningKey = new(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
@@ -91,6 +86,30 @@ namespace GameTrip.Platform
             }
             return true;
         }
+
+        public async Task<string> GenerateEmailConfirmationLinkAsync(GameTripUser user)
+        {
+            string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            return $"{_registerSettings.ConfirmationEmailUrl}?Token={registrationToken}&Email={user.Email}";
+        }
+
+        public async Task<IdentityResult> ConfirmEmailAsync(GameTripUser user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<string> GeneratePasswordResetLinkAsync(GameTripUser user)
+        {
+            string resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return $"{_registerSettings.ResetPasswordUrl}?Token={resetPasswordToken}&Email={user.Email}";
+        }
+
+        public async Task<IdentityResult?> ResetPasswordAsync(GameTripUser user, string password, string token)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, password);
+        }
+
+        
 
         #endregion Public Methods
     }

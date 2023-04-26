@@ -55,6 +55,8 @@ internal class Startup
         AddJWT(services);
         AddDatabase(services);
 
+        
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
@@ -177,6 +179,12 @@ internal class Startup
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("Bearer")
                 .Build();
+        });
+
+
+        services.Configure<DataProtectionTokenProviderOptions>(o =>
+        {
+            o.TokenLifespan = TimeSpan.FromHours(1);
         });
     }
 

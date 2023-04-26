@@ -10,5 +10,8 @@ public interface IAuthPlatform
 
     public bool TestToken(string token);
 
-    public Task<IdentityResult?> ResetPasswordAsync(GameTripUser user, string password);
+    public Task<IdentityResult?> ResetPasswordAsync(GameTripUser user, string password, string token);
+    Task<string> GenerateEmailConfirmationLinkAsync(GameTripUser user);
+    Task<string> GeneratePasswordResetLinkAsync(GameTripUser user);
+    Task<IdentityResult> ConfirmEmailAsync(GameTripUser user, string token);
 }

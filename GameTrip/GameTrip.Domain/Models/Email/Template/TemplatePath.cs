@@ -8,6 +8,7 @@ public class TemplatePath
     public string Value { get; private set; }
 
     public static TemplatePath Register => new("RegisterTemplate.html");
+    public static TemplatePath FrogotPassword => new("FrogotPasswordTemplate.html");
 
     public override string ToString()
     {
