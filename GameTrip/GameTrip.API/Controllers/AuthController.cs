@@ -23,13 +23,15 @@ namespace GameTrip.API.Controllers
         private readonly IAuthPlatform _authPlatform;
         private readonly IMailPlatform _mailPlatform;
         private readonly IEmailProvider _emailProvider;
+        private readonly RegisterSettings _registerSettings;
 
-        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider)
+        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider, RegisterSettings registerSettings)
         {
             _userManager = userManager;
             _authPlatform = authPlatform;
             _mailPlatform = mailPlatform;
             _emailProvider = emailProvider;
+            _registerSettings = registerSettings;
         }
 
         /// <summary>
@@ -111,13 +113,13 @@ namespace GameTrip.API.Controllers
             };
 
             IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
-            if (result.Succeeded == false) return BadRequest(result.Errors);
+            if (result.Succeeded is false) return BadRequest(result.Errors);
 
             string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            string confirmationLink = Url.Action("ConfirmEmail", "Auth", new { token = registrationToken, email = user.Email }, Request.Scheme);
+            string confirmationLink = $"{_registerSettings.ConfirmationEmailUrl}?Token={registrationToken}&Email={user.Email}";
 
             string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
-            if (emailTemplateText == null) throw new FileNotFoundException();
+            if (emailTemplateText is null) throw new FileNotFoundException();
 
             emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
             emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
@@ -136,18 +138,17 @@ namespace GameTrip.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpPost]
         [Route("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        public async Task<ActionResult<GameTripUserDTO>> ConfirmEmail([FromBody] ConfirmMailDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            GameTripUser user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return BadRequest();
+            GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user is null) return BadRequest();
 
-            IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
-            return result.Succeeded ? Redirect("portainer.game-trip.fr/") : Unauthorized();
+            IdentityResult result = await _userManager.ConfirmEmailAsync(user, dto.Token);
+            return result.Succeeded ? Ok(user.ToDTO()) : Unauthorized();
         }
 
         [HttpPost]

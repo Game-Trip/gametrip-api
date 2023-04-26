@@ -15,6 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTrip.EFCore", "GameTrip
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CB1406F-198B-4610-92F8-499ED75E9402}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		..\.gitignore = ..\.gitignore
 		..\.github\workflows\docker.yml = ..\.github\workflows\docker.yml
 		..\.github\workflows\GameTripClientAPI.yml = ..\.github\workflows\GameTripClientAPI.yml

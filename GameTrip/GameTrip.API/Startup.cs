@@ -227,8 +227,11 @@ internal class Startup
         JWTSettings JWTSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
         services.AddSingleton(JWTSettings);
         //génération du swagger.json from dll buger tkt
-        MailSettings MailSettings = Configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
-        services.AddSingleton(MailSettings);
+        MailSettings mailSettings = Configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
+        services.AddSingleton(mailSettings);
+        //génération du swagger.json from dll buger tkt
+        RegisterSettings registerSettings = Configuration.GetSection("RegisterSettings").Get<RegisterSettings>() ?? new();
+        services.AddSingleton(registerSettings);
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
