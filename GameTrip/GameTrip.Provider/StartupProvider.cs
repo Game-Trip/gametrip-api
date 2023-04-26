@@ -4,6 +4,9 @@ namespace GameTrip.Provider
 {
     public class StartupProvider : IStartupProvider
     {
-        public string ping() => "UwUaaaabbbbbb!!!";
+        public string ping()
+        {
+            return "UwUaaaabbbbbb!!!";
+        }
     }
 }

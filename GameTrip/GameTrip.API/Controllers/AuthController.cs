@@ -4,18 +4,13 @@ using GameTrip.Domain.Models.Email;
 using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
-using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider.IProvider;
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text.RegularExpressions;
-using System.Web;
 
 namespace GameTrip.API.Controllers
 {
@@ -46,8 +41,8 @@ namespace GameTrip.API.Controllers
         [Route("Initialize")]
         public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
         {
-            var result = await dBInitializer.Initialize();
-            var resultMessage = $"Initialisation DB : {(result ? "Succès" : "DB existe déja")}";
+            bool result = await dBInitializer.Initialize();
+            string resultMessage = $"Initialisation DB : {(result ? "Succès" : "DB existe déja")}";
 
             return Ok(resultMessage);
         }
@@ -67,11 +62,11 @@ namespace GameTrip.API.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null) user = await _userManager.FindByEmailAsync(dto.Username);
+            user ??= await _userManager.FindByEmailAsync(dto.Username);
 
             if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                JwtSecurityTokenHandler tokenHandler = new();
                 SecurityToken token = await _authPlatform.CreateTokenAsync(user);
                 return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
             }
@@ -87,13 +82,10 @@ namespace GameTrip.API.Controllers
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
         [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] string token)
+        public IActionResult TokenTest([FromBody] string token)
         {
             bool isValid = _authPlatform.TestToken(token);
-            if (isValid)
-                return Ok();
-            else
-                return Unauthorized();
+            return isValid ? Ok() : Unauthorized();
         }
 
         /// <summary>
@@ -112,7 +104,7 @@ namespace GameTrip.API.Controllers
             GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
             if (userExists != null) return BadRequest("This mail is already taken");
 
-            GameTripUser user = new GameTripUser
+            GameTripUser user = new()
             {
                 UserName = dto.Username,
                 Email = dto.Email
@@ -130,9 +122,7 @@ namespace GameTrip.API.Controllers
             emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
             emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
 
-
-
-            MailDTO mailDTO = new MailDTO
+            MailDTO mailDTO = new()
             {
                 Name = "Dercraker",
                 Email = "antoine.capitain@gmail.com",
@@ -159,7 +149,7 @@ namespace GameTrip.API.Controllers
             IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
             return result.Succeeded ? Redirect("portainer.game-trip.fr/") : Unauthorized();
         }
-        
+
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
@@ -170,9 +160,7 @@ namespace GameTrip.API.Controllers
             if (user == null) return BadRequest("No account has been created with this email");
 
             IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
-
-            return Ok("The password has been successfully changed");
+            return !result.Succeeded ? BadRequest(result.Errors) : Ok("The password has been successfully changed");
         }
     }
 }

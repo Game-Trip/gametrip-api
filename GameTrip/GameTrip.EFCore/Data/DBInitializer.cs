@@ -1,11 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Settings;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameTrip.EFCore.Data
 {
@@ -26,25 +21,23 @@ namespace GameTrip.EFCore.Data
         {
             _context.Database.EnsureCreated();
 
-
             if (_context.Roles.Any() || _context.Users.Any()) return false;
 
-
             //Adding roles
-            var roles = Roles.GetAllRoles();
+            string[] roles = Roles.GetAllRoles();
 
-            foreach (var role in roles)
+            foreach (string role in roles)
             {
                 if (!await _roleManager.RoleExistsAsync(role))
                 {
-                    var resultAddRole = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+                    IdentityResult resultAddRole = await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
                     if (!resultAddRole.Succeeded)
                         throw new ApplicationException("Adding role '" + role + "' failed with error(s): " + resultAddRole.Errors);
                 }
             }
 
             //Adding Admin
-            GameTripUser admin = new GameTripUser
+            GameTripUser admin = new()
             {
                 UserName = "Dercraker",
                 Email = "antoine.capitain@gmail.com",
@@ -57,10 +50,9 @@ namespace GameTrip.EFCore.Data
             if (!resultAddUser.Succeeded)
                 throw new ApplicationException("Adding user '" + admin.UserName + "' failed with error(s): " + resultAddUser.Errors);
 
-            var resultAddRoleToUser = await _userManager.AddToRoleAsync(admin, Roles.Admin);
+            IdentityResult resultAddRoleToUser = await _userManager.AddToRoleAsync(admin, Roles.Admin);
             if (!resultAddRoleToUser.Succeeded)
                 throw new ApplicationException("Adding user '" + admin.UserName + "' to role '" + Roles.Admin + "' failed with error(s): " + resultAddRoleToUser.Errors);
-
 
             await _context.SaveChangesAsync();
 

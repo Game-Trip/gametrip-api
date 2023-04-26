@@ -12,6 +12,9 @@ namespace GameTrip.Platform
             _startupProvider = startupProvider;
         }
 
-        public string ping() => _startupProvider.ping();
+        public string ping()
+        {
+            return _startupProvider.ping();
+        }
     }
 }

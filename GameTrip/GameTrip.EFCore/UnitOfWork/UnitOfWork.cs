@@ -25,9 +25,18 @@ public class UnitOfWork : IUnitOfWork
         Pictures = new PictureRepository(_context);
     }
 
-    public int Complet() => _context.SaveChanges();
+    public int Complet()
+    {
+        return _context.SaveChanges();
+    }
 
-    public async Task<int> CompletAsync() => await _context.SaveChangesAsync();
+    public async Task<int> CompletAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
 
-    public void Dispose() => _context.Dispose();
+    public void Dispose()
+    {
+        _context.Dispose();
+    }
 }

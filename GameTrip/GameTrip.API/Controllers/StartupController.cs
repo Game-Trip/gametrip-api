@@ -3,12 +3,10 @@ using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models;
 using GameTrip.Domain.Models.Email;
 using GameTrip.Domain.Models.Email.Template;
-using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS.Core;
 
 namespace GameTrip.API.Controllers
 {
@@ -32,10 +30,13 @@ namespace GameTrip.API.Controllers
 
         [HttpGet]
         [Route("ping")]
-        public ActionResult<TestModel> Ping() => new TestModel()
+        public ActionResult<TestModel> Ping()
         {
-            Test = _startupPlatform.ping()
-        };
+            return new TestModel()
+            {
+                Test = _startupPlatform.ping()
+            };
+        }
 
         [AllowAnonymous]
         [HttpGet]
@@ -50,9 +51,7 @@ namespace GameTrip.API.Controllers
                 emailTemplateText = emailTemplateText.Replace("{0}", "Dercraker");
                 emailTemplateText = emailTemplateText.Replace("{1}", "Dercraker");
 
-
-
-                MailDTO mailDTO = new MailDTO
+                MailDTO mailDTO = new()
                 {
                     Name = "Dercraker",
                     Email = "antoine.capitain@gmail.com",
@@ -67,13 +66,14 @@ namespace GameTrip.API.Controllers
             {
                 return BadRequest(e.InnerException);
                 throw;
-            }            
+            }
         }
+
         [HttpGet]
         [Route("locations")]
         public ActionResult<List<LocationDTO>> GetLocations()
         {
-            List<LocationDTO> locations = new List<LocationDTO>
+            List<LocationDTO> locations = new()
             {
                 new LocationDTO("Tour Eiffel", "Monument emblématique de Paris, France", 48.8588443, 2.2943506),
                 new LocationDTO("Statue de la Liberté", "Symbole de liberté à New York, États-Unis", 40.689247, -74.044502),

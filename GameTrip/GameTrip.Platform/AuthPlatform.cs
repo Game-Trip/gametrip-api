@@ -2,7 +2,6 @@
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -35,22 +34,22 @@ namespace GameTrip.Platform
         {
             IList<string>? userRoles = await _userManager.GetRolesAsync(user);
 
-            List<Claim> authClaims = new List<Claim>
-                {
+            List<Claim> authClaims = new()
+            {
                     new Claim("User", user.UserName),
                     new Claim("Email", user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-            foreach (var userRole in userRoles)
+            foreach (string userRole in userRoles)
             {
                 authClaims.Add(new Claim("Roles", userRole));
             }
 
-            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
+            SymmetricSecurityKey authSigningKey = new(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
 
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            JwtSecurityTokenHandler tokenHandler = new();
+            SecurityTokenDescriptor tokenDescriptor = new()
             {
                 Subject = new ClaimsIdentity(authClaims),
                 Expires = DateTime.UtcNow.AddHours(_jwtSettings.DurationTime),
@@ -71,9 +70,9 @@ namespace GameTrip.Platform
 
         public bool TestToken(string token)
         {
-            SymmetricSecurityKey authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
+            SymmetricSecurityKey authSigningKey = new(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            JwtSecurityTokenHandler tokenHandler = new();
             try
             {
                 tokenHandler.ValidateToken(token, new TokenValidationParameters

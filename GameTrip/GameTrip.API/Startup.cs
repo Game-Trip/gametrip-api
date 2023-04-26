@@ -44,6 +44,7 @@ internal class Startup
 
     #region Public Methods
 
+    [Obsolete]
     public void ConfigureServices(IServiceCollection services)
     {
         AddServices(services);
@@ -122,7 +123,7 @@ internal class Startup
             endpoints.MapControllers();
         });
 
-        var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
+        ILogger<Program> logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
 
     #endregion Public Methods
@@ -147,7 +148,7 @@ internal class Startup
 
     private void AddJWT(IServiceCollection services)
     {
-        var jwtSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>();
+        JWTSettings? jwtSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -221,10 +222,11 @@ internal class Startup
         #endregion Provider
 
         #region Settings
-        //génération du swagger.json from dll buger tkt 
+
+        //génération du swagger.json from dll buger tkt
         JWTSettings JWTSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
         services.AddSingleton(JWTSettings);
-        //génération du swagger.json from dll buger tkt 
+        //génération du swagger.json from dll buger tkt
         MailSettings MailSettings = Configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
         services.AddSingleton(MailSettings);
         services.AddScoped<DBInitializer>();
@@ -283,12 +285,12 @@ internal class Startup
         {
             appError.Run(async context =>
             {
-                var contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
+                IExceptionHandlerFeature? contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
                 if (contextFeatures == null) return;
 
                 context.Response.ContentType = "text/html; charset=utf-8";
                 string message = string.Empty;
-                var user = context?.User?.Identity?.Name ?? "Unknow User";
+                string user = context?.User?.Identity?.Name ?? "Unknow User";
                 if (contextFeatures.Error is ServiceException se)
                 {
                     context.Response.StatusCode = (int)se.StatusCode;

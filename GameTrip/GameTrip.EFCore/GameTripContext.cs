@@ -38,7 +38,6 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
     {
         base.OnModelCreating(builder);
 
-
         builder.Entity<Comment>(c =>
         {
             c.HasKey(c => c.IdComment);
