@@ -9,6 +9,7 @@ public class TokenDTO
         Token = token;
         ExpirationDate = expirationDate;
     }
+
     public TokenDTO(string token)
     {
         Token = token;
@@ -17,7 +18,6 @@ public class TokenDTO
 
     [Required]
     public string Token { get; set; }
-
 
     public DateTime? ExpirationDate { get; set; }
 }

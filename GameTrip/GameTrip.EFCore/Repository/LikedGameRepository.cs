@@ -7,6 +7,5 @@ public class LikedGameRepository : GenericRepository<LikedGame>, ILikedGameRepos
 {
     public LikedGameRepository(GameTripContext context) : base(context)
     {
-
     }
 }

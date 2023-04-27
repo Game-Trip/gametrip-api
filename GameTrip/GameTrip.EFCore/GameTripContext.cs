@@ -25,10 +25,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
     {
     }
 
-    public GameTripContext(DbContextOptions<GameTripContext> options) : base(options)
-    {
-        Database.Migrate();
-    }
+    public GameTripContext(DbContextOptions<GameTripContext> options) : base(options) => Database.Migrate();
 
     #endregion Constructor
 
@@ -37,7 +34,6 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
 
         builder.Entity<Comment>(c =>
         {

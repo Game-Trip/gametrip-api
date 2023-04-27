@@ -1,163 +1,192 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.Email;
+using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
-using GameTrip.Platform;
 using GameTrip.Platform.IPlatform;
-using MailKit.Net.Smtp;
+using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text.RegularExpressions;
-using System.Web;
 
-namespace GameTrip.API.Controllers
+namespace GameTrip.API.Controllers;
+
+[Route("[controller]")]
+[Authorize]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("[controller]")]
-    [Authorize]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly UserManager<GameTripUser> _userManager;
+    private readonly IAuthPlatform _authPlatform;
+    private readonly IMailPlatform _mailPlatform;
+    private readonly IEmailProvider _emailProvider;
+
+    public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider)
     {
-        private readonly UserManager<GameTripUser> _userManager;
-        private readonly IAuthPlatform _authPlatform;
-        private readonly IMailPlatform _mailPlatform;
+        _userManager = userManager;
+        _authPlatform = authPlatform;
+        _mailPlatform = mailPlatform;
+        _emailProvider = emailProvider;
+    }
 
-        public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform)
+    [HttpPost]
+    [Route("Initialize")]
+    public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
+    {
+        bool result = await dBInitializer.Initialize();
+        string resultMessage = $"Initialisation DB : {(result ? "Succès" : "DB existe déja")}";
+
+        return Ok(resultMessage);
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("Login")]
+    public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginDTO dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
+        user ??= await _userManager.FindByEmailAsync(dto.Username);
+
+        if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
         {
-            _userManager = userManager;
-            _authPlatform = authPlatform;
-            _mailPlatform = mailPlatform;
+            JwtSecurityTokenHandler tokenHandler = new();
+            SecurityToken token = await _authPlatform.CreateTokenAsync(user);
+            return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
         }
+        else
+            return Unauthorized();
+    }
 
-        /// <summary>
-        /// Initialise les table avec les rôles et l'utilisateur Admin
-        /// </summary>
-        /// <response code="200 + Message"></response>
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("Initialize")]
-        public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
+    [HttpPost]
+    [Authorize(Roles = Roles.Admin)]
+    [Route("TokenTest")]
+    public IActionResult TokenTest([FromBody] string token)
+    {
+        bool isValid = _authPlatform.TestToken(token);
+        return isValid ? Ok() : Unauthorized();
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("Register")]
+    public async Task<ActionResult<GameTripUserDTO>> Register([FromBody] RegisterDTO dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
+        if (userExists != null)
+            return BadRequest("This mail is already taken");
+
+        GameTripUser user = new()
         {
-            var result = await dBInitializer.Initialize();
-            var resultMessage = $"Initialisation DB : {(result ? "Succès" : "DB existe déja")}";
+            UserName = dto.Username,
+            Email = dto.Email
+        };
 
-            return Ok(resultMessage);
-        }
+        IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
+        if (result.Succeeded is false)
+            return BadRequest(result.Errors);
 
-        /// <summary>
-        /// Permet de login un user dans la DB
-        /// </summary>
-        /// <param name="dto">Model de login d'un user</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="401">Erreur de mdp ou username</response>
-        /// <response code="200">Token + date d'expiration</response>
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("Login")]
-        public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginDTO dto)
+        string confirmationLink = await _authPlatform.GenerateEmailConfirmationLinkAsync(user);
+
+        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
+        if (emailTemplateText is null)
+            throw new FileNotFoundException();
+
+        emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
+        emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
+
+        MailDTO mailDTO = new()
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            Name = user.UserName,
+            Email = user.Email,
+            Subject = "Bienvenue sur GameTrip",
+            Body = emailTemplateText
+        };
 
-            GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null) user = await _userManager.FindByEmailAsync(dto.Username);
+        await _mailPlatform.SendMailAsync(mailDTO);
 
-            if (user != null && await _userManager.CheckPasswordAsync(user, dto.Password))
+        return Ok(user.ToDTO());
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("ConfirmEmail")]
+    public async Task<ActionResult<GameTripUserDTO>> ConfirmEmail([FromBody] ConfirmMailDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
+            return BadRequest();
+
+        IdentityResult result = await _authPlatform.ConfirmEmailAsync(user, dto.Token);
+        return result.Succeeded ? Ok(user.ToDTO()) : Unauthorized();
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("FrogotPassword")]
+    public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+            return BadRequest();
+
+        string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
+
+        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.FrogotPassword)!;
+        if (emailTemplateText is null)
+            throw new FileNotFoundException();
+
+        emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
+        emailTemplateText = emailTemplateText.Replace("{1}", resetPasswordLink);
+
+        MailDTO mailDTO = new()
+        {
+            Name = user.UserName,
+            Email = user.Email,
+            Subject = "Changement de mot de passe",
+            Body = emailTemplateText
+        };
+
+        await _mailPlatform.SendMailAsync(mailDTO);
+
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("ResetPassword")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
+            return BadRequest();
+
+        IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password, dto.Token);
+        if (!result.Succeeded)
+        {
+            foreach (IdentityError error in result.Errors)
             {
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                SecurityToken token = await _authPlatform.CreateTokenAsync(user);
-                return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
+                ModelState.TryAddModelError(error.Code, error.Description);
             }
-            else return Unauthorized();
         }
 
-        /// <summary>
-        /// Teste la validiter d'un token
-        /// </summary>
-        /// <param name="token">token a check</param>
-        /// <response code="401">Token non valide || Pas la permission d'acceder a cette endpoint</response>
-        /// <response code="200">Token valide</response>
-        [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
-        [Route("TokenTest")]
-        public async Task<IActionResult> TokenTest([FromBody] string token)
-        {
-            bool isValid = _authPlatform.TestToken(token);
-            if (isValid)
-                return Ok();
-            else
-                return Unauthorized();
-        }
-
-        /// <summary>
-        /// Permet de register un user dans la DB
-        /// </summary>
-        /// <param name="dto">Model de l'utilisateur</param>
-        /// <response code="400 + Message"></response>
-        /// <response code="200 + Message"></response>
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("Register")]
-        public async Task<ActionResult<GameTripUserDTO>> Register([FromBody] RegisterDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
-            if (userExists != null) return BadRequest("This mail is already taken");
-
-            GameTripUser user = new GameTripUser
-            {
-                UserName = dto.Username,
-                Email = dto.Email,
-                EmailConfirmed = true
-            };
-
-            IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
-            if (result.Succeeded == false) return BadRequest(result.Errors);
-
-            string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            registrationToken = HttpUtility.UrlEncode(registrationToken);
-
-            MailDTO mailDTO = new MailDTO
-            {
-                Name = user.UserName,
-                Email = user.Email,
-                Subject = "Bienvenue sur GameTrip",
-                Body = $"Bienvenue sur GameTrip, cliquez sur le lien pour confirmer votre compte : <a href='http://staging-api.game-trip.fr/RegisterValidation/{user.Email}'>Confirmer</a><br> <em>Le lien est factise pour l'instant</em>"
-            };
-
-            _mailPlatform.SendMail(mailDTO);
-
-            //EmailConfirmationTokenDTO tokenDTO = new() { token = registrationToken };
-
-            ////discord valide token stp :D
-            ////var url = $"{apiToBotSettings.baseURI}sendRegisterValidationButton/{user.Email}";
-            //var url = $"http://bot.guanajuato-roleplay.fr/sendRegisterValidationButton/{user.Email}";
-            //HttpClient client = new();
-            //string json = JsonSerializer.Serialize(tokenDTO);
-            //StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
-
-            //HttpResponseMessage response = await client.PostAsync(url, data);
-
-            return Ok(user.ToDTO());
-        }
-
-        [HttpPost]
-        [Route("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null) return BadRequest("No account has been created with this email");
-
-            IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
-
-            return Ok("The password has been successfully changed");
-        }
+        return result.Succeeded ? Ok() : BadRequest(ModelState);
     }
 }

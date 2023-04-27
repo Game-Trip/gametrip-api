@@ -7,6 +7,5 @@ public class PictureRepository : GenericRepository<Picture>, IPictureRepository
 {
     public PictureRepository(GameTripContext context) : base(context)
     {
-
     }
 }

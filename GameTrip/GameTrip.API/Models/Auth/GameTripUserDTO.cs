@@ -16,8 +16,5 @@ public class GameTripUserDTO
 
 public static class GameTripUserDTOMapper
 {
-    public static GameTripUserDTO ToDTO(this GameTripUser user)
-    {
-        return new GameTripUserDTO(user.UserName, user.Email);
-    }
+    public static GameTripUserDTO ToDTO(this GameTripUser user) => new(user.UserName, user.Email);
 }
