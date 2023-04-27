@@ -1,8 +1,6 @@
 ﻿using GameTrip.API.Models;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models;
-using GameTrip.Domain.Models.Email;
-using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Platform.IPlatform;
 using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
@@ -36,38 +34,6 @@ public class StartupController : ControllerBase
         {
             Test = _startupPlatform.ping()
         };
-    }
-
-    [AllowAnonymous]
-    [HttpGet]
-    [Route("sendMail")]
-    public async Task<IActionResult> SendMailAsync()
-    {
-        try
-        {
-            string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
-            if (emailTemplateText == null)
-                throw new FileNotFoundException();
-
-            emailTemplateText = emailTemplateText.Replace("{0}", "Dercraker");
-            emailTemplateText = emailTemplateText.Replace("{1}", "Dercraker");
-
-            MailDTO mailDTO = new()
-            {
-                Name = "Dercraker",
-                Email = "antoine.capitain@gmail.com",
-                Subject = "Bienvenue sur GameTrip",
-                Body = emailTemplateText
-            };
-
-            await _mailPlatform.SendMailAsync(mailDTO);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.InnerException);
-            throw;
-        }
     }
 
     [HttpGet]
