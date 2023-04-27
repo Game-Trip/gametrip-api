@@ -1,12 +1,8 @@
 ﻿using GameTrip.Provider.IProvider;
 
-namespace GameTrip.Provider
+namespace GameTrip.Provider;
+
+public class StartupProvider : IStartupProvider
 {
-    public class StartupProvider : IStartupProvider
-    {
-        public string ping()
-        {
-            return "UwUaaaabbbbbb!!!";
-        }
-    }
+    public string ping() => "UwUaaaabbbbbb!!!";
 }

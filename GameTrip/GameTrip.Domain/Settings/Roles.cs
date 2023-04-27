@@ -1,13 +1,9 @@
-﻿namespace GameTrip.Domain.Settings
-{
-    public class Roles
-    {
-        public const string Admin = "Admin";
-        public const string User = "User";
+﻿namespace GameTrip.Domain.Settings;
 
-        public static string[] GetAllRoles()
-        {
-            return new string[] { Admin, User };
-        }
-    }
+public class Roles
+{
+    public const string Admin = "Admin";
+    public const string User = "User";
+
+    public static string[] GetAllRoles() => new string[] { Admin, User };
 }

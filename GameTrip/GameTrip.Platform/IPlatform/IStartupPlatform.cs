@@ -1,7 +1,6 @@
-﻿namespace GameTrip.Platform.IPlatform
+﻿namespace GameTrip.Platform.IPlatform;
+
+public interface IStartupPlatform
 {
-    public interface IStartupPlatform
-    {
-        public string ping();
-    }
+    public string ping();
 }

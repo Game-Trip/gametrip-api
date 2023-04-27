@@ -8,8 +8,5 @@ public class FrogotPasswordDto
     [EmailAddress]
     public string Email { get; }
 
-    public FrogotPasswordDto(string email)
-    {
-        Email = email;
-    }
+    public FrogotPasswordDto(string email) => Email = email;
 }

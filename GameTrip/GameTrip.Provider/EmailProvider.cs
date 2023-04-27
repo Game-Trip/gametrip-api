@@ -10,10 +10,7 @@ public class EmailProvider : IEmailProvider
 {
     private readonly MailSettings _mailSettings;
 
-    public EmailProvider(MailSettings mailSettings)
-    {
-        _mailSettings = mailSettings;
-    }
+    public EmailProvider(MailSettings mailSettings) => _mailSettings = mailSettings;
 
     public async Task SendMailAsync(MimeMessage email)
     {

@@ -35,10 +35,7 @@ internal class Startup
 
     #region Constructor
 
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+    public Startup(IConfiguration configuration) => Configuration = configuration;
 
     #endregion Constructor
 
@@ -54,8 +51,6 @@ internal class Startup
         AddCORS(services);
         AddJWT(services);
         AddDatabase(services);
-
-        
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -181,7 +176,6 @@ internal class Startup
                 .Build();
         });
 
-
         services.Configure<DataProtectionTokenProviderOptions>(o =>
         {
             o.TokenLifespan = TimeSpan.FromHours(1);
@@ -297,7 +291,8 @@ internal class Startup
             appError.Run(async context =>
             {
                 IExceptionHandlerFeature? contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
-                if (contextFeatures == null) return;
+                if (contextFeatures == null)
+                    return;
 
                 context.Response.ContentType = "text/html; charset=utf-8";
                 string message = string.Empty;
