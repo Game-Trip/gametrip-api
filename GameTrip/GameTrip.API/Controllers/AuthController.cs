@@ -129,6 +129,9 @@ public class AuthController : ControllerBase
             return BadRequest();
 
         IdentityResult result = await _authPlatform.ConfirmEmailAsync(user, dto.Token);
+        if (result.Succeeded)
+            await _userManager.AddToRoleAsync(user, Roles.User);
+
         return result.Succeeded ? Ok(user.ToDTO()) : Unauthorized();
     }
 
