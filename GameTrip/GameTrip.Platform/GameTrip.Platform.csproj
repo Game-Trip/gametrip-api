@@ -16,4 +16,25 @@
     <ProjectReference Include="..\GameTrip.Provider\GameTrip.Provider.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="AuthPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IAuthPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IMailPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IStartupPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="MailPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="StartupPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>

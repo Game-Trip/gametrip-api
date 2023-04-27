@@ -14,4 +14,19 @@
     <ProjectReference Include="..\GameTrip.Domain\GameTrip.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="EmailProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IProvider\IEmailProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IProvider\IStartupProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="StartupProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>
