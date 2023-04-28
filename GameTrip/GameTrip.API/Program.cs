@@ -4,12 +4,11 @@ namespace GameTrip.API;
 
 public class Program
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
+    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
-    private static IWebHostBuilder CreateHostBuilder(string[] args) =>
-    WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+    private static IWebHostBuilder CreateHostBuilder(string[] args)
+    {
+        return WebHost.CreateDefaultBuilder(args)
+                    .UseStartup<Startup>();
+    }
 }

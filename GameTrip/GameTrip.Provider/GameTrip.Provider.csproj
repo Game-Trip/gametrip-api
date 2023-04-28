@@ -6,4 +6,27 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameTrip.Domain\GameTrip.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="EmailProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IProvider\IEmailProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IProvider\IStartupProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="StartupProvider.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>

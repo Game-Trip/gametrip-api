@@ -7,6 +7,5 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
 {
     public LocationRepository(GameTripContext context) : base(context)
     {
-
     }
 }

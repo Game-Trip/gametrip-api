@@ -7,12 +7,14 @@
     <UserSecretsId>35cb7aac-d4ef-441a-90a5-31f4ad65edb7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	 
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.5.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.1" />
+    <PackageReference Include="MailKit" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
@@ -35,5 +37,57 @@
     <ProjectReference Include="..\GameTrip.Platform\GameTrip.Platform.csproj" />
     <ProjectReference Include="..\GameTrip.Provider\GameTrip.Provider.csproj" />
   </ItemGroup>
+
+	<ItemGroup>
+		<Content Update="*.pdb" CopyToPublishDirectory="Never" />
+		<Content Update="appsettings.Development.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+		  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.$(EnvironmentName).json" CopyToPublishDirectory="PreserveNewest" />
+		<Content Update="appsettings.Production.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Models\Auth\ConfirmMailDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\FrogotPasswordDto.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\GameTripUserDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\LoginDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\RegisterDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\ResetPasswordDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	  <Compile Update="Models\Auth\TokenDTO.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Models\Template\FrogotPasswordTemplate.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Models\Template\RegisterTemplate.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@ using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
+using GameTrip.EFCore.Data;
 using GameTrip.EFCore.Repository;
 using GameTrip.EFCore.UnitOfWork;
 using GameTrip.Platform;
@@ -34,15 +35,13 @@ internal class Startup
 
     #region Constructor
 
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+    public Startup(IConfiguration configuration) => Configuration = configuration;
 
     #endregion Constructor
 
     #region Public Methods
 
+    [Obsolete]
     public void ConfigureServices(IServiceCollection services)
     {
         AddServices(services);
@@ -63,7 +62,7 @@ internal class Startup
             {
                 Version = "v1",
                 Title = API_NAME,
-                Description = "Fifty Cent API",
+                Description = "GameTrip API",
             });
             c.IncludeXmlComments(xmlPath);
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -100,7 +99,6 @@ internal class Startup
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.InjectStylesheet("/swagger-ui/SwaggerDark.css");
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
                 options.EnablePersistAuthorization();
                 options.DisplayRequestDuration();
@@ -111,12 +109,9 @@ internal class Startup
 
         ConfigureExceptionHandler(app);
 
-        //app.UseHttpsRedirection();
-
         app.UseRouting();
 
         app.UseCors();
-        //app.UseCorsMiddleware();
 
         app.UseAuthorization();
 
@@ -125,7 +120,7 @@ internal class Startup
             endpoints.MapControllers();
         });
 
-        var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
+        ILogger<Program> logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
 
     #endregion Public Methods
@@ -150,7 +145,7 @@ internal class Startup
 
     private void AddJWT(IServiceCollection services)
     {
-        var jwtSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>();
+        JWTSettings? jwtSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>();
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -170,7 +165,7 @@ internal class Startup
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                 ValidateLifetime = true,
                 RoleClaimType = "Roles",
-                NameClaimType = "Name",
+                NameClaimType = "User",
             };
         });
         services.AddAuthorization(options =>
@@ -179,6 +174,11 @@ internal class Startup
                 .RequireAuthenticatedUser()
                 .AddAuthenticationSchemes("Bearer")
                 .Build();
+        });
+
+        services.Configure<DataProtectionTokenProviderOptions>(o =>
+        {
+            o.TokenLifespan = TimeSpan.FromHours(1);
         });
     }
 
@@ -211,14 +211,32 @@ internal class Startup
         #region Platform
 
         services.AddScoped<IStartupPlatform, StartupPlatform>();
+        services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<IMailPlatform, MailPlatform>();
 
         #endregion Platform
 
         #region Provider
 
         services.AddScoped<IStartupProvider, StartupProvider>();
+        services.AddScoped<IEmailProvider, EmailProvider>();
 
         #endregion Provider
+
+        #region Settings
+
+        //génération du swagger.json from dll buger tkt
+        JWTSettings JWTSettings = Configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
+        services.AddSingleton(JWTSettings);
+        //génération du swagger.json from dll buger tkt
+        MailSettings mailSettings = Configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
+        services.AddSingleton(mailSettings);
+        //génération du swagger.json from dll buger tkt
+        RegisterSettings registerSettings = Configuration.GetSection("RegisterSettings").Get<RegisterSettings>() ?? new();
+        services.AddSingleton(registerSettings);
+        services.AddScoped<DBInitializer>();
+
+        #endregion Settings
     }
 
     private void AddIdentity(IServiceCollection services)
@@ -248,6 +266,9 @@ internal class Startup
             //User
             options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.User.RequireUniqueEmail = true;
+
+            //Sign
+            options.SignIn.RequireConfirmedAccount = true;
         })
         .AddDefaultTokenProviders()
         .AddRoles<IdentityRole<Guid>>()
@@ -269,12 +290,13 @@ internal class Startup
         {
             appError.Run(async context =>
             {
-                var contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
-                if (contextFeatures == null) return;
+                IExceptionHandlerFeature? contextFeatures = context.Features.Get<IExceptionHandlerFeature>();
+                if (contextFeatures == null)
+                    return;
 
                 context.Response.ContentType = "text/html; charset=utf-8";
                 string message = string.Empty;
-                var user = context?.User?.Identity?.Name ?? "Unknow User";
+                string user = context?.User?.Identity?.Name ?? "Unknow User";
                 if (contextFeatures.Error is ServiceException se)
                 {
                     context.Response.StatusCode = (int)se.StatusCode;

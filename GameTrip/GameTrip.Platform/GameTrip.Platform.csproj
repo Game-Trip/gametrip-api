@@ -7,7 +7,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MimeKit" Version="4.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.28.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameTrip.Domain\GameTrip.Domain.csproj" />
     <ProjectReference Include="..\GameTrip.Provider\GameTrip.Provider.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AuthPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IAuthPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IMailPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="IPlatform\IStartupPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="MailPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="StartupPlatform.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
-﻿namespace GameTrip.Provider.IProvider
+﻿namespace GameTrip.Provider.IProvider;
+
+public interface IStartupProvider
 {
-    public interface IStartupProvider
-    {
-        public string ping();
-    }
+    public string ping();
 }

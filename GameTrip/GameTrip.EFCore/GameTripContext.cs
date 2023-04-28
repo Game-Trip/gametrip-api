@@ -1,9 +1,11 @@
 ﻿using GameTrip.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore;
 
-public class GameTripContext : DbContext
+public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid>, Guid>
 {
     #region Properties
 
@@ -23,10 +25,7 @@ public class GameTripContext : DbContext
     {
     }
 
-    public GameTripContext(DbContextOptions<GameTripContext> options) : base(options)
-    {
-        Database.Migrate();
-    }
+    public GameTripContext(DbContextOptions<GameTripContext> options) : base(options) => Database.Migrate();
 
     #endregion Constructor
 
@@ -35,7 +34,6 @@ public class GameTripContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
 
         builder.Entity<Comment>(c =>
         {
