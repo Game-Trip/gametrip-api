@@ -7,9 +7,6 @@ namespace GameTrip.Platform.IPlatform;
 public interface IAuthPlatform
 {
     public Task<SecurityToken> CreateTokenAsync(GameTripUser user);
-
-    public bool TestToken(string token);
-
     public Task<IdentityResult?> ResetPasswordAsync(GameTripUser user, string password, string token);
     Task<string> GenerateEmailConfirmationLinkAsync(GameTripUser user);
     Task<string> GeneratePasswordResetLinkAsync(GameTripUser user);

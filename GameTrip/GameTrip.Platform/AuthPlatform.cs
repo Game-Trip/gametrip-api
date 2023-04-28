@@ -64,30 +64,6 @@ public class AuthPlatform : IAuthPlatform
 
     }
 
-    public bool TestToken(string token)
-    {
-        SymmetricSecurityKey authSigningKey = new(Encoding.ASCII.GetBytes(_jwtSettings.Secret));
-
-        JwtSecurityTokenHandler tokenHandler = new();
-        try
-        {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidIssuer = _jwtSettings.ValidIssuer,
-                ValidAudience = _jwtSettings.ValidAudience,
-                IssuerSigningKey = authSigningKey
-            }, out SecurityToken validatedToken);
-        }
-        catch
-        {
-            return false;
-        }
-        return true;
-    }
-
     public async Task<string> GenerateEmailConfirmationLinkAsync(GameTripUser user)
     {
         string registrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
