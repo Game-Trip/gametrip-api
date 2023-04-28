@@ -220,7 +220,7 @@ internal class Startup
 
         #region Platform
 
-        services.AddScoped<IStartupPlatform, StartupPlatform>();
+        services.AddScoped<ILocationPlarform, LocationPlatform>();
         services.AddScoped<IAuthPlatform, AuthPlatform>();
         services.AddScoped<IMailPlatform, MailPlatform>();
 
@@ -228,7 +228,7 @@ internal class Startup
 
         #region Provider
 
-        services.AddScoped<IStartupProvider, StartupProvider>();
+        services.AddScoped<ILocationProvider, LocationProvider>();
         services.AddScoped<IEmailProvider, EmailProvider>();
 
         #endregion Provider

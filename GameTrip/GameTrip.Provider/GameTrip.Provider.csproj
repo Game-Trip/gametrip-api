@@ -21,10 +21,10 @@
     <Compile Update="IProvider\IEmailProvider.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="IProvider\IStartupProvider.cs">
+    <Compile Update="IProvider\ILocationProvider.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="StartupProvider.cs">
+    <Compile Update="LocationProvider.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

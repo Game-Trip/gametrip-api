@@ -26,13 +26,13 @@
     <Compile Update="IPlatform\IMailPlatform.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="IPlatform\IStartupPlatform.cs">
+    <Compile Update="IPlatform\ILocationPlarform.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Update="MailPlatform.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="StartupPlatform.cs">
+    <Compile Update="LocationPlatform.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>

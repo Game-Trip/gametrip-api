@@ -1,5 +1,5 @@
 ﻿using GameTrip.API.Models;
-using GameTrip.Domain.Models;
+using GameTrip.Domain.Entities;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,25 +9,40 @@ namespace GameTrip.API.Controllers;
 [Route("[controller]")]
 [Authorize]
 [ApiController]
-public class StartupController : ControllerBase
+public class LocationController : ControllerBase
 {
-    private readonly IStartupPlatform _startupPlatform;
+    private readonly ILocationPlarform _locationPlarform;
 
-    public StartupController(IStartupPlatform startupPlatform) => _startupPlatform = startupPlatform;
+    public LocationController(ILocationPlarform locationPlarform) => _locationPlarform = locationPlarform;
 
-    [HttpGet]
-    [Route("ping")]
-    public ActionResult<TestModel> Ping()
+    [HttpPost]
+    [Route("CreateLocation")]
+    public async Task<ActionResult<LocationDTO>> CreateLocation(LocationDTO locationDTO)
     {
-        return new TestModel()
-        {
-            Test = _startupPlatform.ping()
-        };
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        Location location = _locationPlarform.GetLocationByName(locationDTO.Name);
+
+        //Location location = new()
+        //{
+        //    Name = locationDTO.Name,
+        //    Description = locationDTO.Description,
+        //    Latitude = locationDTO.Latitude,
+        //    Longitude = locationDTO.Longitude,
+        //    TripId = locationDTO.TripId
+        //};
+
+        //_context.Locations.Add(location);
+        //await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetLocation), new { id = location.Id }, location);
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    [Route("locations")]
-    public ActionResult<List<LocationDTO>> GetLocations()
+    [Route("StaticLocations")]
+    public ActionResult<List<LocationDTO>> GetStaticLocations()
     {
         List<LocationDTO> locations = new()
         {
