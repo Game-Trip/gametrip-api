@@ -31,7 +31,8 @@ public class AuthController : ControllerBase
         _mailPlatform = mailPlatform;
         _emailProvider = emailProvider;
     }
-
+    
+    [AllowAnonymous]
     [HttpPost]
     [Route("Initialize")]
     public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
