@@ -63,6 +63,16 @@ internal class Startup
                 Version = "v1",
                 Title = API_NAME,
                 Description = "GameTrip API",
+                Contact = new OpenApiContact
+                {
+                    Name = "Dercraker",
+                    Url = new Uri("https://github.com/Dercraker")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "MIT License",
+                    Url = new Uri("https://opensource.org/licenses/MIT")
+                }
             });
             c.IncludeXmlComments(xmlPath);
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

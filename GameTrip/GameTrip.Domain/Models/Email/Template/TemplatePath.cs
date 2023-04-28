@@ -1,10 +1,10 @@
 ﻿namespace GameTrip.Domain.Models.Email.Template;
 
-public class TemplatePath
+public class TemplatePath : StringEnum
 {
-    private TemplatePath(string value) => Value = value;
-
-    public string Value { get; private set; }
+    public TemplatePath(string value) : base(value)
+    {
+    }
 
     public static TemplatePath Register => new("RegisterTemplate.html");
     public static TemplatePath FrogotPassword => new("FrogotPasswordTemplate.html");
