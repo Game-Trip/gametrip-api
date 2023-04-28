@@ -1,8 +1,6 @@
 ﻿using GameTrip.API.Models;
-using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models;
 using GameTrip.Platform.IPlatform;
-using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,17 +12,8 @@ namespace GameTrip.API.Controllers;
 public class StartupController : ControllerBase
 {
     private readonly IStartupPlatform _startupPlatform;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMailPlatform _mailPlatform;
-    private readonly IEmailProvider _emailProvider;
 
-    public StartupController(IStartupPlatform startupPlatform, IUnitOfWork unitOfWork, IMailPlatform mailPlatform, IEmailProvider emailProvider)
-    {
-        _startupPlatform = startupPlatform;
-        _unitOfWork = unitOfWork;
-        _mailPlatform = mailPlatform;
-        _emailProvider = emailProvider;
-    }
+    public StartupController(IStartupPlatform startupPlatform) => _startupPlatform = startupPlatform;
 
     [HttpGet]
     [Route("ping")]

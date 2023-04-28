@@ -24,7 +24,7 @@ public class EmailProvider : IEmailProvider
 
     public string? GetTemplate(TemplatePath path)
     {
-        string filePath = Directory.GetCurrentDirectory() + @$"/models/Template/{path}";
+        string filePath = Directory.GetCurrentDirectory() + @$"/Models/Template/{path}";
         return File.Exists(filePath) ? File.ReadAllText(filePath) : null;
     }
 }
