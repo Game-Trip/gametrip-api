@@ -14,11 +14,13 @@ public static class LocationExtension
         Longitude = dto.Longitude
     };
 
-    public static LocationDto ToDTO(this Location location) => new()
+    public static LocationDto ToDto(this Location location) => new()
     {
+        Id = location.IdLocation,
         Name = location.Name,
         Description = location.Description,
         Latitude = location.Latitude,
         Longitude = location.Longitude
     };
+    public static List<LocationDto> ToDtoList(this IEnumerable<Location> location) => location.Select(l => l.ToDto()).ToList();
 }

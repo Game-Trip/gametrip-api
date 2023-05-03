@@ -1,4 +1,5 @@
 ﻿using GameTrip.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace GameTrip.EFCore.Repository;
@@ -16,6 +17,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public IEnumerable<T> Find(Expression<Func<T, bool>> expression) => _context.Set<T>().Where(expression);
 
     public IEnumerable<T> GetAll() => _context.Set<T>().ToList();
+    public async Task<IEnumerable<T>> GetAllAsync() => await _context.Set<T>().ToListAsync();
 
     public T GetById(int id) => _context.Set<T>().Find(id);
 

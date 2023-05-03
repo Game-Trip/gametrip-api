@@ -17,4 +17,6 @@ public class LocationPlatform : ILocationPlarform
         _unitOfWork.Locations.Add(location);
         _unitOfWork.Complet();
     }
+
+    public async Task<IEnumerable<Location>> GetAllLocationAsync() => await _unitOfWork.Locations.GetAllAsync();
 }
