@@ -25,7 +25,7 @@ jobs:
       - name: Checkout GameTrip Client Api Repo
         uses: actions/checkout@v2
         with:
-          repository: https://github.com/Game-Trip/gametrip-api-client.git
+          repository: Game-Trip/gametrip-api-client
           ref: ${{ github.ref_name }}
           path: ./gametrip-api-client
           token: ${{ secrets.DERCRAKER_TOKEN }}
