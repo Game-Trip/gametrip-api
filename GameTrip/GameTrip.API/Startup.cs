@@ -1,6 +1,9 @@
-﻿using FluentValidation.AspNetCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using GameTrip.API.Validator.LocationValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
@@ -228,7 +231,6 @@ internal class Startup
 
         #region Provider
 
-        services.AddScoped<ILocationProvider, LocationProvider>();
         services.AddScoped<IEmailProvider, EmailProvider>();
 
         #endregion Provider
@@ -247,6 +249,10 @@ internal class Startup
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
+
+        #region FluentValidator
+        services.AddScoped<IValidator<LocationDto>, CreateLocationValidator>();
+        #endregion
     }
 
     private void AddIdentity(IServiceCollection services)

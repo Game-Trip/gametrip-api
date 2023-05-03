@@ -1,15 +1,15 @@
-﻿using GameTrip.Domain.Models;
+﻿using GameTrip.Domain.Models.Enum;
 
 namespace GameTrip.Domain.Errors;
 
-public class ErrorReturnDTO
+public class ErrorResultDTO
 {
     public string ErrorCode { get; set; }
     public string Message { get; set; }
 
-    public ErrorReturnDTO(StringEnumError error)
+    public ErrorResultDTO(StringEnumError error)
     {
         ErrorCode = error.Key;
-        Message = error.Value;
+        Message = error.Message;
     }
 }

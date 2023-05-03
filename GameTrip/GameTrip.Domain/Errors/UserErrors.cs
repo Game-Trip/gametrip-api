@@ -1,4 +1,4 @@
-﻿using GameTrip.Domain.Models;
+﻿using GameTrip.Domain.Models.Enum;
 
 namespace GameTrip.Domain.Errors;
 

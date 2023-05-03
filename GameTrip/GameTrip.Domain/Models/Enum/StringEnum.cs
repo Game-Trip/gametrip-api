@@ -1,4 +1,4 @@
-﻿namespace GameTrip.Domain.Models;
+﻿namespace GameTrip.Domain.Models.Enum;
 
 public abstract class StringEnum
 {

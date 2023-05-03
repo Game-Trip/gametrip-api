@@ -1,14 +1,20 @@
 ﻿using GameTrip.Domain.Entities;
+using GameTrip.Domain.Interfaces;
 using GameTrip.Platform.IPlatform;
-using GameTrip.Provider.IProvider;
 
 namespace GameTrip.Platform;
 
 public class LocationPlatform : ILocationPlarform
 {
-    private readonly ILocationProvider _locationProvider;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public LocationPlatform(ILocationProvider locationProvider) => _locationProvider = locationProvider;
+    public LocationPlatform(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-    public Location? GetLocationByName(string name) => _locationProvider.GetLocationByName(name);
+    public Location? GetLocationByName(string name) => _unitOfWork.Locations.GetLocationByName(name);
+    public Location? GetLocationByPosition(decimal latitude, decimal longitude) => _unitOfWork.Locations.GetLocationByPos(latitude, longitude);
+    public void CreateLocation(Location location)
+    {
+        _unitOfWork.Locations.Add(location);
+        _unitOfWork.Complet();
+    }
 }

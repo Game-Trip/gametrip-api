@@ -4,6 +4,7 @@ using GameTrip.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameTrip.EFCore.Migrations
 {
     [DbContext(typeof(GameTripContext))]
-    partial class GameTripContextModelSnapshot : ModelSnapshot
+    [Migration("20230503193703_PosGPX_DoubleToDecimal")]
+    partial class PosGPX_DoubleToDecimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -8,4 +8,7 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
     public LocationRepository(GameTripContext context) : base(context)
     {
     }
+
+    public Location? GetLocationByName(string name) => _context.Location.FirstOrDefault(l => l.Name == name);
+    public Location? GetLocationByPos(decimal latitude, decimal longitude) => _context.Location.FirstOrDefault(l => l.Latitude == latitude && l.Longitude == longitude);
 }

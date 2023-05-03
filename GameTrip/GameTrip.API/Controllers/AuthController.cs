@@ -63,7 +63,7 @@ public class AuthController : ControllerBase
             return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
         }
         else
-            return Unauthorized(new ErrorReturnDTO(UserError.FailedLogin));
+            return Unauthorized(new ErrorResultDTO(UserError.FailedLogin));
     }
 
     [AllowAnonymous]
@@ -76,10 +76,10 @@ public class AuthController : ControllerBase
 
         GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
         if (userExists is not null)
-            return BadRequest(new ErrorReturnDTO(UserError.MailAlreadyExist));
+            return BadRequest(new ErrorResultDTO(UserError.MailAlreadyExist));
         userExists ??= await _userManager.FindByNameAsync(dto.Username);
         if (userExists is not null)
-            return BadRequest(new ErrorReturnDTO(UserError.UserNameAlreadyExist));
+            return BadRequest(new ErrorResultDTO(UserError.UserNameAlreadyExist));
 
         GameTripUser user = new()
         {
@@ -123,7 +123,7 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)
-            return BadRequest(new ErrorReturnDTO(UserError.NotFoundByMail));
+            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
 
         IdentityResult result = await _authPlatform.ConfirmEmailAsync(user, dto.Token);
         if (result.Succeeded)
@@ -142,7 +142,7 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            return BadRequest(new ErrorReturnDTO(UserError.NotFoundByMail));
+            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
 
         string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
 
@@ -176,7 +176,7 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)
-            return BadRequest(new ErrorReturnDTO(UserError.NotFoundByMail));
+            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
 
         IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password, dto.Token);
         if (!result.Succeeded)
