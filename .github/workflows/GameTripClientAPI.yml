@@ -23,7 +23,7 @@ jobs:
         run: echo "npmTag=-Beta" >> $GITHUB_ENV
       
       - name: Checkout GameTrip Client Api Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: Game-Trip/gametrip-api-client
           ref: ${{ github.ref_name }}
