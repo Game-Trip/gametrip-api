@@ -10,8 +10,8 @@ public class LocationPlatform : ILocationPlarform
 
     public LocationPlatform(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-    public Location? GetLocationByName(string name) => _unitOfWork.Locations.GetLocationByName(name);
-    public Location? GetLocationByPosition(decimal latitude, decimal longitude) => _unitOfWork.Locations.GetLocationByPos(latitude, longitude);
+    public async Task<Location?> GetLocationByNameAsync(string name) => await _unitOfWork.Locations.GetLocationByNameAsync(name);
+    public async Task<Location?> GetLocationByPositionAsync(decimal latitude, decimal longitude) => await _unitOfWork.Locations.GetLocationByPosAsync(latitude, longitude);
     public void CreateLocation(Location location)
     {
         _unitOfWork.Locations.Add(location);
@@ -19,4 +19,5 @@ public class LocationPlatform : ILocationPlarform
     }
 
     public async Task<IEnumerable<Location>> GetAllLocationAsync() => await _unitOfWork.Locations.GetAllAsync();
+    public async Task<Location?> GetLocationByIdAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationByIdAsync(locationId);
 }

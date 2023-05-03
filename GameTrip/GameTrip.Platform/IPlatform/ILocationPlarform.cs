@@ -6,6 +6,7 @@ public interface ILocationPlarform
 {
     void CreateLocation(Location location);
     Task<IEnumerable<Location>> GetAllLocationAsync();
-    Location? GetLocationByName(string name);
-    Location? GetLocationByPosition(decimal latitude, decimal longitude);
+    Task<Location?> GetLocationByIdAsync(Guid locationId);
+    Task<Location?> GetLocationByNameAsync(string name);
+    Task<Location?> GetLocationByPositionAsync(decimal latitude, decimal longitude);
 }

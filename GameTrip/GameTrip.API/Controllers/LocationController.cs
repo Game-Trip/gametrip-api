@@ -29,7 +29,7 @@ public class LocationController : ControllerBase
 
     [HttpPost]
     [Route("CreateLocation")]
-    public IActionResult CreateLocation(LocationDto dto)
+    public async Task<IActionResult> CreateLocation(LocationDto dto)
     {
         ValidationResult result = _locationValidator.Validate(dto);
         if (!result.IsValid)
@@ -38,11 +38,11 @@ public class LocationController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        Location? location = _locationPlarform.GetLocationByName(dto.Name);
+        Location? location = await _locationPlarform.GetLocationByNameAsync(dto.Name);
         if (location is not null)
             return BadRequest(new ErrorResultDTO(LocationErrors.AlreadyExistByName));
 
-        location ??= _locationPlarform.GetLocationByPosition(dto.Latitude, dto.Longitude);
+        location ??= await _locationPlarform.GetLocationByPositionAsync(dto.Latitude, dto.Longitude);
         if (location is not null)
             return BadRequest(new ErrorResultDTO(LocationErrors.AlreadyExistByPos));
 
@@ -57,5 +57,20 @@ public class LocationController : ControllerBase
     {
         IEnumerable<Location> locations = await _locationPlarform.GetAllLocationAsync();
         return locations.ToDtoList();
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("Location/id/{locationId}")]
+    public async Task<ActionResult<LocationDto>> LocationByIdAsync([FromRoute] Guid locationId)
+    {
+        Location? location = await _locationPlarform.GetLocationByIdAsync(locationId);
+        if (location is null)
+        {
+            ModelState.AddModelError(LocationErrors.NotFoundById.Key, LocationErrors.NotFoundById.Message);
+            return BadRequest(ModelState);
+        }
+
+        return location.ToDto();
     }
 }

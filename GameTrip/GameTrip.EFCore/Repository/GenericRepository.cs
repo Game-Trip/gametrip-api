@@ -20,7 +20,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task<IEnumerable<T>> GetAllAsync() => await _context.Set<T>().ToListAsync();
 
     public T GetById(int id) => _context.Set<T>().Find(id);
-
     public void Remove(T entity) => _context.Set<T>().Remove(entity);
 
     public void RemoveRange(IEnumerable<T> entities) => _context.Set<T>().RemoveRange(entities);

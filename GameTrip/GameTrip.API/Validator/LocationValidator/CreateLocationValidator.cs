@@ -16,28 +16,28 @@ public class CreateLocationValidator : AbstractValidator<LocationDto>
         RuleFor(location => location.Name)
             .Must(name => name is not null)
             .Unless(location => location is null)
-            .WithErrorCode(LocationErrors.LocationNameCanNotBeNull.Key)
-            .WithMessage(LocationErrors.LocationNameCanNotBeNull.Message);
+            .WithErrorCode(LocationErrors.NameCanNotBeNull.Key)
+            .WithMessage(LocationErrors.NameCanNotBeNull.Message);
 
         RuleFor(location => location.Name)
             .Must(name => !string.IsNullOrWhiteSpace(name))
             .Unless(location => location is null)
             .Unless(location => location.Name is null)
-            .WithErrorCode(LocationErrors.LocationNameCanNotBeEmpty.Key)
-            .WithMessage(LocationErrors.LocationNameCanNotBeEmpty.Message);
+            .WithErrorCode(LocationErrors.NameCanNotBeEmpty.Key)
+            .WithMessage(LocationErrors.NameCanNotBeEmpty.Message);
 
         RuleFor(location => location.Description)
             .Must(name => name is not null)
             .Unless(location => location is null)
-            .WithErrorCode(LocationErrors.LocationNameCanNotBeNull.Key)
-            .WithMessage(LocationErrors.LocationDescriptionCanNotBeNull.Message);
+            .WithErrorCode(LocationErrors.NameCanNotBeNull.Key)
+            .WithMessage(LocationErrors.DescriptionCanNotBeNull.Message);
 
         RuleFor(location => location.Description)
             .Must(name => !string.IsNullOrWhiteSpace(name))
             .Unless(location => location is null)
             .Unless(location => location.Description is null)
-            .WithErrorCode(LocationErrors.LocationNameCanNotBeEmpty.Key)
-            .WithMessage(LocationErrors.LocationDescriptionCanNotBeEmpty.Message);
+            .WithErrorCode(LocationErrors.NameCanNotBeEmpty.Key)
+            .WithMessage(LocationErrors.DescriptionCanNotBeEmpty.Message);
 
         RuleFor(location => location.Latitude)
             .PrecisionScale(15, 12, true)
