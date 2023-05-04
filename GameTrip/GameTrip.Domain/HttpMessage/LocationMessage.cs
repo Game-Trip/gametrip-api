@@ -28,5 +28,5 @@ public class LocationMessage : StringEnumError
     public static LocationMessage AlreadyExistByPos => new("LocationAlreadyExistByPosition", "The location with provided Position already exist");
     public static LocationMessage NotFoundByName => new("LocationNotFoundByName", "No location find with provided Name");
     public static LocationMessage NotFoundById => new("LocationNotFoundById", "No location find with provided Id");
-    public static LocationMessage SuccesDeleted => new("SuccesDeleted", "Location provided as been deleted");
+    public static LocationMessage SuccesDeleted => new("LocationSuccesDeleted", "Location provided as been deleted");
 }

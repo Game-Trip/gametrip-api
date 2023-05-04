@@ -13,7 +13,7 @@ namespace GameTrip.API.Controllers;
 
 [Route("[controller]")]
 #if !DEBUG
-[Authorize]
+[Authorize(Roles = "User")]
 #endif
 [ApiController]
 public class LocationController : ControllerBase
@@ -27,8 +27,9 @@ public class LocationController : ControllerBase
         _locationValidator = (IValidator<CreateLocationDto>?)locationValidator;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    [Route("CreateLocation")]
+    [Route("Location")]
     public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
     {
         ValidationResult result = _locationValidator.Validate(dto);
