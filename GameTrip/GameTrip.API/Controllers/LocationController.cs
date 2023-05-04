@@ -27,9 +27,11 @@ public class LocationController : ControllerBase
         _locationValidator = (IValidator<CreateLocationDto>?)locationValidator;
     }
 
-    [Authorize(Roles = "Admin")]
+#if !DEBUG
+[Authorize(Roles = "Admin")]
+#endif
     [HttpPost]
-    [Route("Location")]
+    [Route("CreateLocation")]
     public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
     {
         ValidationResult result = _locationValidator.Validate(dto);
@@ -47,13 +49,13 @@ public class LocationController : ControllerBase
         if (location is not null)
             return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
 
-        _locationPlarform.CreateLocation(dto.ToEntity());
+        await _locationPlarform.CreateLocationAsync(dto.ToEntity());
         return Ok();
     }
 
     [AllowAnonymous]
     [HttpGet]
-    [Route("Locations")]
+    [Route("")]
     public async Task<ActionResult<List<LocationDto>>> GetLocationsAsync()
     {
         IEnumerable<Location> locations = await _locationPlarform.GetAllLocationAsync();
@@ -62,7 +64,7 @@ public class LocationController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    [Route("Location/Id/{locationId}")]
+    [Route("Id/{locationId}")]
     public async Task<ActionResult<Location>> GetLocationByIdAsync([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlarform.GetLocationByIdAsync(locationId);
@@ -76,7 +78,7 @@ public class LocationController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    [Route("Location/Name/{locationName}")]
+    [Route("Name/{locationName}")]
     public async Task<ActionResult<Location>> GetLocationByNameAsync([FromRoute] string locationName)
     {
         Location? location = await _locationPlarform.GetLocationByNameAsync(locationName);
@@ -89,8 +91,10 @@ public class LocationController : ControllerBase
     }
 
     [HttpDelete]
-    //[Authorize(Roles = "Admin")]
-    [Route("Location/Delete{locationId}")]
+#if !DEBUG
+[Authorize(Roles = "Admin")]
+#endif
+    [Route("Delete/{locationId}")]
     public async Task<ActionResult<Location>> DeleteLocationByIdAsync([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlarform.GetLocationByIdAsync(locationId);
@@ -99,7 +103,7 @@ public class LocationController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
         }
 
-        await _locationPlarform.DeleteLocation(location);
+        await _locationPlarform.DeleteLocationAsync(location);
 
         return Ok(new MessageDto(LocationMessage.SuccesDeleted));
     }
