@@ -12,4 +12,5 @@ public abstract class StringEnumError
     }
 
     public override string ToString() => Message;
+    public string Format(params object?[] args) => string.Format(Message, args);
 }

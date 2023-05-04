@@ -20,7 +20,8 @@ public class GameMessage : StringEnumError
 
     #endregion Validator
 
-    public static GameMessage NotFound => new("GameNotFound", "Game not found");
+    public static GameMessage NotFoundByName => new("GameNotFoundByName", "Game not found with provided Name");
     public static GameMessage AlreadyExist => new("GameAlreadyExist", "Game already exist");
     public static GameMessage Deleted => new("GameDeleted", "Game deleted");
+    public static GameMessage Created => new("GameDeleted", "Game created");
 }

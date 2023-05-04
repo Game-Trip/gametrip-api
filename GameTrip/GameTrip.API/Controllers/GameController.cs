@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GameTrip.Domain.Entities;
+using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Platform.IPlatform;
@@ -38,10 +39,10 @@ public class GameController : ControllerBase
         }
 
         Game? game = await _gamePlatform.GetGameByNameAsync(dto.Name);
-        if (location is not null)
-            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByName));
+        if (game is not null)
+            return BadRequest(new MessageDto(GameMessage.NotFoundByName));
 
-        await _gamePlatform.CreateGameAsync(dto.ToEntity());
-        return Ok();
+        _gamePlatform.CreateGame(dto.ToEntity());
+        return Ok(new MessageDto(GameMessage.Created));
     }
 }

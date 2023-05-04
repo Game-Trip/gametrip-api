@@ -4,7 +4,7 @@ namespace GameTrip.Platform.IPlatform;
 
 public interface IGamePlatform
 {
-    void CreateGameAsync(Game value);
+    void CreateGame(Game value);
 
     Task<Game?> GetGameByNameAsync(string name);
 }

@@ -10,7 +10,7 @@ public class GamePlatform : IGamePlatform
 
     public GamePlatform(IUnitOfWork unitOfWork) => _unitOfWork=unitOfWork;
 
-    public void CreateGameAsync(Game game)
+    public void CreateGame(Game game)
     {
         _unitOfWork.Games.Add(game);
         _unitOfWork.Complet();
