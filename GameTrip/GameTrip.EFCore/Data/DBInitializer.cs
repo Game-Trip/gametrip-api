@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore.Data;
+/// <summary>
+/// The d b initializer.
+/// </summary>
 
 public class DBInitializer
 {
@@ -12,6 +15,12 @@ public class DBInitializer
     private readonly UserManager<GameTripUser> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DBInitializer"/> class.
+    /// </summary>
+    /// <param name="context">The context.</param>
+    /// <param name="userManager">The user manager.</param>
+    /// <param name="roleManager">The role manager.</param>
     public DBInitializer(GameTripContext context, UserManager<GameTripUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
         _context = context;
@@ -19,11 +28,15 @@ public class DBInitializer
         _roleManager = roleManager;
     }
 
+    /// <summary>
+    /// Initializes the.
+    /// </summary>
+    /// <returns>A Task.</returns>
     public async Task<bool> Initialize()
     {
         _context.Database.EnsureCreated();
 
-        if (_context.Roles.Any() || _context.Users.Any() || _context.Location.Any())
+        if (_context.Roles.Any() || _context.Users.Any())
             return false;
 
         //Adding roles

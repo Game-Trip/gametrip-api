@@ -6,7 +6,7 @@ namespace GameTrip.Domain.Extension;
 public static class LocationExtension
 {
 
-    public static Location ToEntity(this LocationDto dto) => new()
+    public static Location ToEntity(this CreateLocationDto dto) => new()
     {
         Name = dto.Name,
         Description = dto.Description,

@@ -2,8 +2,8 @@
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GameTrip.Domain.Entities;
-using GameTrip.Domain.Errors;
 using GameTrip.Domain.Extension;
+using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
@@ -19,17 +19,17 @@ namespace GameTrip.API.Controllers;
 public class LocationController : ControllerBase
 {
     private readonly ILocationPlarform _locationPlarform;
-    private readonly IValidator<LocationDto> _locationValidator;
+    private readonly IValidator<CreateLocationDto> _locationValidator;
 
     public LocationController(ILocationPlarform locationPlarform, IValidator<LocationDto> locationValidator)
     {
         _locationPlarform = locationPlarform;
-        _locationValidator = locationValidator;
+        _locationValidator = (IValidator<CreateLocationDto>?)locationValidator;
     }
 
     [HttpPost]
     [Route("CreateLocation")]
-    public async Task<IActionResult> CreateLocation(LocationDto dto)
+    public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
     {
         ValidationResult result = _locationValidator.Validate(dto);
         if (!result.IsValid)
@@ -40,11 +40,11 @@ public class LocationController : ControllerBase
 
         Location? location = await _locationPlarform.GetLocationByNameAsync(dto.Name);
         if (location is not null)
-            return BadRequest(new ErrorResultDTO(LocationErrors.AlreadyExistByName));
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByName));
 
         location ??= await _locationPlarform.GetLocationByPositionAsync(dto.Latitude, dto.Longitude);
         if (location is not null)
-            return BadRequest(new ErrorResultDTO(LocationErrors.AlreadyExistByPos));
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
 
         _locationPlarform.CreateLocation(dto.ToEntity());
         return Ok();
@@ -53,7 +53,7 @@ public class LocationController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Locations")]
-    public async Task<ActionResult<List<LocationDto>>> LocationsAsync()
+    public async Task<ActionResult<List<LocationDto>>> GetLocationsAsync()
     {
         IEnumerable<Location> locations = await _locationPlarform.GetAllLocationAsync();
         return locations.ToDtoList();
@@ -61,16 +61,45 @@ public class LocationController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    [Route("Location/id/{locationId}")]
-    public async Task<ActionResult<LocationDto>> LocationByIdAsync([FromRoute] Guid locationId)
+    [Route("Location/Id/{locationId}")]
+    public async Task<ActionResult<Location>> GetLocationByIdAsync([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlarform.GetLocationByIdAsync(locationId);
         if (location is null)
         {
-            ModelState.AddModelError(LocationErrors.NotFoundById.Key, LocationErrors.NotFoundById.Message);
-            return BadRequest(ModelState);
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
         }
 
-        return location.ToDto();
+        return location;
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("Location/Name/{locationName}")]
+    public async Task<ActionResult<Location>> GetLocationByNameAsync([FromRoute] string locationName)
+    {
+        Location? location = await _locationPlarform.GetLocationByNameAsync(locationName);
+        if (location is null)
+        {
+            return NotFound(new MessageDto(LocationMessage.NotFoundByName));
+        }
+
+        return location;
+    }
+
+    [HttpDelete]
+    //[Authorize(Roles = "Admin")]
+    [Route("Location/Delete{locationId}")]
+    public async Task<ActionResult<Location>> DeleteLocationByIdAsync([FromRoute] Guid locationId)
+    {
+        Location? location = await _locationPlarform.GetLocationByIdAsync(locationId);
+        if (location is null)
+        {
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+        }
+
+        await _locationPlarform.DeleteLocation(location);
+
+        return Ok(new MessageDto(LocationMessage.SuccesDeleted));
     }
 }

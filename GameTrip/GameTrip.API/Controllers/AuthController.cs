@@ -1,6 +1,7 @@
 ﻿using GameTrip.API.Models.Auth;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Errors;
+using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.Email;
 using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
@@ -14,6 +15,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace GameTrip.API.Controllers;
+/// <summary>
+/// The auth controller.
+/// </summary>
 
 [Consumes("application/json")]
 [Produces("application/json")]
@@ -27,6 +31,13 @@ public class AuthController : ControllerBase
     private readonly IMailPlatform _mailPlatform;
     private readonly IEmailProvider _emailProvider;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthController"/> class.
+    /// </summary>
+    /// <param name="userManager">The user manager.</param>
+    /// <param name="authPlatform">The auth platform.</param>
+    /// <param name="mailPlatform">The mail platform.</param>
+    /// <param name="emailProvider">The email provider.</param>
     public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider)
     {
         _userManager = userManager;
@@ -35,6 +46,11 @@ public class AuthController : ControllerBase
         _emailProvider = emailProvider;
     }
 
+    /// <summary>
+    /// Initializes the.
+    /// </summary>
+    /// <param name="dBInitializer">The d b initializer.</param>
+    /// <returns>A Task.</returns>
     [HttpPost]
     [Route("Initialize")]
     public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)
@@ -45,6 +61,11 @@ public class AuthController : ControllerBase
         return Ok(resultMessage);
     }
 
+    /// <summary>
+    /// Logins the.
+    /// </summary>
+    /// <param name="dto">The dto.</param>
+    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("Login")]
@@ -63,9 +84,14 @@ public class AuthController : ControllerBase
             return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
         }
         else
-            return Unauthorized(new ErrorResultDTO(UserError.FailedLogin));
+            return Unauthorized(new MessageDto(UserMessage.FailedLogin));
     }
 
+    /// <summary>
+    /// Registers the.
+    /// </summary>
+    /// <param name="dto">The dto.</param>
+    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("Register")]
@@ -76,10 +102,10 @@ public class AuthController : ControllerBase
 
         GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
         if (userExists is not null)
-            return BadRequest(new ErrorResultDTO(UserError.MailAlreadyExist));
+            return BadRequest(new MessageDto(UserMessage.MailAlreadyExist));
         userExists ??= await _userManager.FindByNameAsync(dto.Username);
         if (userExists is not null)
-            return BadRequest(new ErrorResultDTO(UserError.UserNameAlreadyExist));
+            return BadRequest(new MessageDto(UserMessage.UserNameAlreadyExist));
 
         GameTripUser user = new()
         {
@@ -95,7 +121,7 @@ public class AuthController : ControllerBase
 
         string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
         if (emailTemplateText is null)
-            throw new FileNotFoundException(TemplateErrors.TemplateRegisterNotFound.ToString());
+            throw new FileNotFoundException(TemplateMessage.TemplateRegisterNotFound.ToString());
 
         emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
         emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
@@ -113,6 +139,11 @@ public class AuthController : ControllerBase
         return Ok(user.ToDTO());
     }
 
+    /// <summary>
+    /// Confirms the email.
+    /// </summary>
+    /// <param name="dto">The dto.</param>
+    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("ConfirmEmail")]
@@ -123,7 +154,7 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)
-            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
+            return BadRequest(new MessageDto(UserMessage.NotFoundByMail));
 
         IdentityResult result = await _authPlatform.ConfirmEmailAsync(user, dto.Token);
         if (result.Succeeded)
@@ -132,6 +163,11 @@ public class AuthController : ControllerBase
         return result.Succeeded ? Ok() : Unauthorized();
     }
 
+    /// <summary>
+    /// Frogots the password.
+    /// </summary>
+    /// <param name="dto">The dto.</param>
+    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("FrogotPassword")]
@@ -142,13 +178,13 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
+            return BadRequest(new MessageDto(UserMessage.NotFoundByMail));
 
         string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
 
         string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.FrogotPassword)!;
         if (emailTemplateText is null)
-            throw new FileNotFoundException(TemplateErrors.TemplateFrogotPasswordNotFound.ToString());
+            throw new FileNotFoundException(TemplateMessage.TemplateFrogotPasswordNotFound.ToString());
 
         emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
         emailTemplateText = emailTemplateText.Replace("{1}", resetPasswordLink);
@@ -166,6 +202,11 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Resets the password.
+    /// </summary>
+    /// <param name="dto">The dto.</param>
+    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("ResetPassword")]
@@ -176,7 +217,7 @@ public class AuthController : ControllerBase
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)
-            return BadRequest(new ErrorResultDTO(UserError.NotFoundByMail));
+            return BadRequest(new MessageDto(UserMessage.NotFoundByMail));
 
         IdentityResult? result = await _authPlatform.ResetPasswordAsync(user, dto.Password, dto.Token);
         if (!result.Succeeded)

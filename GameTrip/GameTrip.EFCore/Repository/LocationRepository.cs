@@ -15,11 +15,13 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
                                                                                                  .Include(l => l.Comments)
                                                                                                  .Include(l => l.LikedLocations)
                                                                                                  .FirstOrDefaultAsync(l => l.IdLocation == locationId);
+
     public async Task<Location?> GetLocationByNameAsync(string name) => await _context.Location.Include(l => l.Pictures)
                                                                         .Include(l => l.Games)
                                                                         .Include(l => l.Comments)
                                                                         .Include(l => l.LikedLocations)
                                                                         .FirstOrDefaultAsync(l => l.Name == name);
+
     public async Task<Location?> GetLocationByPosAsync(decimal latitude, decimal longitude) => await _context.Location.Include(l => l.Pictures)
                                                                                                .Include(l => l.Games)
                                                                                                .Include(l => l.Comments)
