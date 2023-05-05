@@ -251,6 +251,7 @@ internal class Startup
         #region FluentValidator
 
         services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
+        services.AddScoped<IValidator<UpdateLocationDto>, UpdateLocationValidator>();
         services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
         services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
 

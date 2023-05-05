@@ -1,5 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Platform.IPlatform;
 
 namespace GameTrip.Platform;
@@ -32,4 +33,10 @@ public class LocationPlatform : ILocationPlarform
 
     public Task<IEnumerable<Location?>> GetLocationByGameIdAsync(Guid idGame) => _unitOfWork.Locations.GetLocationByGameIdAsync(idGame);
     public Task<IEnumerable<Location?>> GetLocationByGameNameAsync(string gameName) => _unitOfWork.Locations.GetLocationByGameNameAsync(gameName);
+    public async Task<Location> UpdateLocationAsync(Location entity, UpdateLocationDto dto)
+    {
+        Location location = await _unitOfWork.Locations.UpdateLocationAsync(entity, dto);
+        await _unitOfWork.CompletAsync();
+        return location;
+    }
 }

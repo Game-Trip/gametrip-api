@@ -20,13 +20,15 @@ public class LocationController : ControllerBase
 {
     private readonly ILocationPlarform _locationPlatform;
     private readonly IGamePlatform _gamePlatform;
-    private readonly IValidator<CreateLocationDto> _locationValidator;
+    private readonly IValidator<CreateLocationDto> _createLocationValidator;
+    private readonly IValidator<UpdateLocationDto> _updateLocationValidator;
 
-    public LocationController(ILocationPlarform locationPlarform, IValidator<CreateLocationDto> locationValidator, IGamePlatform gamePlatform)
+    public LocationController(ILocationPlarform locationPlarform, IValidator<CreateLocationDto> locationValidator, IGamePlatform gamePlatform, IValidator<UpdateLocationDto> updateLocationValidator)
     {
         _locationPlatform = locationPlarform;
-        _locationValidator = locationValidator;
-        _gamePlatform=gamePlatform;
+        _createLocationValidator = locationValidator;
+        _gamePlatform = gamePlatform;
+        _updateLocationValidator = updateLocationValidator;
     }
 
     [Authorize(Roles = Roles.User)]
@@ -34,7 +36,7 @@ public class LocationController : ControllerBase
     [Route("CreateLocation")]
     public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
     {
-        ValidationResult result = _locationValidator.Validate(dto);
+        ValidationResult result = _createLocationValidator.Validate(dto);
         if (!result.IsValid)
         {
             result.AddToModelState(this.ModelState);
@@ -129,13 +131,12 @@ public class LocationController : ControllerBase
     [Route("{locationId}")]
     public async Task<ActionResult<GameDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto)
     {
-        //Create Validator
-        //ValidationResult result = _updateGameValidator.Validate(dto);
-        //if (!result.IsValid)
-        //{
-        //    result.AddToModelState(ModelState);
-        //    return BadRequest(ModelState);
-        //}
+        ValidationResult result = _updateLocationValidator.Validate(dto);
+        if (!result.IsValid)
+        {
+            result.AddToModelState(ModelState);
+            return BadRequest(ModelState);
+        }
 
         if (locationId != dto.LocationId)
             return BadRequest(new MessageDto(LocationMessage.IdWithQueryAndDtoAreDifferent));
@@ -143,9 +144,9 @@ public class LocationController : ControllerBase
         Location? entity = await _locationPlatform.GetLocationByIdAsync(dto.LocationId);
         if (entity is null)
             return BadRequest(new MessageDto(LocationMessage.NotFoundById));
-        //Todo change this
-        Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
-        return Ok(game.ToDto());
+
+        Location location = await _locationPlatform.UpdateLocationAsync(entity, dto);
+        return Ok(location.ToDto());
     }
 
     [HttpDelete]

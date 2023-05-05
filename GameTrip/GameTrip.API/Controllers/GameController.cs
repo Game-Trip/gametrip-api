@@ -27,7 +27,7 @@ public class GameController : ControllerBase
         _createGameValidator = createGameValidator;
         _gamePlatform = gamePlatform;
         _locationPlatform = locationPlarform;
-        _updateGameValidator=(IValidator<UpdateGameDto>?)updateGameValidator;
+        _updateGameValidator = (IValidator<UpdateGameDto>?)updateGameValidator;
     }
 
     [Authorize(Roles = Roles.User)]
@@ -97,7 +97,7 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
 
         IEnumerable<Game?> games = await _gamePlatform.GetGamesByLocationIdAsync(location.IdLocation);
-        if (games.Any())
+        if (!games.Any())
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationId));
 
         return games.ToDtoList();
@@ -113,7 +113,7 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundByName));
 
         IEnumerable<Game?> game = await _gamePlatform.GetGamesByLocationNameAsync(locationName);
-        if (game.Any())
+        if (!game.Any())
         {
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationName));
         }

@@ -1,5 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.LocationModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore.Repository;
@@ -35,5 +36,14 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
                                                                                                .Include(l => l.LikedLocations)
                                                                                                .FirstOrDefaultAsync(l => l.Latitude == latitude && l.Longitude == longitude);
     public void RemoveGameToLocation(Game game, Location location) => location.Games!.Remove(game);
+    public async Task<Location> UpdateLocationAsync(Location entity, UpdateLocationDto dto)
+    {
+        entity.Name = dto.Name;
+        entity.Description = dto.Description;
+        entity.Latitude = dto.Latitude;
+        entity.Longitude = dto.Longitude;
 
+        await _context.SaveChangesAsync();
+        return entity;
+    }
 }
