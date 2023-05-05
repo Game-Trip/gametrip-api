@@ -29,4 +29,7 @@ public class LocationPlatform : ILocationPlarform
         _unitOfWork.Locations.Remove(location);
         await _unitOfWork.CompletAsync();
     }
+
+    public Task<IEnumerable<Location?>> GetLocationByGameIdAsync(Guid idGame) => _unitOfWork.Locations.GetLocationByGameIdAsync(idGame);
+    public Task<IEnumerable<Location?>> GetLocationByGameNameAsync(string gameName) => _unitOfWork.Locations.GetLocationByGameNameAsync(gameName);
 }

@@ -11,7 +11,12 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
     }
 
     public void AddGameToLocation(Game game, Location location) => location.Games!.Add(game);
-
+    public async Task<IEnumerable<Location?>> GetLocationByGameIdAsync(Guid idGame) => await _context.Location.Include(l => l.Games)
+                                                                                                              .Where(l => l.Games.Any(gl => gl.IdGame == idGame))
+                                                                                                              .ToListAsync();
+    public async Task<IEnumerable<Location?>> GetLocationByGameNameAsync(string gameName) => await _context.Location.Include(l => l.Games)
+                                                                                                              .Where(l => l.Games.Any(gl => gl.Name == gameName))
+                                                                                                              .ToListAsync();
     public async Task<Location?> GetLocationByIdAsync(Guid locationId) => await _context.Location.Include(l => l.Pictures)
                                                                                                  .Include(l => l.Games)
                                                                                                  .Include(l => l.Comments)
