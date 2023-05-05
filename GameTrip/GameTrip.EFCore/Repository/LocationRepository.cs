@@ -10,6 +10,8 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
     {
     }
 
+    public void AddGameToLocation(Game game, Location location) => location.Games!.Add(game);
+
     public async Task<Location?> GetLocationByIdAsync(Guid locationId) => await _context.Location.Include(l => l.Pictures)
                                                                                                  .Include(l => l.Games)
                                                                                                  .Include(l => l.Comments)
@@ -27,4 +29,6 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
                                                                                                .Include(l => l.Comments)
                                                                                                .Include(l => l.LikedLocations)
                                                                                                .FirstOrDefaultAsync(l => l.Latitude == latitude && l.Longitude == longitude);
+    public void RemoveGameToLocation(Game game, Location location) => location.Games!.Remove(game);
+
 }

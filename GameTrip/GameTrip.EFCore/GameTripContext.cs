@@ -57,12 +57,10 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         builder.Entity<LikedGame>(lg =>
         {
             lg.HasKey(lg => lg.IdLikedGame);
+            lg.Property(lg => lg.vote).HasPrecision(2, 1);
         });
 
-        builder.Entity<LikedLocation>(ll =>
-        {
-            ll.HasKey(ll => ll.IdLikedLocation);
-        });
+        builder.Entity<LikedLocation>(ll => ll.HasKey(ll => ll.IdLikedLocation));
 
         builder.Entity<Location>(l =>
         {

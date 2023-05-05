@@ -27,4 +27,6 @@ public class GameMessage : StringEnumError
     public static GameMessage AlreadyExist => new("GameAlreadyExist", "Game already exist");
     public static GameMessage SuccesDeleted => new("GameDeleted", "Game deleted");
     public static GameMessage SuccesCreated => new("GameDeleted", "Game created");
+    public static GameMessage AddedToLocation => new("GameAddedToLocation", "The provided Game has been added to provided location");
+    public static GameMessage RemovedToLocation => new("GameRemovedToLocation", "The provided Game has been removed to provided location");
 }

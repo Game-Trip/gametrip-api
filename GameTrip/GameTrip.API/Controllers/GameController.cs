@@ -32,6 +32,7 @@ public class GameController : ControllerBase
 #if !DEBUG
 [Authorize(Roles = "Admin")]
 #endif
+
     [HttpPost]
     [Route("CreateGame")]
     public async Task<ActionResult<Game>> CreateGame(CreateGameDto dto)
@@ -120,6 +121,88 @@ public class GameController : ControllerBase
         }
 
         return game.ToDtoList();
+    }
+
+#if !DEBUG
+    [Authorize(Roles = "User")]
+#endif
+
+    [HttpPost]
+    [Route("AddGameToLocation/Game/{gameId}/Location/{locationId}")]
+    public async Task<IActionResult> AddGameToLocationByIdAsync([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    {
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
+        if (location is null)
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+
+        if (location.Games!.Contains(game))
+            return BadRequest(new MessageDto(LocationMessage.AlreadyContainGameById));
+
+        await _gamePlatform.AddGameToLocationByIdAsync(game, location);
+        return Ok(new MessageDto(GameMessage.AddedToLocation));
+    }
+
+#if !DEBUG
+    [Authorize(Roles = "User")]
+#endif
+
+    [HttpPost]
+    [Route("RemoveGameToLocation/Game/{gameId}/Location/{locationId}")]
+    public async Task<IActionResult> RemoveGameToLocationByIdAsync([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    {
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
+        if (location is null)
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+
+        if (!location.Games!.Contains(game))
+            return BadRequest(new MessageDto(LocationMessage.NotContainGameById));
+
+        await _gamePlatform.RemoveGameToLocationByIdAsync(game, location);
+        return Ok(new MessageDto(GameMessage.RemovedToLocation));
+    }
+
+    //Todo à test le sort
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("SortLikedCount")]
+    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeCountAsync([FromQuery] int? limit, [FromQuery] bool? asc = true)
+    {
+        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
+        if (limit is not null)
+            games = _gamePlatform.LimitList(games, (int)limit);
+
+        games.OrderBy(g => g.LikedGames.Count());
+
+        if (asc is false)
+            games.Reverse();
+
+        return games.ToDtoList();
+    }
+
+    //Todo à test le sort
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("SortLikedValue")]
+    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeScoreAsync([FromQuery] int? limit, [FromQuery] bool? asc = true)
+    {
+        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
+        if (limit is not null)
+            games = _gamePlatform.LimitList(games, (int)limit);
+
+        games = _gamePlatform.SortLikedGamesByScore(games);
+
+        if (asc is false)
+            games.Reverse();
+
+        return games.ToDtoList();
     }
 
     [HttpDelete]

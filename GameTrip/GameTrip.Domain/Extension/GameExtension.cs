@@ -2,6 +2,7 @@
 using GameTrip.Domain.Models.GameModels;
 
 namespace GameTrip.Domain.Extension;
+
 public static class GameExtension
 {
     public static Game ToEntity(this CreateGameDto dto)
@@ -23,7 +24,7 @@ public static class GameExtension
             Description = game.Description,
             Editor = game.Editor,
             ReleaseDate = game.ReleaseDate,
-            Locations = game.Locations,
+            Locations = game.Locations.ToDtoList(),
             Pictures = game.Pictures,
             LikedGames = game.LikedGames,
         };

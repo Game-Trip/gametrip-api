@@ -21,15 +21,16 @@ public class LocationController : ControllerBase
     private readonly ILocationPlarform _locationPlarform;
     private readonly IValidator<CreateLocationDto> _locationValidator;
 
-    public LocationController(ILocationPlarform locationPlarform, IValidator<LocationDto> locationValidator)
+    public LocationController(ILocationPlarform locationPlarform, IValidator<CreateLocationDto> locationValidator)
     {
         _locationPlarform = locationPlarform;
-        _locationValidator = (IValidator<CreateLocationDto>?)locationValidator;
+        _locationValidator = locationValidator;
     }
 
 #if !DEBUG
 [Authorize(Roles = "Admin")]
 #endif
+
     [HttpPost]
     [Route("CreateLocation")]
     public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
@@ -62,6 +63,7 @@ public class LocationController : ControllerBase
         return locations.ToDtoList();
     }
 
+    //TODO fix loop DTO
     [AllowAnonymous]
     [HttpGet]
     [Route("Id/{locationId}")]
@@ -76,6 +78,7 @@ public class LocationController : ControllerBase
         return location;
     }
 
+    //TODO fix loop DTO
     [AllowAnonymous]
     [HttpGet]
     [Route("Name/{locationName}")]
