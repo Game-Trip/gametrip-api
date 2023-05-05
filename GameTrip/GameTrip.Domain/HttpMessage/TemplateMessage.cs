@@ -9,5 +9,5 @@ public class TemplateMessage : StringEnumError
     }
 
     public static TemplateMessage TemplateRegisterNotFound => new("TemplateRegisterNotFound", "Template file, Register not found");
-    public static TemplateMessage TemplateFrogotPasswordNotFound => new("FrogotPassword", "Template file, FrogotPassword not found");
+    public static TemplateMessage TemplateForgotPasswordNotFound => new("FrogotPassword", "Template file, FrogotPassword not found");
 }

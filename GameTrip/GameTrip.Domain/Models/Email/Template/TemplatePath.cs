@@ -9,7 +9,7 @@ public class TemplatePath : StringEnum
     }
 
     public static TemplatePath Register => new("RegisterTemplate.html");
-    public static TemplatePath FrogotPassword => new("FrogotPasswordTemplate.html");
+    public static TemplatePath ForgotPassword => new("FrogotPasswordTemplate.html");
 
     public override string ToString() => Value;
 }

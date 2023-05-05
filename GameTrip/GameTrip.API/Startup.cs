@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using GameTrip.API.Validator.AuthValidator;
 using GameTrip.API.Validator.GameValidator;
 using GameTrip.API.Validator.LocationValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
@@ -248,14 +250,29 @@ internal class Startup
 
         #endregion Settings
 
-        #region FluentValidator
+        #region Auth&UserValidator
+
+        services.AddScoped<IValidator<LoginDto>, LoginValidator>();
+        services.AddScoped<IValidator<RegisterDto>, RegisterValidator>();
+        services.AddScoped<IValidator<ConfirmMailDto>, ConfirmEmailValidator>();
+        services.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
+        services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
+
+        #endregion Auth&UserValidator
+
+        #region LocationValidator
 
         services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
         services.AddScoped<IValidator<UpdateLocationDto>, UpdateLocationValidator>();
+
+        #endregion LocationValidator
+
+        #region GameValidator
+
         services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
         services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
 
-        #endregion FluentValidator
+        #endregion GameValidator
     }
 
     private void AddIdentity(IServiceCollection services)

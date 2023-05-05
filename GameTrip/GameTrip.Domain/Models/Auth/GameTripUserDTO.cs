@@ -1,10 +1,10 @@
 ﻿using GameTrip.Domain.Entities;
 
-namespace GameTrip.API.Models.Auth;
+namespace GameTrip.Domain.Models.Auth;
 
-public class GameTripUserDTO
+public class GameTripUserDto
 {
-    public GameTripUserDTO(string userName, string email)
+    public GameTripUserDto(string userName, string email)
     {
         UserName = userName;
         Email = email;
@@ -16,5 +16,5 @@ public class GameTripUserDTO
 
 public static class GameTripUserDTOMapper
 {
-    public static GameTripUserDTO ToDTO(this GameTripUser user) => new(user.UserName, user.Email);
+    public static GameTripUserDto ToDTO(this GameTripUser user) => new(user.UserName, user.Email);
 }

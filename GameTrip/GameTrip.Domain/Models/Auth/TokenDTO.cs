@@ -1,16 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GameTrip.API.Models.Auth;
+namespace GameTrip.Domain.Models.Auth;
 
-public class TokenDTO
+public class TokenDto
 {
-    public TokenDTO(string token, DateTime expirationDate)
+    public TokenDto(string token, DateTime expirationDate)
     {
         Token = token;
         ExpirationDate = expirationDate;
     }
 
-    public TokenDTO(string token)
+    public TokenDto(string token)
     {
         Token = token;
         ExpirationDate = null;
