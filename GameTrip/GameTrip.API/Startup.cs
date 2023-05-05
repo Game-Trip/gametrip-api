@@ -1,6 +1,11 @@
-﻿using FluentValidation.AspNetCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using GameTrip.API.Validator.GameValidator;
+using GameTrip.API.Validator.LocationValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
@@ -123,12 +128,10 @@ internal class Startup
 
         app.UseCors();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
 
         ILogger<Program> logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
@@ -186,10 +189,7 @@ internal class Startup
                 .Build();
         });
 
-        services.Configure<DataProtectionTokenProviderOptions>(o =>
-        {
-            o.TokenLifespan = TimeSpan.FromHours(1);
-        });
+        services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(1));
     }
 
     private void AddDatabase(IServiceCollection services)
@@ -220,15 +220,15 @@ internal class Startup
 
         #region Platform
 
-        services.AddScoped<IStartupPlatform, StartupPlatform>();
         services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<ILocationPlarform, LocationPlatform>();
+        services.AddScoped<IGamePlatform, GamePlatform>();
         services.AddScoped<IMailPlatform, MailPlatform>();
 
         #endregion Platform
 
         #region Provider
 
-        services.AddScoped<IStartupProvider, StartupProvider>();
         services.AddScoped<IEmailProvider, EmailProvider>();
 
         #endregion Provider
@@ -247,6 +247,15 @@ internal class Startup
         services.AddScoped<DBInitializer>();
 
         #endregion Settings
+
+        #region FluentValidator
+
+        services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
+        services.AddScoped<IValidator<UpdateLocationDto>, UpdateLocationValidator>();
+        services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
+        services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
+
+        #endregion FluentValidator
     }
 
     private void AddIdentity(IServiceCollection services)

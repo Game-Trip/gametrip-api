@@ -4,6 +4,7 @@ using GameTrip.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameTrip.EFCore.Migrations
 {
     [DbContext(typeof(GameTripContext))]
-    partial class GameTripContextModelSnapshot : ModelSnapshot
+    [Migration("20230504213222_updateGameEntity")]
+    partial class updateGameEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,7 +84,6 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<long?>("ReleaseDate")
-                        .HasPrecision(9)
                         .HasColumnType("bigint");
 
                     b.HasKey("IdGame");
@@ -167,9 +169,8 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("vote")
-                        .HasPrecision(2, 1)
-                        .HasColumnType("decimal(2,1)");
+                    b.Property<int>("vote")
+                        .HasColumnType("int");
 
                     b.HasKey("IdLikedGame");
 

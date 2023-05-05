@@ -49,6 +49,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             g.Property(g => g.Name).HasMaxLength(255);
             g.Property(g => g.Description).HasMaxLength(255);
             g.Property(g => g.Editor).HasMaxLength(255);
+            g.Property(g => g.ReleaseDate).HasPrecision(9);
 
             g.HasMany(g => g.Pictures).WithOne(p => p.Game).HasForeignKey(p => p.GameId).OnDelete(DeleteBehavior.Cascade);
             g.HasMany(g => g.LikedGames).WithOne(lg => lg.Game).HasForeignKey(lg => lg.GameId).OnDelete(DeleteBehavior.Cascade);
@@ -57,12 +58,10 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         builder.Entity<LikedGame>(lg =>
         {
             lg.HasKey(lg => lg.IdLikedGame);
+            lg.Property(lg => lg.vote).HasPrecision(2, 1);
         });
 
-        builder.Entity<LikedLocation>(ll =>
-        {
-            ll.HasKey(ll => ll.IdLikedLocation);
-        });
+        builder.Entity<LikedLocation>(ll => ll.HasKey(ll => ll.IdLikedLocation));
 
         builder.Entity<Location>(l =>
         {

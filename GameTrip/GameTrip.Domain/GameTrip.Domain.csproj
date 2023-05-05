@@ -62,9 +62,6 @@
     <Compile Update="Models\Email\Template\TemplatePath.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\testModel.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
     <Compile Update="Settings\JWTSettings.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>

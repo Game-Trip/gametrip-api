@@ -1,4 +1,6 @@
-﻿namespace GameTrip.Domain.Models.Email.Template;
+﻿using GameTrip.Domain.Models.Enum;
+
+namespace GameTrip.Domain.Models.Email.Template;
 
 public class TemplatePath : StringEnum
 {
