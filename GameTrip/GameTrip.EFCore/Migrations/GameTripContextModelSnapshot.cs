@@ -17,7 +17,7 @@ namespace GameTrip.EFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -47,7 +47,6 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -70,21 +69,19 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Editor")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("RealaseDate")
+                    b.Property<long?>("ReleaseDate")
+                        .HasPrecision(9)
                         .HasColumnType("bigint");
 
                     b.HasKey("IdGame");
@@ -170,8 +167,9 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("vote")
-                        .HasColumnType("int");
+                    b.Property<decimal>("vote")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
 
                     b.HasKey("IdLikedGame");
 
@@ -213,20 +211,18 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<double>("Latitude")
+                    b.Property<decimal>("Latitude")
                         .HasPrecision(18, 12)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("decimal(18,12)");
 
-                    b.Property<double>("Longitude")
+                    b.Property<decimal>("Longitude")
                         .HasPrecision(18, 12)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("decimal(18,12)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -242,7 +238,6 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -253,12 +248,10 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Path")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
