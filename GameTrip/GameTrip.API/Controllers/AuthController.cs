@@ -1,7 +1,10 @@
-using GameTrip.API.Models.Auth;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Errors;
 using GameTrip.Domain.HttpMessage;
+using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.Email;
 using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
@@ -30,6 +33,11 @@ public class AuthController : ControllerBase
     private readonly IAuthPlatform _authPlatform;
     private readonly IMailPlatform _mailPlatform;
     private readonly IEmailProvider _emailProvider;
+    private readonly IValidator<LoginDto> _loginValidator;
+    private readonly IValidator<RegisterDto> _registerValidator;
+    private readonly IValidator<ConfirmMailDto> _confirmMailValidator;
+    private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
+    private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AuthController"/> class.
@@ -38,14 +46,24 @@ public class AuthController : ControllerBase
     /// <param name="authPlatform">The auth platform.</param>
     /// <param name="mailPlatform">The mail platform.</param>
     /// <param name="emailProvider">The email provider.</param>
-    public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider)
+    /// <param name="forgotPasswordValidator"></param>
+    /// <param name="resetPasswordValidator"></param>
+    /// <param name="confirmMailValidator"></param>
+    /// <param name="registerValidator"></param>
+    /// <param name="loginValidator"></param>
+    public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ConfirmMailDto> confirmMailValidator, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
     {
         _userManager = userManager;
         _authPlatform = authPlatform;
         _mailPlatform = mailPlatform;
         _emailProvider = emailProvider;
+        _forgotPasswordValidator = forgotPasswordValidator;
+        _resetPasswordValidator = resetPasswordValidator;
+        _confirmMailValidator = confirmMailValidator;
+        _registerValidator = registerValidator;
+        _loginValidator = loginValidator;
     }
-    
+
     [AllowAnonymous]
     [HttpPost]
     [Route("Initialize")]
@@ -71,10 +89,14 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     [Route("Login")]
-    public async Task<ActionResult<TokenDTO>> Login([FromBody] LoginDTO dto)
+    public async Task<ActionResult<TokenDto>> Login([FromBody] LoginDto dto)
     {
-        if (!ModelState.IsValid)
+        ValidationResult resultValidation = _loginValidator.Validate(dto);
+        if (!resultValidation.IsValid)
+        {
+            resultValidation.AddToModelState(ModelState);
             return BadRequest(ModelState);
+        }
 
         GameTripUser? user = await _userManager.FindByNameAsync(dto.Username);
         user ??= await _userManager.FindByEmailAsync(dto.Username);
@@ -83,24 +105,23 @@ public class AuthController : ControllerBase
         {
             JwtSecurityTokenHandler tokenHandler = new();
             SecurityToken token = await _authPlatform.CreateTokenAsync(user);
-            return Ok(new TokenDTO(tokenHandler.WriteToken(token), token.ValidTo));
+            return Ok(new TokenDto(tokenHandler.WriteToken(token), token.ValidTo));
         }
         else
             return Unauthorized(new MessageDto(UserMessage.FailedLogin));
     }
 
-    /// <summary>
-    /// Registers the.
-    /// </summary>
-    /// <param name="dto">The dto.</param>
-    /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("Register")]
-    public async Task<ActionResult<GameTripUserDTO>> Register([FromBody] RegisterDTO dto)
+    public async Task<ActionResult<GameTripUserDto>> Register([FromBody] RegisterDto dto)
     {
-        if (!ModelState.IsValid)
+        ValidationResult resultValidation = _registerValidator.Validate(dto);
+        if (!resultValidation.IsValid)
+        {
+            resultValidation.AddToModelState(ModelState);
             return BadRequest(ModelState);
+        }
 
         GameTripUser? userExists = await _userManager.FindByEmailAsync(dto.Email);
         if (userExists is not null)
@@ -151,8 +172,12 @@ public class AuthController : ControllerBase
     [Route("ConfirmEmail")]
     public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmMailDto dto)
     {
-        if (!ModelState.IsValid)
+        ValidationResult resultValidation = _confirmMailValidator.Validate(dto);
+        if (!resultValidation.IsValid)
+        {
+            resultValidation.AddToModelState(ModelState);
             return BadRequest(ModelState);
+        }
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)
@@ -172,11 +197,15 @@ public class AuthController : ControllerBase
     /// <returns>A Task.</returns>
     [AllowAnonymous]
     [HttpPost]
-    [Route("FrogotPassword")]
-    public async Task<IActionResult> FrogotPassword([FromBody] FrogotPasswordDto dto)
+    [Route("ForgotPassword")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
     {
-        if (!ModelState.IsValid)
+        ValidationResult result = _forgotPasswordValidator.Validate(dto);
+        if (!result.IsValid)
+        {
+            result.AddToModelState(ModelState);
             return BadRequest(ModelState);
+        }
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
@@ -184,9 +213,9 @@ public class AuthController : ControllerBase
 
         string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
 
-        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.FrogotPassword)!;
+        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.ForgotPassword)!;
         if (emailTemplateText is null)
-            throw new FileNotFoundException(TemplateMessage.TemplateFrogotPasswordNotFound.ToString());
+            throw new FileNotFoundException(TemplateMessage.TemplateForgotPasswordNotFound.ToString());
 
         emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
         emailTemplateText = emailTemplateText.Replace("{1}", resetPasswordLink);
@@ -212,10 +241,14 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     [Route("ResetPassword")]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
     {
-        if (!ModelState.IsValid)
+        ValidationResult resultValidation = _resetPasswordValidator.Validate(dto);
+        if (!resultValidation.IsValid)
+        {
+            resultValidation.AddToModelState(ModelState);
             return BadRequest(ModelState);
+        }
 
         GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
         if (user is null)

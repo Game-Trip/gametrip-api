@@ -1,12 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace GameTrip.Domain.Models.Auth;
 
-namespace GameTrip.API.Models.Auth;
-
-public class FrogotPasswordDto
+public class ForgotPasswordDto
 {
-    [Required]
-    [EmailAddress]
-    public string Email { get; }
+    public ForgotPasswordDto(string email) => Email = email;
 
-    public FrogotPasswordDto(string email) => Email = email;
+    public string Email { get; }
 }

@@ -1,19 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace GameTrip.Domain.Models.Auth;
 
-namespace GameTrip.API.Models.Auth;
-
-public class LoginDTO
+public class LoginDto
 {
-    public LoginDTO(string username, string password)
+    public LoginDto(string username, string password)
     {
         Username = username;
         Password = password;
     }
 
-    [Required]
     public string Username { get; }
-
-    [Required]
-    [DataType(DataType.Password)]
     public string Password { get; }
 }

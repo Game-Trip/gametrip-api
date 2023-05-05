@@ -9,47 +9,53 @@ public class CreateGameValidator : AbstractValidator<CreateGameDto>
     public CreateGameValidator()
     {
         RuleFor(game => game)
-            .Must(game => game is not null)
+            .NotNull().NotEmpty()
             .WithErrorCode(GameMessage.GameCanNotBeNull.Key)
             .WithMessage(GameMessage.GameCanNotBeNull.Message);
 
+        #region Name
         RuleFor(game => game.Name)
-            .Must(name => name is not null)
+            .NotNull()
             .Unless(location => location is null)
             .WithErrorCode(GameMessage.NameCanNotBeNull.Key)
             .WithMessage(GameMessage.NameCanNotBeNull.Message);
 
         RuleFor(game => game.Name)
-            .Must(name => !string.IsNullOrWhiteSpace(name))
+            .NotEmpty()
             .Unless(game => game is null)
             .Unless(game => game.Name is null)
             .WithErrorCode(GameMessage.NameCanNotBeEmpty.Key)
             .WithMessage(GameMessage.NameCanNotBeEmpty.Message);
+        #endregion
 
+        #region Description
         RuleFor(game => game.Description)
-            .Must(desc => desc is not null)
+            .NotNull()
             .Unless(location => location is null)
             .WithErrorCode(GameMessage.DescriptionCanNotBeNull.Key)
             .WithMessage(GameMessage.DescriptionCanNotBeNull.Message);
 
         RuleFor(game => game.Description)
-            .Must(desc => !string.IsNullOrWhiteSpace(desc))
+            .NotEmpty()
             .Unless(game => game is null)
             .Unless(game => game.Description is null)
             .WithErrorCode(GameMessage.DescriptionCanNotBeEmpty.Key)
             .WithMessage(GameMessage.DescriptionCanNotBeEmpty.Message);
+        #endregion
 
+        #region Editor
         RuleFor(game => game.Editor)
-            .Must(editor => editor is not null)
+            .NotNull()
             .Unless(location => location is null)
             .WithErrorCode(GameMessage.EditorCanNotBeNull.Key)
             .WithMessage(GameMessage.EditorCanNotBeNull.Message);
 
         RuleFor(game => game.Editor)
-            .Must(editor => !string.IsNullOrWhiteSpace(editor))
+            .NotEmpty()
             .Unless(game => game is null)
             .Unless(game => game.Editor is null)
             .WithErrorCode(GameMessage.EditorCanNotBeEmpty.Key)
             .WithMessage(GameMessage.EditorCanNotBeEmpty.Message);
+        #endregion
     }
 }
