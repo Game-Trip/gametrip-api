@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using GameTrip.API.Validator.GameValidator;
 using GameTrip.API.Validator.LocationValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
@@ -128,10 +130,7 @@ internal class Startup
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
 
         ILogger<Program> logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
     }
@@ -189,10 +188,7 @@ internal class Startup
                 .Build();
         });
 
-        services.Configure<DataProtectionTokenProviderOptions>(o =>
-        {
-            o.TokenLifespan = TimeSpan.FromHours(1);
-        });
+        services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(1));
     }
 
     private void AddDatabase(IServiceCollection services)
@@ -223,8 +219,9 @@ internal class Startup
 
         #region Platform
 
-        services.AddScoped<ILocationPlarform, LocationPlatform>();
         services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<ILocationPlarform, LocationPlatform>();
+        services.AddScoped<IGamePlatform, GamePlatform>();
         services.AddScoped<IMailPlatform, MailPlatform>();
 
         #endregion Platform
@@ -251,8 +248,11 @@ internal class Startup
         #endregion Settings
 
         #region FluentValidator
-        services.AddScoped<IValidator<LocationDto>, CreateLocationValidator>();
-        #endregion
+
+        services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
+        services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
+
+        #endregion FluentValidator
     }
 
     private void AddIdentity(IServiceCollection services)

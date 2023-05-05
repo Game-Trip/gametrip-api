@@ -51,6 +51,11 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="dBInitializer">The d b initializer.</param>
     /// <returns>A Task.</returns>
+#if DEBUG
+    [AllowAnonymous]
+#else
+    [Authorize(Roles = Roles.Admin)]
+#endif
     [HttpPost]
     [Route("Initialize")]
     public async Task<IActionResult> Initialize([FromServices] DBInitializer dBInitializer)

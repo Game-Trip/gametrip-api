@@ -1,4 +1,5 @@
 ﻿using GameTrip.Domain.Entities;
+using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using Microsoft.AspNetCore.Identity;
@@ -103,6 +104,81 @@ public class DBInitializer
                     Description = location.Description,
                     Latitude = location.Latitude,
                     Longitude = location.Longitude
+                });
+            }
+        }
+
+        //Adding Games
+        List<CreateGameDto> games = new()
+        {
+            new CreateGameDto
+            {
+                Name = "Assassin's Creed Unity",
+                Description = "Un jeu vidéo d'action-aventure en monde ouvert développé par Ubisoft",
+                Editor = "Ubisoft",
+                ReleaseDate = new DateTime(2014, 11, 11).Ticks,
+            },
+            new CreateGameDto
+            {
+                Name = "Call of Duty: Modern Warfare 3",
+                Description = "Un jeu vidéo de tir à la première personne développé par Infinity Ward et édité par Activision",
+                Editor = "Activision",
+                ReleaseDate = new DateTime(2011, 11, 8).Ticks,
+            },
+            new CreateGameDto
+            {
+                Name = "Assassin's Creed: Brotherhood",
+                Description = "Un jeu vidéo d'action-aventure en monde ouvert développé par Ubisoft",
+                Editor = "Ubisoft",
+                ReleaseDate = new DateTime(2010, 11, 16).Ticks
+            },
+            new CreateGameDto
+            {
+                Name = "Age of Empires II",
+                Description = "Un jeu vidéo de stratégie en temps réel développé par Ensemble Studios et édité par Microsoft",
+                Editor = "Microsoft",
+                ReleaseDate = new DateTime(1999, 9, 30).Ticks,
+            },
+            new CreateGameDto
+            {
+                Name = "Uncharted 2: Among Thieves",
+                Description = "Un jeu vidéo d'action-aventure développé par Naughty Dog et édité par Sony Computer Entertainment",
+                Editor = "Sony Computer Entertainment",
+                ReleaseDate = new DateTime(2009, 10, 13).Ticks
+            },
+            new CreateGameDto
+            {
+                Name = "Indiana Jones and the Fate of Atlantis",
+                Description = "Un jeu vidéo d'aventure graphique développé et édité par LucasArts",
+                Editor = "LucasArts",
+                ReleaseDate = new DateTime(1992, 6, 1).Ticks
+            },
+            new CreateGameDto
+            {
+                Name = "Civilization V",
+                Description = "Un jeu vidéo de stratégie au tour par tour développé par Firaxis Games et édité par 2K Games",
+                Editor = "2K Games",
+                ReleaseDate = new DateTime(2010, 9, 21).Ticks
+            },
+            new CreateGameDto
+            {
+                Name = "FIFA 21",
+                Description = "Un jeu vidéo de simulation de football développé et édité par Electronic Arts",
+                Editor = "Electronic Arts",
+                ReleaseDate = new DateTime(2020, 10, 9).Ticks
+            }
+        };
+
+        foreach (CreateGameDto game in games)
+        {
+            if (await _context.Game.FirstOrDefaultAsync(g => g.Name == game.Name) is null)
+            {
+                await _context.Game.AddAsync(new()
+                {
+                    Name = game.Name,
+                    Description = game.Description,
+                    Editor = game.Editor,
+                    ReleaseDate = game.ReleaseDate
                 });
             }
         }
