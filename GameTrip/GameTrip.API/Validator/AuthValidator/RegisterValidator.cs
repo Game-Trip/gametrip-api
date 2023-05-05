@@ -9,7 +9,7 @@ public class RegisterValidator : AbstractValidator<RegisterDto>
     public RegisterValidator()
     {
         RuleFor(dto => dto)
-            .Must(dto => dto is not null)
+            .NotNull().NotEmpty()
             .WithErrorCode(UserMessage.RegisterDtoNull.Key)
             .WithMessage(UserMessage.RegisterDtoNull.Message);
 
@@ -65,13 +65,13 @@ public class RegisterValidator : AbstractValidator<RegisterDto>
 
         #region ConfirmPassword
         RuleFor(dto => dto.ConfirmPassword)
-           .Must(confirmPassword => confirmPassword is not null)
+            .NotNull()
            .Unless(dto => dto is null)
            .WithErrorCode(UserMessage.PasswordConfirmationNull.Key)
            .WithMessage(UserMessage.PasswordConfirmationNull.Message);
 
         RuleFor(dto => dto.ConfirmPassword)
-            .Must(confirmPassword => !string.IsNullOrWhiteSpace(confirmPassword))
+            .NotEmpty()
             .Unless(dto => dto is null)
             .Unless(dto => dto.ConfirmPassword is null)
             .WithErrorCode(UserMessage.PasswordConfirmationEmpty.Key)
@@ -80,10 +80,7 @@ public class RegisterValidator : AbstractValidator<RegisterDto>
         RuleFor(dto => dto.ConfirmPassword)
             .Equal(dto => dto.Password)
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Password is null)
-            .Unless(dto => dto.ConfirmPassword is null)
-            .Unless(dto => !string.IsNullOrWhiteSpace(dto.Password))
-            .Unless(dto => !string.IsNullOrWhiteSpace(dto.ConfirmPassword))
+            .Unless(dto => dto.Password is null && dto.ConfirmPassword is null && !string.IsNullOrWhiteSpace(dto.Password) && !string.IsNullOrWhiteSpace(dto.ConfirmPassword))
             .WithErrorCode(UserMessage.PasswordConfirmationNotEqual.Key)
             .WithMessage(UserMessage.PasswordConfirmationNotEqual.Message);
 
