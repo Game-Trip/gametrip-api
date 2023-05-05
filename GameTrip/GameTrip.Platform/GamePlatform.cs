@@ -2,6 +2,7 @@
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Platform.IPlatform;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.Platform;
 
@@ -35,7 +36,7 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.CompletAsync();
     }
 
-    public async Task<IEnumerable<Game>> GetAllGamesAsync() => await _unitOfWork.Games.GetAllAsync();
+    public async Task<IEnumerable<Game>> GetAllGamesAsync([Optional] int limit) => await _unitOfWork.Games.GetAllAsync(limit);
 
     public async Task<Game?> GetGameByIdAsync(Guid gameId) => await _unitOfWork.Games.GetGameByIdAsync(gameId);
 
@@ -44,23 +45,6 @@ public class GamePlatform : IGamePlatform
     public async Task<IEnumerable<Game?>> GetGamesByLocationIdAsync(Guid locationId) => await _unitOfWork.Games.GetGameByLocationIdAsync(locationId);
 
     public async Task<IEnumerable<Game?>> GetGamesByLocationNameAsync(string locationName) => await _unitOfWork.Games.GetGameByLocationNameAsync(locationName);
-
-    public IEnumerable<Game> SortLikedGamesByScore(IEnumerable<Game> games)
-    {
-        return games.OrderBy(g =>
-        {
-            decimal score = 0.0m;
-            int nbVote = 0;
-            g.LikedGames!.ToList().ForEach(l =>
-            {
-                nbVote++;
-                score += l.vote;
-            });
-            return score/nbVote;
-        });
-    }
-
-    public IEnumerable<Game> LimitList(IEnumerable<Game> games, int limit) => games.Take(limit);
 
     public async Task<Game> UpdateGameAsync(Game entity, UpdateGameDto dto)
     {

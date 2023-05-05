@@ -9,6 +9,7 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
 
@@ -53,16 +54,16 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGames()
+    public async Task<ActionResult<List<ListGameDto>>> GetGames([Optional][FromQuery] int limit)
     {
-        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
+        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync(limit);
         return games.ToDtoList();
     }
 
     [AllowAnonymous]
     [HttpGet]
     [Route("Id/{gameId}")]
-    public async Task<ActionResult<GameDto>> GetGaleById([FromRoute] Guid gameId)
+    public async Task<ActionResult<GameDto>> GetGameById([FromRoute] Guid gameId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -161,42 +162,6 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.RemovedToLocation));
     }
 
-    //Todo à test le sort
-    [AllowAnonymous]
-    [HttpGet]
-    [Route("SortLikedCount")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeCount([FromQuery] int? limit, [FromQuery] bool? asc = true)
-    {
-        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
-        if (limit is not null)
-            games = _gamePlatform.LimitList(games, (int)limit);
-
-        games.OrderBy(g => g.LikedGames.Count());
-
-        if (asc is false)
-            games.Reverse();
-
-        return games.ToDtoList();
-    }
-
-    //Todo à test le sort
-    [AllowAnonymous]
-    [HttpGet]
-    [Route("SortLikedValue")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeScore([FromQuery] int? limit, [FromQuery] bool? asc = true)
-    {
-        IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
-        if (limit is not null)
-            games = _gamePlatform.LimitList(games, (int)limit);
-
-        games = _gamePlatform.SortLikedGamesByScore(games);
-
-        if (asc is false)
-            games.Reverse();
-
-        return games.ToDtoList();
-    }
-
     [Authorize(Roles = Roles.User)]
     [HttpPut]
     [Route("{gameId}")]
@@ -222,7 +187,7 @@ public class GameController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.User)]
     [Route("Delete/{gameId}")]
     public async Task<IActionResult> DeleteGameById([FromRoute] Guid gameId)
     {

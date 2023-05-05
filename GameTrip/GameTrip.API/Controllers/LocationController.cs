@@ -10,6 +10,7 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
 
@@ -58,9 +59,9 @@ public class LocationController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("")]
-    public async Task<ActionResult<List<LocationDto>>> GetLocationsAsync()
+    public async Task<ActionResult<List<LocationDto>>> GetLocationsAsync([Optional][FromQuery] int limit)
     {
-        IEnumerable<Location> locations = await _locationPlatform.GetAllLocationAsync();
+        IEnumerable<Location> locations = await _locationPlatform.GetAllLocationAsync(limit);
         return locations.ToDtoList();
     }
 

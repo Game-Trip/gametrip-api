@@ -2,6 +2,7 @@
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Platform.IPlatform;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.Platform;
 
@@ -21,8 +22,6 @@ public class LocationPlatform : ILocationPlarform
         await _unitOfWork.CompletAsync();
     }
 
-    public async Task<IEnumerable<Location>> GetAllLocationAsync() => await _unitOfWork.Locations.GetAllAsync();
-
     public async Task<Location?> GetLocationByIdAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationByIdAsync(locationId);
 
     public async Task DeleteLocationAsync(Location location)
@@ -39,4 +38,6 @@ public class LocationPlatform : ILocationPlarform
         await _unitOfWork.CompletAsync();
         return location;
     }
+
+    public async Task<IEnumerable<Location>> GetAllLocationAsync([Optional] int limit) => await _unitOfWork.Locations.GetAllAsync(limit);
 }
