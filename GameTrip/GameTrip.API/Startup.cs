@@ -128,6 +128,7 @@ internal class Startup
 
         app.UseCors();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => endpoints.MapControllers());
@@ -251,6 +252,7 @@ internal class Startup
 
         services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
         services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
+        services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
 
         #endregion FluentValidator
     }

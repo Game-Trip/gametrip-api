@@ -1,5 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.GameModels;
 using GameTrip.Platform.IPlatform;
 
 namespace GameTrip.Platform;
@@ -15,6 +16,7 @@ public class GamePlatform : IGamePlatform
         _unitOfWork.Locations.AddGameToLocation(game, location);
         await _unitOfWork.CompletAsync();
     }
+
     public async Task RemoveGameToLocationByIdAsync(Game game, Location location)
     {
         _unitOfWork.Locations.RemoveGameToLocation(game, location);
@@ -59,4 +61,11 @@ public class GamePlatform : IGamePlatform
     }
 
     public IEnumerable<Game> LimitList(IEnumerable<Game> games, int limit) => games.Take(limit);
+
+    public async Task<Game> UpdateGameAsync(Game entity, UpdateGameDto dto)
+    {
+        Game game = await _unitOfWork.Games.UpdateGameAsync(entity, dto);
+        await _unitOfWork.CompletAsync();
+        return game;
+    }
 }

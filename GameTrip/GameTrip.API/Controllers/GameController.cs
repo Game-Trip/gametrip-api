@@ -5,6 +5,7 @@ using GameTrip.Domain.Entities;
 using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,27 +13,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameTrip.API.Controllers;
 
 [Route("[controller]")]
-#if !DEBUG
-[Authorize(Roles = User)]
-#endif
+[Authorize]
 [ApiController]
 public class GameController : ControllerBase
 {
     private readonly IGamePlatform _gamePlatform;
     private readonly ILocationPlarform _locationPlatform;
     private readonly IValidator<CreateGameDto> _createGameValidator;
+    private readonly IValidator<UpdateGameDto> _updateGameValidator;
 
-    public GameController(IValidator<CreateGameDto> createGameValidator, IGamePlatform gamePlatform, ILocationPlarform locationPlarform)
+    public GameController(IValidator<CreateGameDto> createGameValidator, IGamePlatform gamePlatform, ILocationPlarform locationPlarform, IValidator<UpdateGameDto> updateGameValidator)
     {
         _createGameValidator = createGameValidator;
         _gamePlatform = gamePlatform;
         _locationPlatform = locationPlarform;
+        _updateGameValidator=(IValidator<UpdateGameDto>?)updateGameValidator;
     }
 
-#if !DEBUG
-[Authorize(Roles = "Admin")]
-#endif
-
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateGame")]
     public async Task<ActionResult<Game>> CreateGame(CreateGameDto dto)
@@ -55,7 +53,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGamesAsync()
+    public async Task<ActionResult<List<ListGameDto>>> GetGames()
     {
         IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
         return games.ToDtoList();
@@ -64,7 +62,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Id/{gameId}")]
-    public async Task<ActionResult<GameDto>> GetGaleByIdAsync([FromRoute] Guid gameId)
+    public async Task<ActionResult<GameDto>> GetGaleById([FromRoute] Guid gameId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -78,7 +76,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Name/{gameName}")]
-    public async Task<ActionResult<GameDto>> GetLocationByNameAsync([FromRoute] string gameName)
+    public async Task<ActionResult<GameDto>> GetLocationByName([FromRoute] string gameName)
     {
         Game? game = await _gamePlatform.GetGameByNameAsync(gameName);
         if (game is null)
@@ -92,7 +90,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Location/Id/{locationId}")]
-    public async Task<ActionResult<List<ListGameDto?>>> GetGamesByLocationIdAsync([FromRoute] Guid locationId)
+    public async Task<ActionResult<List<ListGameDto?>>> GetGamesByLocationId([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
         if (location is null)
@@ -108,7 +106,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Location/Name/{locationName}")]
-    public async Task<ActionResult<List<ListGameDto?>>> GetGamesByLocationNameAsync([FromRoute] string locationName)
+    public async Task<ActionResult<List<ListGameDto?>>> GetGamesByLocationName([FromRoute] string locationName)
     {
         Location? location = await _locationPlatform.GetLocationByNameAsync(locationName);
         if (location is null)
@@ -123,13 +121,10 @@ public class GameController : ControllerBase
         return game.ToDtoList();
     }
 
-#if !DEBUG
-    [Authorize(Roles = "User")]
-#endif
-
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddGameToLocation/Game/{gameId}/Location/{locationId}")]
-    public async Task<IActionResult> AddGameToLocationByIdAsync([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    public async Task<IActionResult> AddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -146,13 +141,10 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.AddedToLocation));
     }
 
-#if !DEBUG
-    [Authorize(Roles = "User")]
-#endif
-
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RemoveGameToLocation/Game/{gameId}/Location/{locationId}")]
-    public async Task<IActionResult> RemoveGameToLocationByIdAsync([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    public async Task<IActionResult> RemoveGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -173,7 +165,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("SortLikedCount")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeCountAsync([FromQuery] int? limit, [FromQuery] bool? asc = true)
+    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeCount([FromQuery] int? limit, [FromQuery] bool? asc = true)
     {
         IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
         if (limit is not null)
@@ -191,7 +183,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("SortLikedValue")]
-    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeScoreAsync([FromQuery] int? limit, [FromQuery] bool? asc = true)
+    public async Task<ActionResult<List<ListGameDto>>> GetGameSortByLikeScore([FromQuery] int? limit, [FromQuery] bool? asc = true)
     {
         IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync();
         if (limit is not null)
@@ -205,12 +197,34 @@ public class GameController : ControllerBase
         return games.ToDtoList();
     }
 
+    [Authorize(Roles = Roles.User)]
+    [HttpPut]
+    [Route("{gameId}")]
+    public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto)
+    {
+        System.Security.Claims.ClaimsPrincipal uwu = HttpContext.User;
+        ValidationResult result = _updateGameValidator.Validate(dto);
+        if (!result.IsValid)
+        {
+            result.AddToModelState(ModelState);
+            return BadRequest(ModelState);
+        }
+
+        if (gameId != dto.gameId)
+            return BadRequest(new MessageDto(GameMessage.IdWithQueryAndDtoAreDifferent));
+
+        Game? entity = await _gamePlatform.GetGameByNameAsync(dto.Name);
+        if (entity is null)
+            return BadRequest(new MessageDto(GameMessage.NotFoundById));
+
+        Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
+        return Ok(game.ToDto());
+    }
+
     [HttpDelete]
-#if !DEBUG
-[Authorize(Roles = "Admin")]
-#endif
+    [Authorize(Roles = Roles.Admin)]
     [Route("Delete/{gameId}")]
-    public async Task<IActionResult> DeleteGameByIdAsync([FromRoute] Guid gameId)
+    public async Task<IActionResult> DeleteGameById([FromRoute] Guid gameId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)

@@ -17,6 +17,7 @@ public class GameMessage : StringEnumError
     public static GameMessage DescriptionCanNotBeEmpty => new("GameDescriptionCanNotBeEmpty", "Game description cannot be Empty");
     public static GameMessage EditorCanNotBeNull => new("GameEditorCanNotBeNull", "Game editor cannot be Null");
     public static GameMessage EditorCanNotBeEmpty => new("GameEditorCanNotBeEmpty", "Game editor cannot be Empty");
+    public static GameMessage ReleaseCanNotBeNull => new("GameReleaseCanNotBeNull", "Game release cannot be Null");
 
     #endregion Validator
 
@@ -29,4 +30,5 @@ public class GameMessage : StringEnumError
     public static GameMessage SuccesCreated => new("GameDeleted", "Game created");
     public static GameMessage AddedToLocation => new("GameAddedToLocation", "The provided Game has been added to provided location");
     public static GameMessage RemovedToLocation => new("GameRemovedToLocation", "The provided Game has been removed to provided location");
+    public static GameMessage IdWithQueryAndDtoAreDifferent => new("GameIdWithQueryAndDtoAreDifferent", "The provided gameId in route and provided gameId in Dto are not equals");
 }

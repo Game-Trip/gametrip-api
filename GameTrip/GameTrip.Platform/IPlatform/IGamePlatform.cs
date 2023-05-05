@@ -1,4 +1,5 @@
 ﻿using GameTrip.Domain.Entities;
+using GameTrip.Domain.Models.GameModels;
 
 namespace GameTrip.Platform.IPlatform;
 
@@ -15,4 +16,5 @@ public interface IGamePlatform
     IEnumerable<Game> LimitList(IEnumerable<Game> games, int limit);
     Task RemoveGameToLocationByIdAsync(Game game, Location location);
     IEnumerable<Game> SortLikedGamesByScore(IEnumerable<Game> games);
+    Task<Game> UpdateGameAsync(Game entity, UpdateGameDto dto);
 }

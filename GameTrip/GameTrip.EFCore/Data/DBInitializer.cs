@@ -71,6 +71,10 @@ public class DBInitializer
         if (!resultAddRoleToUser.Succeeded)
             throw new ApplicationException("Adding user '" + admin.UserName + "' to role '" + Roles.Admin + "' failed with error(s): " + resultAddRoleToUser.Errors);
 
+        resultAddRoleToUser = await _userManager.AddToRoleAsync(admin, Roles.User);
+        if (!resultAddRoleToUser.Succeeded)
+            throw new ApplicationException("Adding user '" + admin.UserName + "' to role '" + Roles.User + "' failed with error(s): " + resultAddRoleToUser.Errors);
+
         //Adding Locations
         List<LocationDto> locations = new()
         {
@@ -109,6 +113,11 @@ public class DBInitializer
         }
 
         //Adding Games
+        DateTime date = new(2023, 5, 5); // The date you want to get the timestamp of
+        DateTime unixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc); // The Unix epoch
+        TimeSpan timeSpan = date.ToUniversalTime() - unixEpoch; // Get the time span between the date and the Unix epoch
+        long timestamp = (long)timeSpan.TotalSeconds; // Get the total number of seconds as a long integer
+
         List<CreateGameDto> games = new()
         {
             new CreateGameDto
@@ -116,56 +125,56 @@ public class DBInitializer
                 Name = "Assassin's Creed Unity",
                 Description = "Un jeu vidéo d'action-aventure en monde ouvert développé par Ubisoft",
                 Editor = "Ubisoft",
-                ReleaseDate = new DateTime(2014, 11, 11).Ticks,
+                ReleaseDate = (long)(new DateTime(2014, 11, 11).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Call of Duty: Modern Warfare 3",
                 Description = "Un jeu vidéo de tir à la première personne développé par Infinity Ward et édité par Activision",
                 Editor = "Activision",
-                ReleaseDate = new DateTime(2011, 11, 8).Ticks,
+                ReleaseDate = (long)(new DateTime(2011, 11, 8).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Assassin's Creed: Brotherhood",
                 Description = "Un jeu vidéo d'action-aventure en monde ouvert développé par Ubisoft",
                 Editor = "Ubisoft",
-                ReleaseDate = new DateTime(2010, 11, 16).Ticks
+                ReleaseDate = (long)(new DateTime(2010, 11, 16).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Age of Empires II",
                 Description = "Un jeu vidéo de stratégie en temps réel développé par Ensemble Studios et édité par Microsoft",
                 Editor = "Microsoft",
-                ReleaseDate = new DateTime(1999, 9, 30).Ticks,
+                ReleaseDate = (long)(new DateTime(1999, 9, 30).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Uncharted 2: Among Thieves",
                 Description = "Un jeu vidéo d'action-aventure développé par Naughty Dog et édité par Sony Computer Entertainment",
                 Editor = "Sony Computer Entertainment",
-                ReleaseDate = new DateTime(2009, 10, 13).Ticks
+                ReleaseDate = (long)(new DateTime(2009, 10, 13).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Indiana Jones and the Fate of Atlantis",
                 Description = "Un jeu vidéo d'aventure graphique développé et édité par LucasArts",
                 Editor = "LucasArts",
-                ReleaseDate = new DateTime(1992, 6, 1).Ticks
+                ReleaseDate = (long)(new DateTime(1992, 6, 1).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "Civilization V",
                 Description = "Un jeu vidéo de stratégie au tour par tour développé par Firaxis Games et édité par 2K Games",
                 Editor = "2K Games",
-                ReleaseDate = new DateTime(2010, 9, 21).Ticks
+                ReleaseDate = (long)(new DateTime(2010, 9, 21).ToUniversalTime() - unixEpoch).TotalSeconds,
             },
             new CreateGameDto
             {
                 Name = "FIFA 21",
                 Description = "Un jeu vidéo de simulation de football développé et édité par Electronic Arts",
                 Editor = "Electronic Arts",
-                ReleaseDate = new DateTime(2020, 10, 9).Ticks
+                ReleaseDate = (long)(new DateTime(2020, 10, 9).ToUniversalTime() - unixEpoch).TotalSeconds,
             }
         };
 

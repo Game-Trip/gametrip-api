@@ -52,6 +52,7 @@ public class AuthController : ControllerBase
     /// <param name="dBInitializer">The d b initializer.</param>
     /// <returns>A Task.</returns>
 #if DEBUG
+
     [AllowAnonymous]
 #else
     [Authorize(Roles = Roles.Admin)]
@@ -71,6 +72,12 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="dto">The dto.</param>
     /// <returns>A Task.</returns>
+    /// <remarks>
+    /// {
+    ///   "username": "Dercraker",
+    ///   "password": "NMdRx$HqyT8jX6"
+    /// }
+    /// </remarks>
     [AllowAnonymous]
     [HttpPost]
     [Route("Login")]
