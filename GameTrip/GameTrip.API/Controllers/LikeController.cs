@@ -33,7 +33,7 @@ public class LikeController : ControllerBase
 
     [Authorize(Roles = Roles.User)]
     [HttpPost]
-    [Route("AddLikedLocation")]
+    [Route("AddLikeToLocation")]
     public async Task<ActionResult<LikedLocationDto>> LikeLocation([FromBody] AddLikeLocationDto dto)
     {
         ValidationResult validationResult = _addLikeLocationValidator.Validate(dto);
@@ -58,7 +58,38 @@ public class LikeController : ControllerBase
 
         IEnumerable<LikedLocation> likedLocations = _likePlatform.GetAllLikedLocationByLocation(location);
 
-        //Create Mapper
+        return Ok(likedLocations.ToDto());
+    }
+
+    /// <summary>
+    /// Remove Like from Location
+    /// </summary>
+    /// return <see cref="LikedLocationDto"/>
+    /// <response code = "204">Location provided did not have like from any users</response>
+    /// 
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("RemoveLikeToLocation/{locationId}/{userId}")]
+    public async Task<ActionResult<LikedLocationDto>> UnlikeLocation([FromRoute] Guid locationId, Guid userId)
+    {
+        Location? location = await _locationPlaform.GetLocationByIdAsync(locationId);
+        if (location is null)
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+
+        GameTripUser? user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+            return NotFound(new MessageDto(UserMessage.NotFoundById));
+
+        if (!location.LikedLocations!.Any(l => l.UserId == userId))
+            return BadRequest(new MessageDto(LikeMessage.UserNotLikeLocation));
+
+        await _likePlatform.RemoveLikeToLocationAsync(location, user);
+
+        IEnumerable<LikedLocation> likedLocations = _likePlatform.GetAllLikedLocationByLocation(location);
+
+        if (!likedLocations.Any())
+            return NoContent();
+
         return Ok(likedLocations.ToDto());
     }
 }

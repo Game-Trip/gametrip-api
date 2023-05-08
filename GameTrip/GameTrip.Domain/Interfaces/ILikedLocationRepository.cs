@@ -6,4 +6,5 @@ public interface ILikedLocationRepository : IGenericRepository<LikedLocation>
 {
     Task AddLikeAsync(Location location, GameTripUser user, decimal value);
     IEnumerable<LikedLocation> GetAllByLocation(Location location);
+    Task RemoveLike(Location location, GameTripUser user);
 }

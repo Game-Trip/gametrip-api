@@ -20,5 +20,6 @@ public class LikeMessage : StringEnumError
     #endregion
 
     public static LikeMessage UserAlreadyLikeLocation => new("UserAlreadyLikeLocation", "The user already liked the location provided");
+    public static LikeMessage UserNotLikeLocation => new("UserNotLikeLocation", "The user did not like the location provided");
 
 }

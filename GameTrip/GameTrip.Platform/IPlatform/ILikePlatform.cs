@@ -5,4 +5,5 @@ public interface ILikePlatform
 {
     Task AddLikeToLocationAsync(Location location, GameTripUser user, decimal value);
     IEnumerable<LikedLocation> GetAllLikedLocationByLocation(Location location);
+    Task RemoveLikeToLocationAsync(Location location, GameTripUser user);
 }

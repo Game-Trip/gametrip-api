@@ -1,5 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore.Repository;
 
@@ -24,4 +25,12 @@ public class LikedLocationRepository : GenericRepository<LikedLocation>, ILikedL
     }
 
     public IEnumerable<LikedLocation> GetAllByLocation(Location location) => _context.LikedLocation.Where(ll => ll.Location == location).AsEnumerable();
+    public async Task RemoveLike(Location location, GameTripUser user)
+    {
+        LikedLocation? likedLocation = await _context.LikedLocation.FirstOrDefaultAsync(ll => ll.LocationId == location.IdLocation && ll.UserId == user.Id);
+
+        if (likedLocation is not null)
+            _context.LikedLocation.Remove(likedLocation!);
+        await _context.SaveChangesAsync();
+    }
 }
