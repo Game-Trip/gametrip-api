@@ -110,4 +110,32 @@ public class LikeController : ControllerBase
 
         return Ok(likedLocations.ToListLikedLocationDto());
     }
+
+    [Authorize(Roles = Roles.User)]
+    [HttpGet]
+    [Route("AllLikedLocations")]
+    public async Task<ActionResult<IEnumerable<LikedLocationDto>>> GetAllLikedLocation()
+    {
+        IEnumerable<LikedLocation> likedLocations = await _likePlatform.GetAllLikedLocationIncludeAll();
+
+        IEnumerable<IGrouping<Guid, LikedLocation>> likedLocationGroupByLocation = likedLocations.GroupBy(ll => ll.LocationId);
+        List<LikedLocationDto> likedLocationDtos = new();
+
+        foreach (IGrouping<Guid, LikedLocation> group in likedLocationGroupByLocation)
+        {
+            LikedLocationDto likedLocationDto = new()
+            {
+                LocationId = group.Key,
+                Location = group.First().Location.ToLocationNameDto(),
+                UsersIds = group.Select(ll => ll.UserId).AsEnumerable(),
+                NbVote = group.Count(),
+                MaxValue = group.OrderBy(ll => ll.Vote).First().Vote,
+                MinValue = group.OrderByDescending(ll => ll.Vote).First().Vote,
+                AverageValue = group.Average(ll => ll.Vote)
+            };
+            likedLocationDtos.Add(likedLocationDto);
+        }
+
+        return Ok(likedLocationDtos.AsEnumerable());
+    }
 }
