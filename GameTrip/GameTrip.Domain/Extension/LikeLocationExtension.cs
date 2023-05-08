@@ -1,5 +1,5 @@
 ﻿using GameTrip.Domain.Entities;
-using GameTrip.Domain.Models.LikeModels;
+using GameTrip.Domain.Models.LikeModels.Location;
 
 namespace GameTrip.Domain.Extension;
 public static class LikeLocationExtension
@@ -9,7 +9,7 @@ public static class LikeLocationExtension
 
         return new()
         {
-            LikedLocationId = likedLocations.First().LocationId,
+            LikedLocationId = likedLocations.First().IdLikedLocation,
             LocationId = likedLocations.First().LocationId,
             UsersIds = likedLocations.Select(ll => ll.UserId),
             NbVote = likedLocations.Count(),

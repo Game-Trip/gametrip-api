@@ -1,24 +1,24 @@
 ﻿using FluentValidation;
 using GameTrip.Domain.HttpMessage;
-using GameTrip.Domain.Models.LikeModels.Location;
+using GameTrip.Domain.Models.LikeModels.Game;
 
 namespace GameTrip.API.Validator.LikeValidator;
 
-public class AddLikeLocationValidator : AbstractValidator<AddLikeLocationDto>
+public class AddLikeGameValidator : AbstractValidator<AddLikeGameDto>
 {
-    public AddLikeLocationValidator()
+    public AddLikeGameValidator()
     {
         RuleFor(dto => dto)
-            .NotNull().NotEmpty()
-            .WithErrorCode(LikeMessage.AddLikeLocationDtoNull.Key)
-            .WithMessage(LikeMessage.AddLikeLocationDtoNull.Message);
+           .NotNull().NotEmpty()
+           .WithErrorCode(LikeMessage.AddLikeLocationDtoNull.Key)
+           .WithMessage(LikeMessage.AddLikeLocationDtoNull.Message);
 
         #region Location
-        RuleFor(dto => dto.LocationId)
+        RuleFor(dto => dto.GameId)
             .NotNull().NotEmpty()
             .Unless(dto => dto is null)
-            .WithErrorCode(LikeMessage.LocationIdNullOrEmpty.Key)
-            .WithMessage(LikeMessage.LocationIdNullOrEmpty.Message);
+            .WithErrorCode(LikeMessage.GameIdNullOrEmpty.Key)
+            .WithMessage(LikeMessage.GameIdNullOrEmpty.Message);
         #endregion
 
         #region User

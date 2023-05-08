@@ -9,6 +9,7 @@ public class LikeMessage : StringEnumError
 
     #region Validator
     public static LikeMessage AddLikeLocationDtoNull => new("AddLikeLocationDtoNull", "AddLikeLocationDto can not be Null");
+    public static LikeMessage AddLikeGameDtoNull => new("AddLikeGameDtoNull", "AddLikeGameDto can not be Null");
     public static LikeMessage LocationIdNullOrEmpty => new("LocationIdNullOrEmpty", "The LocationId field can not be Null or Empty");
     public static LikeMessage GameIdNullOrEmpty => new("GameIdNullOrEmpty", "The GameId field can not be Null or Empty");
     public static LikeMessage UserIdNullOrEmpty => new("UserIdNullOrEmpty", "The UserId field can not be Null or Empty");
@@ -20,6 +21,8 @@ public class LikeMessage : StringEnumError
     #endregion
 
     public static LikeMessage UserAlreadyLikeLocation => new("UserAlreadyLikeLocation", "The user already liked the location provided");
+    public static LikeMessage UserAlreadyLikeGame => new("UserAlreadyLikeGame", "The user already liked the game provided");
     public static LikeMessage UserNotLikeLocation => new("UserNotLikeLocation", "The user did not like the location provided");
+    public static LikeMessage UserNotLikeGame => new("UserNotLikeGame", "The user did not like the game provided");
 
 }

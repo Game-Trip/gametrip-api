@@ -58,7 +58,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         builder.Entity<LikedGame>(lg =>
         {
             lg.HasKey(lg => lg.IdLikedGame);
-            lg.Property(lg => lg.vote).HasPrecision(2, 1);
+            lg.Property(lg => lg.Vote).HasPrecision(2, 1);
         });
 
         builder.Entity<LikedLocation>(ll =>

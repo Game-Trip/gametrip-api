@@ -8,7 +8,8 @@ using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.GameModels;
-using GameTrip.Domain.Models.LikeModels;
+using GameTrip.Domain.Models.LikeModels.Game;
+using GameTrip.Domain.Models.LikeModels.Location;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
@@ -279,6 +280,7 @@ internal class Startup
 
         #region LikeValidator
         services.AddScoped<IValidator<AddLikeLocationDto>, AddLikeLocationValidator>();
+        services.AddScoped<IValidator<AddLikeGameDto>, AddLikeGameValidator>();
         #endregion
     }
 

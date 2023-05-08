@@ -30,6 +30,15 @@ public static class GameExtension
         };
     }
 
+    public static GameNameDto ToGameNameDto(this Game game)
+    {
+        return new()
+        {
+            Id = game.IdGame,
+            Name = game.Name,
+        };
+    }
+
     public static List<ListGameDto> ToDtoList(this IEnumerable<Game> games)
     {
         return games.Select(game => new ListGameDto
