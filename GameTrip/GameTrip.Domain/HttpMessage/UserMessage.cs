@@ -43,4 +43,5 @@ public class UserMessage : StringEnumError
     public static UserMessage NotFoundByMail => new("NotFound", "No user found with provided Email");
     public static UserMessage MailAlreadyExist => new("MailAlreadyExist", "An account already exists with the Mail provided");
     public static UserMessage UserNameAlreadyExist => new("UserNameAlreadyExist", "An account already exists with the UserName provided");
+    public static UserMessage NeverLikeAnyLocation => new("NeverLikeAnyLocation", "The User provided never likes any location");
 }

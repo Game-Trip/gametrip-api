@@ -10,6 +10,7 @@ using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.API.Controllers;
 
@@ -91,5 +92,22 @@ public class LikeController : ControllerBase
             return NoContent();
 
         return Ok(likedLocations.ToDto());
+    }
+
+    [Authorize(Roles = Roles.User)]
+    [HttpGet]
+    [Route("LikedLocations/{userId}")]
+    public async Task<ActionResult<IEnumerable<ListLikedLocationDto>>> GetAllLikedLocationFromUser([FromRoute] Guid userId)
+    {
+        GameTripUser? user = await _userManager.Users.Include(u => u.LikedLocations).FirstOrDefaultAsync(u => u.Id == userId);
+        if (user is null)
+            return NotFound(new MessageDto(UserMessage.NotFoundById));
+
+        if (!user.LikedLocations!.Any())
+            return NotFound(UserMessage.NeverLikeAnyLocation);
+
+        IEnumerable<LikedLocation> likedLocations = user.LikedLocations!.Select(ll => _likePlatform.GetLikeLocation(ll));
+
+        return Ok(likedLocations.ToListLikedLocationDto());
     }
 }

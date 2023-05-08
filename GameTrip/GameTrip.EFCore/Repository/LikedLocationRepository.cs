@@ -25,6 +25,8 @@ public class LikedLocationRepository : GenericRepository<LikedLocation>, ILikedL
     }
 
     public IEnumerable<LikedLocation> GetAllByLocation(Location location) => _context.LikedLocation.Where(ll => ll.Location == location).AsEnumerable();
+    public LikedLocation GetLikedLocation(LikedLocation likedLocation) => _context.LikedLocation.Include(ll => ll.Location).First(ll => ll.IdLikedLocation == likedLocation.IdLikedLocation);
+
     public async Task RemoveLike(Location location, GameTripUser user)
     {
         LikedLocation? likedLocation = await _context.LikedLocation.FirstOrDefaultAsync(ll => ll.LocationId == location.IdLocation && ll.UserId == user.Id);

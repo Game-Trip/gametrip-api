@@ -18,4 +18,15 @@ public static class LikeLocationExtension
             AverageValue = likedLocations.Select(ll => ll.Vote).Average()
         };
     }
+
+    public static IEnumerable<ListLikedLocationDto> ToListLikedLocationDto(this IEnumerable<LikedLocation> likedLocations)
+    {
+        return likedLocations.Select(ll => new ListLikedLocationDto()
+        {
+            LikedLocationId = ll.IdLikedLocation,
+            LocationId = ll.LocationId,
+            Location = ll.Location.ToLocationNameDto(),
+
+        }).AsEnumerable();
+    }
 }

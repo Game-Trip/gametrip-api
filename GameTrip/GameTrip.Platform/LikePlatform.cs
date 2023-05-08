@@ -15,6 +15,8 @@ public class LikePlatform : ILikePlatform
         await _unitOfWork.CompletAsync();
     }
     public IEnumerable<LikedLocation> GetAllLikedLocationByLocation(Location location) => _unitOfWork.LikedLocations.GetAllByLocation(location);
+    public LikedLocation GetLikeLocation(LikedLocation likedLocation) => _unitOfWork.LikedLocations.GetLikedLocation(likedLocation);
+
     public async Task RemoveLikeToLocationAsync(Location location, GameTripUser user)
     {
         await _unitOfWork.LikedLocations.RemoveLike(location, user);
