@@ -40,6 +40,7 @@ public class DBInitializer
         if (_context.Roles.Any() || _context.Users.Any())
             return false;
 
+        #region AddRoles
         //Adding roles
         string[] roles = Roles.GetAllRoles();
 
@@ -52,7 +53,10 @@ public class DBInitializer
                     throw new ApplicationException("Adding role '" + role + "' failed with error(s): " + resultAddRole.Errors);
             }
         }
+        await _context.SaveChangesAsync();
+        #endregion
 
+        #region AddAdmin
         //Adding Admin
         GameTripUser admin = new()
         {
@@ -74,8 +78,32 @@ public class DBInitializer
         resultAddRoleToUser = await _userManager.AddToRoleAsync(admin, Roles.User);
         if (!resultAddRoleToUser.Succeeded)
             throw new ApplicationException("Adding user '" + admin.UserName + "' to role '" + Roles.User + "' failed with error(s): " + resultAddRoleToUser.Errors);
+        await _context.SaveChangesAsync();
+        #endregion
+
+        #region AddUser
+        //Adding Admin
+        GameTripUser user = new()
+        {
+            UserName = "DercrakerDev",
+            Email = "antoine.capitain+Dev@gmail.com",
+            EmailConfirmed = true,
+        };
+
+        pwd = "NMdRx$HqyT8jX6";
+
+        resultAddUser = await _userManager.CreateAsync(user, pwd);
+        if (!resultAddUser.Succeeded)
+            throw new ApplicationException("Adding user '" + user.UserName + "' failed with error(s): " + resultAddUser.Errors);
+
+        resultAddRoleToUser = await _userManager.AddToRoleAsync(user, Roles.User);
+        if (!resultAddRoleToUser.Succeeded)
+            throw new ApplicationException("Adding user '" + user.UserName + "' to role '" + Roles.User + "' failed with error(s): " + resultAddRoleToUser.Errors);
+        await _context.SaveChangesAsync();
+        #endregion
 
         //Adding Locations
+        #region AddLocation
         List<LocationDto> locations = new()
         {
             new LocationDto("Tour Eiffel", "Monument emblématique de Paris, France", 48.8588443m, 2.2943506m),
@@ -98,21 +126,23 @@ public class DBInitializer
             new LocationDto("Angkor Wat", "Temple au Cambodge", 48.8588443m, 2.2943506m),
             new LocationDto("Mont Everest", "Plus haute montagne du monde à la frontière du Népal et du Tibet", 48.8588443m, 2.2943506m)
         };
-        foreach (LocationDto location in locations)
+        foreach (LocationDto loc in locations)
         {
-            if (await _context.Location.FirstOrDefaultAsync(l => l.Name == location.Name) is null)
+            if (await _context.Location.FirstOrDefaultAsync(l => l.Name == loc.Name) is null)
             {
                 await _context.Location.AddAsync(new()
                 {
-                    Name = location.Name,
-                    Description = location.Description,
-                    Latitude = location.Latitude,
-                    Longitude = location.Longitude
+                    Name = loc.Name,
+                    Description = loc.Description,
+                    Latitude = loc.Latitude,
+                    Longitude = loc.Longitude
                 });
             }
         }
+        #endregion
 
         //Adding Games
+        #region AddGames
         DateTime date = new(2023, 5, 5); // The date you want to get the timestamp of
         DateTime unixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc); // The Unix epoch
         TimeSpan timeSpan = date.ToUniversalTime() - unixEpoch; // Get the time span between the date and the Unix epoch
@@ -178,21 +208,31 @@ public class DBInitializer
             }
         };
 
-        foreach (CreateGameDto game in games)
+        foreach (CreateGameDto gam in games)
         {
-            if (await _context.Game.FirstOrDefaultAsync(g => g.Name == game.Name) is null)
+            if (await _context.Game.FirstOrDefaultAsync(g => g.Name == gam.Name) is null)
             {
                 await _context.Game.AddAsync(new()
                 {
-                    Name = game.Name,
-                    Description = game.Description,
-                    Editor = game.Editor,
-                    ReleaseDate = game.ReleaseDate
+                    Name = gam.Name,
+                    Description = gam.Description,
+                    Editor = gam.Editor,
+                    ReleaseDate = gam.ReleaseDate
                 });
             }
         }
-
         await _context.SaveChangesAsync();
+        #endregion
+
+        #region AddOneGameToLocation
+        Location? location = _context.Location.Include(l => l.Games).FirstOrDefault(l => l.Name == "Tour Eiffel");
+        Game? game = _context.Game.FirstOrDefault(g => g.Name == "Assassin's Creed Unity");
+        if (location is null && game is null)
+            throw new ApplicationException("Location : Tour Eiffel or Game : Assassin's Creed Unity not found");
+
+        location!.Games!.Add(game!);
+        await _context.SaveChangesAsync();
+        #endregion
 
         return true;
     }

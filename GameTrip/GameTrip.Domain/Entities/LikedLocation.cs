@@ -8,5 +8,5 @@ public class LikedLocation
     public Guid UserId { get; set; }
     public GameTripUser? User { get; set; }
 
-    public int vote { get; set; }
+    public decimal Vote { get; set; }
 }

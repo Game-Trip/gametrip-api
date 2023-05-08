@@ -26,6 +26,21 @@ public static class LocationExtension
         LikedLocations = location.LikedLocations
     };
 
+    public static LocationNameDto ToLocationNameDto(this Location location) => new()
+    {
+        Id = location.IdLocation,
+        Name = location.Name
+    };
+
+    public static LocationDto ToLocationDto(this Location location) => new()
+    {
+        Id = location.IdLocation,
+        Name = location.Name,
+        Description = location.Description,
+        Latitude = location.Latitude,
+        Longitude = location.Longitude
+    };
+
     public static List<LocationDto> ToDtoList(this IEnumerable<Location> location)
     {
         return location.Select(l =>

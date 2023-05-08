@@ -2,11 +2,14 @@
 using FluentValidation.AspNetCore;
 using GameTrip.API.Validator.AuthValidator;
 using GameTrip.API.Validator.GameValidator;
+using GameTrip.API.Validator.LikeValidator;
 using GameTrip.API.Validator.LocationValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LikeModels.Game;
+using GameTrip.Domain.Models.LikeModels.Location;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
@@ -226,6 +229,7 @@ internal class Startup
         services.AddScoped<ILocationPlarform, LocationPlatform>();
         services.AddScoped<IGamePlatform, GamePlatform>();
         services.AddScoped<IMailPlatform, MailPlatform>();
+        services.AddScoped<ILikePlatform, LikePlatform>();
 
         #endregion Platform
 
@@ -273,6 +277,11 @@ internal class Startup
         services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
 
         #endregion GameValidator
+
+        #region LikeValidator
+        services.AddScoped<IValidator<AddLikeLocationDto>, AddLikeLocationValidator>();
+        services.AddScoped<IValidator<AddLikeGameDto>, AddLikeGameValidator>();
+        #endregion
     }
 
     private void AddIdentity(IServiceCollection services)
