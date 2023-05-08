@@ -8,4 +8,20 @@ public class LikedLocationRepository : GenericRepository<LikedLocation>, ILikedL
     public LikedLocationRepository(GameTripContext context) : base(context)
     {
     }
+
+    public async Task AddLikeAsync(Location location, GameTripUser user, decimal value)
+    {
+        LikedLocation likedLocation = new()
+        {
+            LocationId = location.IdLocation,
+            Location = location,
+            UserId = user.Id,
+            User = user,
+            Vote = value
+        };
+        await _context.LikedLocation.AddAsync(likedLocation);
+        await _context.SaveChangesAsync();
+    }
+
+    public IEnumerable<LikedLocation> GetAllByLocation(Location location) => _context.LikedLocation.Where(ll => ll.Location == location).AsEnumerable();
 }
