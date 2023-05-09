@@ -24,9 +24,9 @@ public static class GameExtension
             Description = game.Description,
             Editor = game.Editor,
             ReleaseDate = game.ReleaseDate,
-            Locations = game.Locations.ToDtoList(),
-            Pictures = game.Pictures,
-            LikedGames = game.LikedGames,
+            Locations = game.Locations.ListToLocationNameDto(),
+            Pictures = game.Pictures.ToListListDto(),
+            LikedGames = game.LikedGames.ToListLikedGameDto(),
         };
     }
 

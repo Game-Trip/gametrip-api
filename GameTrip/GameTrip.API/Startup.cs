@@ -289,6 +289,7 @@ internal class Startup
 
         #region PictureValidator
         services.AddScoped<IValidator<AddPictureToLocationDto>, AddPictureToLocationValidator>();
+        services.AddScoped<IValidator<AddPictureToGameDto>, AddPictureToGameValidator>();
 
         #endregion
     }

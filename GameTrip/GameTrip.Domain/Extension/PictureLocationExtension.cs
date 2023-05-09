@@ -8,29 +8,27 @@ public static class PictureLocationExtension
     {
         return new PictureDto()
         {
+            PictureId = picture.IdPicture,
+            Name = picture.Name,
+            Description = picture.Description,
+            Picture = new(picture.Data, "image/jpeg"),
+            LocationId = picture.LocationId ??= null,
+            Location = picture.Location?.ToLocationNameDto()
+        };
+    }
+    public static IEnumerable<PictureDto> ToList(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToDto()).AsEnumerable();
+
+    public static ListPictureDto ToListDto(this Picture picture)
+    {
+        return new()
+        {
+            PictureId = picture.IdPicture,
             Name = picture.Name,
             Description = picture.Description,
             Picture = new(picture.Data, "image/jpeg")
         };
     }
 
-    public static IEnumerable<ListPictureLocationDto> ToListPictureLocationDto(this IEnumerable<Picture> pictures)
-    {
-        List<ListPictureLocationDto> listPictureLocationDtos = new();
-
-        IEnumerable<IGrouping<Guid?, Picture>> picturesGroupByLocation = pictures.GroupBy(p => p.LocationId);
-        foreach (IGrouping<Guid?, Picture> group in picturesGroupByLocation)
-        {
-            ListPictureLocationDto listPictureLocationDto = new()
-            {
-                LocationId = (Guid)group.Key!,
-                Location = group.First().Location.ToLocationNameDto(),
-                Pictures = group.Select(g => g.ToDto())
-            };
-
-            listPictureLocationDtos.Add(listPictureLocationDto);
-        }
-
-        return listPictureLocationDtos.AsEnumerable();
-    }
+    public static IEnumerable<ListPictureDto> ToListListDto(this ICollection<Picture> pictures) => pictures.Select(p => p.ToListDto()).AsEnumerable();
+    public static IEnumerable<ListPictureDto> ToListListDto(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToListDto()).AsEnumerable();
 }

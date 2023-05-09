@@ -1,5 +1,7 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LikeModels.Location;
+using GameTrip.Domain.Models.PictureModels;
 
 namespace GameTrip.Domain.Models.LocationModels;
 
@@ -14,8 +16,8 @@ public class GetLocationDto
 
     public decimal Longitude { get; set; }
 
-    public ICollection<Picture>? Pictures { get; set; }
-    public ICollection<ListGameDto>? Games { get; set; }
-    public ICollection<Comment>? Comments { get; set; }
-    public ICollection<LikedLocation>? LikedLocations { get; set; }
+    public IEnumerable<ListPictureDto>? Pictures { get; set; }
+    public IEnumerable<ListGameDto>? Games { get; set; }
+    public IEnumerable<Comment>? Comments { get; set; }
+    public IEnumerable<ListLikedLocationDto>? LikedLocations { get; set; }
 }
