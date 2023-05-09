@@ -27,7 +27,12 @@ public class LikeController : ControllerBase
     private readonly UserManager<GameTripUser> _userManager;
     private readonly ILikePlatform _likePlatform;
 
-    public LikeController(IValidator<AddLikeLocationDto> addLikeLocationValidator, ILocationPlarform locationPlaform, UserManager<GameTripUser> userManager, ILikePlatform likePlatform, IValidator<AddLikeGameDto> addLikeGameValidator, IGamePlatform gamePlatfrom)
+    public LikeController(IValidator<AddLikeLocationDto> addLikeLocationValidator,
+                          ILocationPlarform locationPlaform,
+                          UserManager<GameTripUser> userManager,
+                          ILikePlatform likePlatform,
+                          IValidator<AddLikeGameDto> addLikeGameValidator,
+                          IGamePlatform gamePlatfrom)
     {
         _addLikeLocationValidator = addLikeLocationValidator;
         _locationPlaform = locationPlaform;
