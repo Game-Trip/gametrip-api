@@ -90,8 +90,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\LikeModels\Picture\" />
-  </ItemGroup>
-
 </Project>

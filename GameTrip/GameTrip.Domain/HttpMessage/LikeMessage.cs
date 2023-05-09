@@ -12,6 +12,7 @@ public class LikeMessage : StringEnumError
     public static LikeMessage AddLikeGameDtoNull => new("AddLikeGameDtoNull", "AddLikeGameDto can not be Null");
     public static LikeMessage LocationIdNullOrEmpty => new("LocationIdNullOrEmpty", "The LocationId field can not be Null or Empty");
     public static LikeMessage GameIdNullOrEmpty => new("GameIdNullOrEmpty", "The GameId field can not be Null or Empty");
+    public static LikeMessage PictureIdNullOrEmpty => new("PictureIdNullOrEmpty", "The PictureId field can not be Null or Empty");
     public static LikeMessage UserIdNullOrEmpty => new("UserIdNullOrEmpty", "The UserId field can not be Null or Empty");
     public static LikeMessage ValueNullOrEmpty => new("ValueNull", "The Value field can not be Null or Empty");
     public static LikeMessage ValuePrecision => new("ValuePrecision", "The Value field must have a precision of 1 digit before and after the decimal point");
