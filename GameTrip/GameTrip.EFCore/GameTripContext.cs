@@ -86,9 +86,9 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         {
             p.HasKey(p => p.IdPicture);
 
-            p.Property(p => p.Name).HasMaxLength(255);
+            p.Property(p => p.Name).IsRequired().HasMaxLength(255);
             p.Property(p => p.Description).HasMaxLength(255);
-            p.Property(p => p.Path).HasMaxLength(255);
+            p.Property(p => p.Data).IsRequired().HasColumnType("varbinary(max)");
         });
 
         builder.Entity<GameTripUser>(u =>
