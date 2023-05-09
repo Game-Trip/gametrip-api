@@ -4,7 +4,7 @@ using GameTrip.Domain.Models.PictureModels;
 namespace GameTrip.Domain.Extension;
 public static class PictureLocationExtension
 {
-    public static PictureDto ToDto(this Picture picture)
+    public static PictureDto ToPictureDto(this Picture picture)
     {
         return new PictureDto()
         {
@@ -16,9 +16,9 @@ public static class PictureLocationExtension
             Location = picture.Location?.ToLocationNameDto()
         };
     }
-    public static IEnumerable<PictureDto> ToList(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToDto()).AsEnumerable();
+    public static IEnumerable<PictureDto> ToEnumerable_PictureDto(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToPictureDto()).AsEnumerable();
 
-    public static ListPictureDto ToListDto(this Picture picture)
+    public static ListPictureDto ToList_ListPictureDto(this Picture picture)
     {
         return new()
         {
@@ -29,6 +29,6 @@ public static class PictureLocationExtension
         };
     }
 
-    public static IEnumerable<ListPictureDto> ToListListDto(this ICollection<Picture> pictures) => pictures.Select(p => p.ToListDto()).AsEnumerable();
-    public static IEnumerable<ListPictureDto> ToListListDto(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToListDto()).AsEnumerable();
+    public static IEnumerable<ListPictureDto> ToEnumerable_ListPictureDto(this ICollection<Picture> pictures) => pictures.Select(p => p.ToList_ListPictureDto()).AsEnumerable();
+    public static IEnumerable<ListPictureDto> ToEnumerable_ListPictureDto(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToList_ListPictureDto()).AsEnumerable();
 }

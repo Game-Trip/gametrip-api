@@ -4,7 +4,7 @@ using GameTrip.Domain.Models.LikeModels.Location;
 namespace GameTrip.Domain.Extension;
 public static class LikeLocationExtension
 {
-    public static LikedLocationDto ToDto(this IEnumerable<LikedLocation> likedLocations)
+    public static LikedLocationDto ToLikedLocationDto(this IEnumerable<LikedLocation> likedLocations)
     {
 
         return new()
@@ -19,7 +19,7 @@ public static class LikeLocationExtension
         };
     }
 
-    public static IEnumerable<ListLikedLocationDto> ToListLikedLocationDto(this IEnumerable<LikedLocation> likedLocations)
+    public static IEnumerable<ListLikedLocationDto> ToEnumerable_ListLikedLocationDto(this IEnumerable<LikedLocation> likedLocations)
     {
         return likedLocations.Select(ll => new ListLikedLocationDto()
         {

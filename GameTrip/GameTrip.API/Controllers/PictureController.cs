@@ -78,7 +78,7 @@ public class PictureController : ControllerBase
             fileResults.Add(fileResult);
         }
 
-        return Ok(pictures.ToListListDto());
+        return Ok(pictures.ToEnumerable_ListPictureDto());
     }
 
     [Authorize(Roles = Roles.User)]
@@ -140,6 +140,6 @@ public class PictureController : ControllerBase
             fileResults.Add(fileResult);
         }
 
-        return Ok(pictures.ToListListDto());
+        return Ok(pictures.ToEnumerable_ListPictureDto());
     }
 }

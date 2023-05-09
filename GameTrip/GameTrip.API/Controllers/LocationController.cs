@@ -62,7 +62,7 @@ public class LocationController : ControllerBase
     public async Task<ActionResult<List<LocationDto>>> GetLocationsAsync([Optional][FromQuery] int limit)
     {
         IEnumerable<Location> locations = await _locationPlatform.GetAllLocationAsync(limit);
-        return locations.ToDtoList();
+        return locations.ToList_LocationDto();
     }
 
     [AllowAnonymous]
@@ -76,7 +76,7 @@ public class LocationController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
         }
 
-        return location.ToDto();
+        return location.ToGetLocationDto();
     }
 
     [AllowAnonymous]
@@ -90,7 +90,7 @@ public class LocationController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundByName));
         }
 
-        return location.ToDto();
+        return location.ToGetLocationDto();
     }
 
     [AllowAnonymous]
@@ -106,7 +106,7 @@ public class LocationController : ControllerBase
         if (!locations.Any())
             return NotFound(new MessageDto(LocationMessage.NotFoundByGameId));
 
-        return locations.ToDtoList();
+        return locations.ToList_LocationDto();
     }
 
     [AllowAnonymous]
@@ -124,7 +124,7 @@ public class LocationController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundByGameName));
         }
 
-        return locations.ToDtoList();
+        return locations.ToList_LocationDto();
     }
 
     [Authorize(Roles = Roles.User)]
@@ -147,7 +147,7 @@ public class LocationController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.NotFoundById));
 
         Location location = await _locationPlatform.UpdateLocationAsync(entity, dto);
-        return Ok(location.ToDto());
+        return Ok(location.ToGetLocationDto());
     }
 
     [HttpDelete]

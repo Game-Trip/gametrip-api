@@ -70,7 +70,7 @@ public class LikeController : ControllerBase
 
         IEnumerable<LikedLocation> likedLocations = _likePlatform.GetAllLikedLocationByLocation(location);
 
-        return Ok(likedLocations.ToDto());
+        return Ok(likedLocations.ToLikedLocationDto());
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public class LikeController : ControllerBase
         if (!likedLocations.Any())
             return NoContent();
 
-        return Ok(likedLocations.ToDto());
+        return Ok(likedLocations.ToLikedLocationDto());
     }
 
     [Authorize(Roles = Roles.User)]
@@ -119,7 +119,7 @@ public class LikeController : ControllerBase
 
         IEnumerable<LikedLocation> likedLocations = user.LikedLocations!.Select(ll => _likePlatform.GetLikeLocation(ll));
 
-        return Ok(likedLocations.ToListLikedLocationDto());
+        return Ok(likedLocations.ToEnumerable_ListLikedLocationDto());
     }
 
     [Authorize(Roles = Roles.User)]
@@ -179,7 +179,7 @@ public class LikeController : ControllerBase
 
         IEnumerable<LikedGame> likedGames = _likePlatform.GetAllLikedGameByGame(game);
 
-        return Ok(likedGames.ToDto());
+        return Ok(likedGames.ToLikedGameDto());
     }
 
     /// <summary>
@@ -211,7 +211,7 @@ public class LikeController : ControllerBase
         if (!likedGames.Any())
             return NoContent();
 
-        return Ok(likedGames.ToDto());
+        return Ok(likedGames.ToLikedGameDto());
     }
 
     [Authorize(Roles = Roles.User)]
@@ -228,7 +228,7 @@ public class LikeController : ControllerBase
 
         IEnumerable<LikedGame> likedGames = user.LikedGames!.Select(lg => _likePlatform.GetLikeGame(lg));
 
-        return Ok(likedGames.ToListLikedGameDto());
+        return Ok(likedGames.ToEnumerable_ListLikedGameDto());
     }
 
     [Authorize(Roles = Roles.User)]

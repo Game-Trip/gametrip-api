@@ -57,7 +57,7 @@ public class GameController : ControllerBase
     public async Task<ActionResult<List<ListGameDto>>> GetGames([Optional][FromQuery] int limit)
     {
         IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync(limit);
-        return games.ToDtoList();
+        return games.ToList_ListGameDto();
     }
 
     [AllowAnonymous]
@@ -71,7 +71,7 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundById));
         }
 
-        return game.ToDto();
+        return game.ToGameDto();
     }
 
     [AllowAnonymous]
@@ -85,7 +85,7 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundByName));
         }
 
-        return game.ToDto();
+        return game.ToGameDto();
     }
 
     [AllowAnonymous]
@@ -101,7 +101,7 @@ public class GameController : ControllerBase
         if (!games.Any())
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationId));
 
-        return games.ToDtoList();
+        return games.ToList_ListGameDto();
     }
 
     [AllowAnonymous]
@@ -119,7 +119,7 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationName));
         }
 
-        return game.ToDtoList();
+        return game.ToList_ListGameDto();
     }
 
     [Authorize(Roles = Roles.User)]
@@ -183,7 +183,7 @@ public class GameController : ControllerBase
             return BadRequest(new MessageDto(GameMessage.NotFoundById));
 
         Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
-        return Ok(game.ToDto());
+        return Ok(game.ToGameDto());
     }
 
     [HttpDelete]

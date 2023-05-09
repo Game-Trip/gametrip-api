@@ -16,7 +16,7 @@ public static class GameExtension
         };
     }
 
-    public static GameDto ToDto(this Game game)
+    public static GameDto ToGameDto(this Game game)
     {
         return new()
         {
@@ -24,9 +24,9 @@ public static class GameExtension
             Description = game.Description,
             Editor = game.Editor,
             ReleaseDate = game.ReleaseDate,
-            Locations = game.Locations.ListToLocationNameDto(),
-            Pictures = game.Pictures.ToListListDto(),
-            LikedGames = game.LikedGames.ToListLikedGameDto(),
+            Locations = game.Locations.ToEnumerable_LocationNameDto(),
+            Pictures = game.Pictures.ToEnumerable_ListPictureDto(),
+            LikedGames = game.LikedGames.ToEnumerable_ListLikedGameDto(),
         };
     }
 
@@ -39,7 +39,7 @@ public static class GameExtension
         };
     }
 
-    public static List<ListGameDto> ToDtoList(this IEnumerable<Game> games)
+    public static List<ListGameDto> ToList_ListGameDto(this IEnumerable<Game> games)
     {
         return games.Select(game => new ListGameDto
         {
