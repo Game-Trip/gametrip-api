@@ -1,5 +1,6 @@
-﻿using GameTrip.Domain.Entities;
+﻿using GameTrip.Domain.Models.LikeModels.Game;
 using GameTrip.Domain.Models.LocationModels;
+using GameTrip.Domain.Models.PictureModels;
 
 namespace GameTrip.Domain.Models.GameModels;
 
@@ -10,7 +11,7 @@ public class GameDto
     public string? Editor { get; set; }
     public long? ReleaseDate { get; set; }
 
-    public ICollection<LocationDto>? Locations { get; set; }
-    public ICollection<Picture>? Pictures { get; set; }
-    public ICollection<LikedGame>? LikedGames { get; set; }
+    public IEnumerable<LocationNameDto>? Locations { get; set; }
+    public IEnumerable<ListPictureDto>? Pictures { get; set; }
+    public IEnumerable<ListLikedGameDto>? LikedGames { get; set; }
 }
