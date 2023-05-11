@@ -9,23 +9,18 @@ public class ResetPasswordValidator : AbstractValidator<ResetPasswordDto>
     public ResetPasswordValidator()
     {
         RuleFor(dto => dto)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .WithErrorCode(UserMessage.ResetPasswordDtoNull.Key)
             .WithMessage(UserMessage.ResetPasswordDtoNull.Message);
 
         #region Email
         RuleFor(dto => dto.Email)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.EmailNull.Key)
-            .WithMessage(UserMessage.EmailNull.Message);
-
-        RuleFor(dto => dto.Email)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Email is null)
-            .WithErrorCode(UserMessage.EmailEmtpy.Key)
-            .WithMessage(UserMessage.EmailEmtpy.Message);
+            .WithErrorCode(UserMessage.EmailNullOrEmpty.Key)
+            .WithMessage(UserMessage.EmailNullOrEmpty.Message);
 
         RuleFor(dto => dto.Email)
             .EmailAddress()
@@ -36,31 +31,20 @@ public class ResetPasswordValidator : AbstractValidator<ResetPasswordDto>
         #region Password
         RuleFor(dto => dto.Password)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.PasswordNull.Key)
-            .WithMessage(UserMessage.PasswordNull.Message);
-
-        RuleFor(dto => dto.Password)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Password is null)
-            .WithErrorCode(UserMessage.PasswordEmpty.Key)
-            .WithMessage(UserMessage.PasswordEmpty.Message);
+            .WithErrorCode(UserMessage.PasswordNullOrEmpty.Key)
+            .WithMessage(UserMessage.PasswordNullOrEmpty.Message);
+
         #endregion
 
         #region ConfirmPassword
         RuleFor(dto => dto.PasswordConfirmation)
-            .Must(passwordConfirmation => passwordConfirmation is not null)
+            .NotNull()
+            .NotEmpty()
             .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.PasswordConfirmationNull.Key)
-            .WithMessage(UserMessage.PasswordConfirmationNull.Message);
-
-        RuleFor(dto => dto.PasswordConfirmation)
-            .Must(passwordConfirmation => !string.IsNullOrWhiteSpace(passwordConfirmation))
-            .Unless(dto => dto is null)
-            .Unless(dto => dto.PasswordConfirmation is null)
-            .WithErrorCode(UserMessage.PasswordConfirmationEmpty.Key)
-            .WithMessage(UserMessage.PasswordConfirmationEmpty.Message);
+            .WithErrorCode(UserMessage.PasswordConfirmationNullOrEmpty.Key)
+            .WithMessage(UserMessage.PasswordConfirmationNullOrEmpty.Message);
 
         RuleFor(dto => dto.PasswordConfirmation)
             .Equal(dto => dto.Password)
@@ -76,16 +60,11 @@ public class ResetPasswordValidator : AbstractValidator<ResetPasswordDto>
         #region Token
         RuleFor(dto => dto.Token)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.TokenNull.Key)
-            .WithMessage(UserMessage.TokenNull.Message);
-
-        RuleFor(dto => dto.Token)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Token is null)
-            .WithErrorCode(UserMessage.TokenEmpty.Key)
-            .WithMessage(UserMessage.TokenEmpty.Message);
+            .WithErrorCode(UserMessage.TokenNullOrEmpty.Key)
+            .WithMessage(UserMessage.TokenNullOrEmpty.Message);
+
         #endregion
     }
 }

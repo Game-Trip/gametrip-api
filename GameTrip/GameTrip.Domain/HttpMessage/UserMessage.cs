@@ -22,18 +22,13 @@ public class UserMessage : StringEnumError
     public static UserMessage ConfirmEmailDtoNull => new("ConfirmEmailDtoNull", "The ConfirmEmailDto can not be Null");
     public static UserMessage ForgotPasswordDtoNull => new("ForgotPasswordDtoNull", "The ForgotPasswordDto can not be Null");
     public static UserMessage ResetPasswordDtoNull => new("ResetPasswordDtoNull", "The ResetPasswordDto can not be Null");
-    public static UserMessage UsernameNull => new("UserUserNameNull", "The UserName field can not be Null");
-    public static UserMessage UsernameEmpty => new("UserUserNameEmtpy", "The UserName field can not be Empty");
-    public static UserMessage EmailNull => new("UserEmailNull", "The Email field can not be Null");
-    public static UserMessage EmailEmtpy => new("UserEmailEmtpy", "The Email field can not be Empty");
+    public static UserMessage UsernameNullOrEmpty => new("UserUserNameNullOrEmpty", "The UserName field can not be Null Or Empty");
+    public static UserMessage EmailNullOrEmpty => new("UserEmailNullOrEmpty", "The Email field can not be Null Or Empty");
     public static UserMessage EmailDoEmail => new("UserEmailDoEmail", "The Email field must be a valid Email");
-    public static UserMessage PasswordNull => new("UserPasswordNull", "The Password field can not be Null");
-    public static UserMessage PasswordEmpty => new("UserPasswordEmpty", "The Password field can not be Emtpy");
-    public static UserMessage PasswordConfirmationNull => new("UserPasswordConfirmationNull", "The PasswordConfirmation field can not be Null");
-    public static UserMessage PasswordConfirmationEmpty => new("UserPasswordConfirmationEmpty", "The PasswordConfirmation field can not be Empty");
+    public static UserMessage PasswordNullOrEmpty => new("UserPasswordNullOrEmpty", "The Password field can not be Null Or Empty");
+    public static UserMessage PasswordConfirmationNullOrEmpty => new("UserPasswordConfirmationNullOrEmpty", "The PasswordConfirmation field can not be Null Or Empty");
     public static UserMessage PasswordConfirmationNotEqual => new("UserPasswordConfirmationNotEqual", "The PasswordConfirmation field and Password field must be Equals");
-    public static UserMessage TokenNull => new("UserTokenNull", "The Token field can not be Null");
-    public static UserMessage TokenEmpty => new("UserTokenEmpty", "The Token field can not be Empty");
+    public static UserMessage TokenNullOrEmpty => new("UserTokenNullOrEmpty", "The Token field can not be Null Or Empty");
 
     #endregion
 

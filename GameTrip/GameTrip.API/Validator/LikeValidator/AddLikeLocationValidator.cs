@@ -9,13 +9,15 @@ public class AddLikeLocationValidator : AbstractValidator<AddLikeLocationDto>
     public AddLikeLocationValidator()
     {
         RuleFor(dto => dto)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .WithErrorCode(LikeMessage.AddLikeLocationDtoNull.Key)
             .WithMessage(LikeMessage.AddLikeLocationDtoNull.Message);
 
         #region Location
         RuleFor(dto => dto.LocationId)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .Unless(dto => dto is null)
             .WithErrorCode(LikeMessage.LocationIdNullOrEmpty.Key)
             .WithMessage(LikeMessage.LocationIdNullOrEmpty.Message);
@@ -23,7 +25,8 @@ public class AddLikeLocationValidator : AbstractValidator<AddLikeLocationDto>
 
         #region User
         RuleFor(dto => dto.UserId)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .Unless(dto => dto is null)
             .WithErrorCode(LikeMessage.UserIdNullOrEmpty.Key)
             .WithMessage(LikeMessage.UserIdNullOrEmpty.Message);
@@ -31,7 +34,8 @@ public class AddLikeLocationValidator : AbstractValidator<AddLikeLocationDto>
 
         #region Value
         RuleFor(dto => dto.Value)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .Unless(dto => dto is null)
             .WithErrorCode(LikeMessage.ValueNullOrEmpty.Key)
             .WithMessage(LikeMessage.ValueNullOrEmpty.Message);

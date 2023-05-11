@@ -9,23 +9,18 @@ public class ConfirmEmailValidator : AbstractValidator<ConfirmMailDto>
     public ConfirmEmailValidator()
     {
         RuleFor(dto => dto)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .WithErrorCode(UserMessage.ConfirmEmailDtoNull.Key)
             .WithMessage(UserMessage.ConfirmEmailDtoNull.Message);
 
         #region Email
         RuleFor(dto => dto.Email)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.EmailNull.Key)
-            .WithMessage(UserMessage.EmailNull.Message);
-
-        RuleFor(dto => dto.Email)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Email is null)
-            .WithErrorCode(UserMessage.EmailEmtpy.Key)
-            .WithMessage(UserMessage.EmailEmtpy.Message);
+            .WithErrorCode(UserMessage.EmailNullOrEmpty.Key)
+            .WithMessage(UserMessage.EmailNullOrEmpty.Message);
 
         RuleFor(dto => dto.Email)
             .EmailAddress()
@@ -36,16 +31,10 @@ public class ConfirmEmailValidator : AbstractValidator<ConfirmMailDto>
         #region Token
         RuleFor(dto => dto.Token)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.TokenNull.Key)
-            .WithMessage(UserMessage.TokenNull.Message);
-
-        RuleFor(dto => dto.Token)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Token is null)
-            .WithErrorCode(UserMessage.TokenEmpty.Key)
-            .WithMessage(UserMessage.TokenEmpty.Message);
+            .WithErrorCode(UserMessage.TokenNullOrEmpty.Key)
+            .WithMessage(UserMessage.TokenNullOrEmpty.Message);
         #endregion
     }
 }

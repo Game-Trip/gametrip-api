@@ -11,13 +11,10 @@ public class GameMessage : StringEnumError
     #region Validator
 
     public static GameMessage GameCanNotBeNull => new("GameCanNotBeNull", "Game cannot be Null");
-    public static GameMessage NameCanNotBeNull => new("GameNameCanNotBeNull", "Game name cannot be Null");
-    public static GameMessage NameCanNotBeEmpty => new("GameNameCanNotBeEmpty", "Game name cannot be Empty");
-    public static GameMessage DescriptionCanNotBeNull => new("GameDescriptionCanNotBeNull", "Game description cannot be Null");
-    public static GameMessage DescriptionCanNotBeEmpty => new("GameDescriptionCanNotBeEmpty", "Game description cannot be Empty");
-    public static GameMessage EditorCanNotBeNull => new("GameEditorCanNotBeNull", "Game editor cannot be Null");
-    public static GameMessage EditorCanNotBeEmpty => new("GameEditorCanNotBeEmpty", "Game editor cannot be Empty");
-    public static GameMessage ReleaseCanNotBeNull => new("GameReleaseCanNotBeNull", "Game release cannot be Null");
+    public static GameMessage NameCanNotBeNullOrEmpty => new("GameNameCanNotBeNullOrEmpty", "Game name cannot be Null Or Empty");
+    public static GameMessage DescriptionCanNotBeNullOrEmpty => new("GameDescriptionCanNotBeNullOrEmpty", "Game description cannot be Null Or Empty");
+    public static GameMessage EditorCanNotBeNullOrEmpty => new("GameEditorCanNotBeNullOrEmpty", "Game editor cannot be Null Or Empty");
+    public static GameMessage ReleaseCanNotBeNullOrEmpty => new("GameReleaseCanNotBeNullOrEmpty", "Game release cannot be Null Or Empty");
 
     #endregion Validator
 

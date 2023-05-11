@@ -14,8 +14,10 @@ using GameTrip.Provider.IProvider;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace GameTrip.API.Controllers;
 /// <summary>
@@ -39,18 +41,6 @@ public class AuthController : ControllerBase
     private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
     private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AuthController"/> class.
-    /// </summary>
-    /// <param name="userManager">The user manager.</param>
-    /// <param name="authPlatform">The auth platform.</param>
-    /// <param name="mailPlatform">The mail platform.</param>
-    /// <param name="emailProvider">The email provider.</param>
-    /// <param name="forgotPasswordValidator"></param>
-    /// <param name="resetPasswordValidator"></param>
-    /// <param name="confirmMailValidator"></param>
-    /// <param name="registerValidator"></param>
-    /// <param name="loginValidator"></param>
     public AuthController(UserManager<GameTripUser> userManager, IAuthPlatform authPlatform, IMailPlatform mailPlatform, IEmailProvider emailProvider, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IValidator<ConfirmMailDto> confirmMailValidator, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
     {
         _userManager = userManager;
@@ -76,16 +66,17 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Logins the.
+    /// Authenticate a user
     /// </summary>
-    /// <param name="dto">The dto.</param>
-    /// <returns>A Task.</returns>
+    /// <param name="dto">LoginDto</param>
     /// <remarks>
     /// {
     ///   "username": "Dercraker",
     ///   "password": "NMdRx$HqyT8jX6"
     /// }
     /// </remarks>
+    [ProducesResponseType(typeof(TokenDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.Unauthorized)]
     [AllowAnonymous]
     [HttpPost]
     [Route("Login")]
@@ -111,6 +102,15 @@ public class AuthController : ControllerBase
             return Unauthorized(new MessageDto(UserMessage.FailedLogin));
     }
 
+    //TODO VOIR CE QUE JE PEUT FAIRE POUR LES 3 MODEL DE BADREQUEST
+    /// <summary>
+    /// Register a user
+    /// </summary>
+    /// <param name="dto">RegisterDto</param>
+    [ProducesResponseType(typeof(GameTripUserDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(IEnumerable<IdentityError>), (int)HttpStatusCode.BadRequest)]
     [AllowAnonymous]
     [HttpPost]
     [Route("Register")]
@@ -163,10 +163,13 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Confirms the email.
+    /// Confirms the email of provided user.
     /// </summary>
-    /// <param name="dto">The dto.</param>
-    /// <returns>A Task.</returns>
+    /// <param name="dto">ConfirmMailDto</param>
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
     [AllowAnonymous]
     [HttpPost]
     [Route("ConfirmEmail")]
@@ -191,10 +194,12 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Frogots the password.
+    /// Send Forgot Password Mail to user
     /// </summary>
-    /// <param name="dto">The dto.</param>
-    /// <returns>A Task.</returns>
+    /// <param name="dto">ForgotPasswordDto</param>
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [AllowAnonymous]
     [HttpPost]
     [Route("ForgotPassword")]
@@ -234,10 +239,11 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Resets the password.
+    /// change the user's password
     /// </summary>
-    /// <param name="dto">The dto.</param>
-    /// <returns>A Task.</returns>
+    /// <param name="dto">ResetPasswrdDto</param>
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.Unauthorized)]
     [AllowAnonymous]
     [HttpPost]
     [Route("ResetPassword")]
