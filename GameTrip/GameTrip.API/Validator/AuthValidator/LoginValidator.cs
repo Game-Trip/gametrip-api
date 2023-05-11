@@ -9,39 +9,30 @@ public class LoginValidator : AbstractValidator<LoginDto>
     public LoginValidator()
     {
         RuleFor(dto => dto)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .WithErrorCode(UserMessage.LoginDtoNull.Key)
             .WithMessage(UserMessage.LoginDtoNull.Message);
 
         #region Username
         RuleFor(dto => dto.Username)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.UsernameNull.Key)
-            .WithMessage(UserMessage.UsernameNull.Message);
-
-        RuleFor(dto => dto.Username)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Username is null)
-            .WithErrorCode(UserMessage.UsernameEmpty.Key)
-            .WithMessage(UserMessage.UsernameEmpty.Message);
+            .WithErrorCode(UserMessage.UsernameNullOrEmpty.Key)
+            .WithMessage(UserMessage.UsernameNullOrEmpty.Message);
+
         #endregion
 
         #region Password
 
         RuleFor(dto => dto.Password)
             .NotNull()
-            .Unless(dto => dto is null)
-            .WithErrorCode(UserMessage.PasswordNull.Key)
-            .WithMessage(UserMessage.PasswordNull.Message);
-
-        RuleFor(dto => dto.Password)
             .NotEmpty()
             .Unless(dto => dto is null)
-            .Unless(dto => dto.Password is null)
-            .WithErrorCode(UserMessage.PasswordEmpty.Key)
-            .WithMessage(UserMessage.PasswordEmpty.Message);
+            .WithErrorCode(UserMessage.PasswordNullOrEmpty.Key)
+            .WithMessage(UserMessage.PasswordNullOrEmpty.Message);
+
         #endregion
     }
 }

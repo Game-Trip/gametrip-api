@@ -9,38 +9,27 @@ public class CreateLocationValidator : AbstractValidator<CreateLocationDto>
     public CreateLocationValidator()
     {
         RuleFor(location => location)
-            .NotNull().NotEmpty()
+            .NotNull()
+            .NotEmpty()
             .WithErrorCode(LocationMessage.LocationCanNotBeNull.Key)
             .WithMessage(LocationMessage.LocationCanNotBeNull.Message);
 
         #region Name
         RuleFor(location => location.Name)
             .NotNull()
-            .Unless(location => location is null)
-            .WithErrorCode(LocationMessage.NameCanNotBeNull.Key)
-            .WithMessage(LocationMessage.NameCanNotBeNull.Message);
-
-        RuleFor(location => location.Name)
             .NotEmpty()
             .Unless(location => location is null)
-            .Unless(location => location.Name is null)
-            .WithErrorCode(LocationMessage.NameCanNotBeEmpty.Key)
-            .WithMessage(LocationMessage.NameCanNotBeEmpty.Message);
+            .WithErrorCode(LocationMessage.NameCanNotBeNullOrEmpty.Key)
+            .WithMessage(LocationMessage.NameCanNotBeNullOrEmpty.Message);
         #endregion
 
         #region Description
         RuleFor(location => location.Description)
             .NotNull()
-            .Unless(location => location is null)
-            .WithErrorCode(LocationMessage.NameCanNotBeNull.Key)
-            .WithMessage(LocationMessage.DescriptionCanNotBeNull.Message);
-
-        RuleFor(location => location.Description)
             .NotEmpty()
             .Unless(location => location is null)
-            .Unless(location => location.Description is null)
-            .WithErrorCode(LocationMessage.NameCanNotBeEmpty.Key)
-            .WithMessage(LocationMessage.DescriptionCanNotBeEmpty.Message);
+            .WithErrorCode(LocationMessage.NameCanNotBeNullOrEmpty.Key)
+            .WithMessage(LocationMessage.DescriptionCanNotBeNullOrEmpty.Message);
         #endregion
 
         #region Latitude
