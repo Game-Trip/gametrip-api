@@ -4,12 +4,13 @@ using FluentValidation.Results;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
-using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
@@ -32,6 +33,13 @@ public class LocationController : ControllerBase
         _updateLocationValidator = updateLocationValidator;
     }
 
+    /// <summary>
+    /// Create new location
+    /// </summary>
+    /// <param name="dto">CreateLocationDto</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateLocation")]
@@ -56,6 +64,11 @@ public class LocationController : ControllerBase
         return Ok();
     }
 
+    /// <summary>
+    /// Get all locations
+    /// </summary>
+    /// <param name="limit">Limit of location present in return</param>
+    [ProducesResponseType(typeof(List<LocationDto>), (int)HttpStatusCode.OK)]
     [AllowAnonymous]
     [HttpGet]
     [Route("")]
@@ -65,6 +78,12 @@ public class LocationController : ControllerBase
         return locations.ToList_LocationDto();
     }
 
+    /// <summary>
+    /// Get location by id
+    /// </summary>
+    /// <param name="locationId">Id of wanted location</param>
+    [ProducesResponseType(typeof(GetLocationDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Id/{locationId}")]
@@ -79,6 +98,12 @@ public class LocationController : ControllerBase
         return location.ToGetLocationDto();
     }
 
+    /// <summary>
+    /// Get location by name
+    /// </summary>
+    /// <param name="locationName">Name of wanted Location</param>
+    [ProducesResponseType(typeof(GetLocationDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Name/{locationName}")]
@@ -93,6 +118,12 @@ public class LocationController : ControllerBase
         return location.ToGetLocationDto();
     }
 
+    /// <summary>
+    /// Get all location by game id
+    /// </summary>
+    /// <param name="gameId">Id of related game</param>
+    [ProducesResponseType(typeof(List<LocationDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Game/Id/{gameId}")]
@@ -109,6 +140,12 @@ public class LocationController : ControllerBase
         return locations.ToList_LocationDto();
     }
 
+    /// <summary>
+    /// Get all location by game name
+    /// </summary>
+    /// <param name="gameName">Name of related game</param>
+    [ProducesResponseType(typeof(List<LocationDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Game/Name/{gameName}")]
@@ -127,10 +164,18 @@ public class LocationController : ControllerBase
         return locations.ToList_LocationDto();
     }
 
+    /// <summary>
+    /// Update location
+    /// </summary>
+    /// <param name="locationId">Id of location to update</param>
+    /// <param name="dto">UpdateLocationDto</param>
+    [ProducesResponseType(typeof(LocationDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [Authorize(Roles = Roles.User)]
     [HttpPut]
     [Route("{locationId}")]
-    public async Task<ActionResult<GameDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto)
+    public async Task<ActionResult<LocationDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto)
     {
         ValidationResult result = _updateLocationValidator.Validate(dto);
         if (!result.IsValid)
@@ -150,10 +195,16 @@ public class LocationController : ControllerBase
         return Ok(location.ToGetLocationDto());
     }
 
+    /// <summary>
+    /// Delete location by id
+    /// </summary>
+    /// <param name="locationId">Id of deleted location</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [HttpDelete]
     [Authorize(Roles = Roles.User)]
     [Route("Delete/{locationId}")]
-    public async Task<ActionResult<Location>> DeleteLocationByIdAsync([FromRoute] Guid locationId)
+    public async Task<IActionResult> DeleteLocationByIdAsync([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
         if (location is null)

@@ -9,6 +9,8 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net;
 
 namespace GameTrip.API.Controllers;
 
@@ -34,6 +36,16 @@ public class PictureController : ControllerBase
 
     //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
     #region Picture and Location
+    /// <summary>
+    /// Create and add picture to location
+    /// </summary>
+    /// <param name="pictureData">Picture file</param>
+    /// <param name="locationId">Id of location to add picture</param>
+    /// <param name="name">Picture name</param>
+    /// <param name="description">Picture description</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddPictureToLocation/{locationId}")]
@@ -57,9 +69,15 @@ public class PictureController : ControllerBase
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
 
         await _picturePlatfrom.AddPictureToLocationAsync(pictureData, dto, location);
-        return Ok();
+        return Ok(new MessageDto(PictureMessage.SucessAddToLocation));
     }
 
+    /// <summary>
+    /// Get all pictures of location
+    /// </summary>
+    /// <param name="locationId">Id of location</param>
+    [ProducesResponseType(typeof(IEnumerable<ListPictureDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("GetPicturesByLocationId/{locationId}")]
@@ -81,6 +99,12 @@ public class PictureController : ControllerBase
         return Ok(pictures.ToEnumerable_ListPictureDto());
     }
 
+    /// <summary>
+    /// Get picture by id
+    /// </summary>
+    /// <param name="pictureId">Id of deleted Picture</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpDelete]
     [Route("DeletePicture/{pictureId}")]
@@ -96,6 +120,16 @@ public class PictureController : ControllerBase
     #endregion
 
     //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
+    /// <summary>
+    /// Create and Add picture to Game
+    /// </summary>
+    /// <param name="pictureData">Picture File</param>
+    /// <param name="gameId">Id of game to add picture</param>
+    /// <param name="name">Name of picture</param>
+    /// <param name="description">Description of Picture</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddPictureToGame/{gameId}")]
@@ -122,6 +156,12 @@ public class PictureController : ControllerBase
         return Ok(new MessageDto(PictureMessage.SucessAddToGame));
     }
 
+    /// <summary>
+    /// Get all pictures of game
+    /// </summary>
+    /// <param name="gameId">Id of game</param>
+    [ProducesResponseType(typeof(IEnumerable<ListPictureDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("GetPicturesByGameId/{gameId}")]

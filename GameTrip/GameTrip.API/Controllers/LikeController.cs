@@ -11,7 +11,9 @@ using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace GameTrip.API.Controllers;
 
@@ -43,6 +45,14 @@ public class LikeController : ControllerBase
     }
 
     #region LocationLike
+    /// <summary>
+    /// Add like to location
+    /// </summary>
+    /// <param name="dto">AddLikeLocationDto</param>
+    [ProducesResponseType(typeof(LikedLocationDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddLikeToLocation")]
@@ -74,11 +84,13 @@ public class LikeController : ControllerBase
     }
 
     /// <summary>
-    /// Remove Like from Location
+    /// Remove like to location
     /// </summary>
-    /// return <see cref="LikedLocationDto"/>
-    /// <response code = "204">Location provided did not have like from any users</response>
-    /// 
+    /// <param name="locationId">id of liked location</param>
+    /// <param name="userId">id of user who liked location</param>
+    [ProducesResponseType(typeof(LikedLocationDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RemoveLikeToLocation/{locationId}/{userId}")]
@@ -105,6 +117,12 @@ public class LikeController : ControllerBase
         return Ok(likedLocations.ToLikedLocationDto());
     }
 
+    /// <summary>
+    /// Get all liked location by user id
+    /// </summary>
+    /// <param name="userId">Id of user who liked all getted location</param>
+    [ProducesResponseType(typeof(IEnumerable<ListLikedLocationDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("LikedLocations/{userId}")]
@@ -122,6 +140,10 @@ public class LikeController : ControllerBase
         return Ok(likedLocations.ToEnumerable_ListLikedLocationDto());
     }
 
+    /// <summary>
+    /// Get all liked location
+    /// </summary>
+    [ProducesResponseType(typeof(IEnumerable<ListLikedLocationDto>), (int)HttpStatusCode.OK)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("AllLikedLocations")]
@@ -152,10 +174,18 @@ public class LikeController : ControllerBase
     #endregion
 
     #region GameLike
+    /// <summary>
+    /// Add like to game
+    /// </summary>
+    /// <param name="dto">AddLikeGame</param>
+    [ProducesResponseType(typeof(LikedGameDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddLikeToGame")]
-    public async Task<ActionResult<LikedLocationDto>> LikeGame([FromBody] AddLikeGameDto dto)
+    public async Task<ActionResult<LikedGameDto>> LikeGame([FromBody] AddLikeGameDto dto)
     {
         ValidationResult validationResult = _addLikeGameValidator.Validate(dto);
         if (validationResult.IsValid is false)
@@ -183,15 +213,17 @@ public class LikeController : ControllerBase
     }
 
     /// <summary>
-    /// Remove Like from Location
+    /// Remove Like to game
     /// </summary>
-    /// return <see cref="LikedLocationDto"/>
-    /// <response code = "204">Game provided did not have like from any users</response>
-    /// 
+    /// <param name="gameId">Id of game to remove like</param>
+    /// <param name="userId">Id of user who liked Game</param>
+    [ProducesResponseType(typeof(LikedGameDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RemoveLikeToGame/{gameId}/{userId}")]
-    public async Task<ActionResult<LikedLocationDto>> UnlikeGame([FromRoute] Guid gameId, Guid userId)
+    public async Task<ActionResult<LikedGameDto>> UnlikeGame([FromRoute] Guid gameId, Guid userId)
     {
         Game? game = await _gamePlatfrom.GetGameByIdAsync(gameId);
         if (game is null)
@@ -214,10 +246,16 @@ public class LikeController : ControllerBase
         return Ok(likedGames.ToLikedGameDto());
     }
 
+    /// <summary>
+    /// Get all liked game by user id
+    /// </summary>
+    /// <param name="userId">Id of user who liked games</param>
+    [ProducesResponseType(typeof(IEnumerable<ListLikedGameDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("LikedGames/{userId}")]
-    public async Task<ActionResult<IEnumerable<ListLikedLocationDto>>> GetAllLikedGamebyUserId([FromRoute] Guid userId)
+    public async Task<ActionResult<IEnumerable<ListLikedGameDto>>> GetAllLikedGamebyUserId([FromRoute] Guid userId)
     {
         GameTripUser? user = await _userManager.Users.Include(u => u.LikedGames).FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -231,6 +269,10 @@ public class LikeController : ControllerBase
         return Ok(likedGames.ToEnumerable_ListLikedGameDto());
     }
 
+    /// <summary>
+    /// Get all liked games
+    /// </summary>
+    [ProducesResponseType(typeof(IEnumerable<LikedGameDto>), (int)HttpStatusCode.OK)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("AllLikedGames")]
