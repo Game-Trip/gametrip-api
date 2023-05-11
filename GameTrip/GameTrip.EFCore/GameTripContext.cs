@@ -58,10 +58,14 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         builder.Entity<LikedGame>(lg =>
         {
             lg.HasKey(lg => lg.IdLikedGame);
-            lg.Property(lg => lg.vote).HasPrecision(2, 1);
+            lg.Property(lg => lg.Vote).HasPrecision(2, 1);
         });
 
-        builder.Entity<LikedLocation>(ll => ll.HasKey(ll => ll.IdLikedLocation));
+        builder.Entity<LikedLocation>(ll =>
+        {
+            ll.HasKey(ll => ll.IdLikedLocation);
+            ll.Property(ll => ll.Vote).HasPrecision(2, 1);
+        });
 
         builder.Entity<Location>(l =>
         {
@@ -82,9 +86,9 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
         {
             p.HasKey(p => p.IdPicture);
 
-            p.Property(p => p.Name).HasMaxLength(255);
+            p.Property(p => p.Name).IsRequired().HasMaxLength(255);
             p.Property(p => p.Description).HasMaxLength(255);
-            p.Property(p => p.Path).HasMaxLength(255);
+            p.Property(p => p.Data).IsRequired().HasColumnType("varbinary(max)");
         });
 
         builder.Entity<GameTripUser>(u =>

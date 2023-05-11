@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GameTrip.API.Models.Auth;
+﻿namespace GameTrip.Domain.Models.Auth;
 
 public class ConfirmMailDto
 {
@@ -10,9 +8,6 @@ public class ConfirmMailDto
         Email = email;
     }
 
-    [Required]
     public string Token { get; }
-
-    [Required]
     public string Email { get; }
 }

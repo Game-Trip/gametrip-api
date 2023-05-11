@@ -1,11 +1,18 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using GameTrip.API.Validator.AuthValidator;
 using GameTrip.API.Validator.GameValidator;
+using GameTrip.API.Validator.LikeValidator;
 using GameTrip.API.Validator.LocationValidator;
+using GameTrip.API.Validator.PictureValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LikeModels.Game;
+using GameTrip.Domain.Models.LikeModels.Location;
 using GameTrip.Domain.Models.LocationModels;
+using GameTrip.Domain.Models.PictureModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Domain.Tools;
 using GameTrip.EFCore;
@@ -99,6 +106,7 @@ internal class Startup
                     new string [] {}
                 }
             });
+            c.OperationFilter<FileUploadFilter>();
         });
 
         AddIdentity(services);
@@ -221,9 +229,11 @@ internal class Startup
         #region Platform
 
         services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<IMailPlatform, MailPlatform>();
         services.AddScoped<ILocationPlarform, LocationPlatform>();
         services.AddScoped<IGamePlatform, GamePlatform>();
-        services.AddScoped<IMailPlatform, MailPlatform>();
+        services.AddScoped<ILikePlatform, LikePlatform>();
+        services.AddScoped<IPicturePlatfrom, PicturePlatfrom>();
 
         #endregion Platform
 
@@ -248,14 +258,39 @@ internal class Startup
 
         #endregion Settings
 
-        #region FluentValidator
+        #region Auth&UserValidator
+
+        services.AddScoped<IValidator<LoginDto>, LoginValidator>();
+        services.AddScoped<IValidator<RegisterDto>, RegisterValidator>();
+        services.AddScoped<IValidator<ConfirmMailDto>, ConfirmEmailValidator>();
+        services.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
+        services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
+
+        #endregion Auth&UserValidator
+
+        #region LocationValidator
 
         services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
         services.AddScoped<IValidator<UpdateLocationDto>, UpdateLocationValidator>();
+
+        #endregion LocationValidator
+
+        #region GameValidator
+
         services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
         services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
 
-        #endregion FluentValidator
+        #endregion GameValidator
+
+        #region LikeValidator
+        services.AddScoped<IValidator<AddLikeLocationDto>, AddLikeLocationValidator>();
+        services.AddScoped<IValidator<AddLikeGameDto>, AddLikeGameValidator>();
+        #endregion
+
+        #region PictureValidator
+        services.AddScoped<IValidator<AddPictureToLocationDto>, AddPictureToLocationValidator>();
+        services.AddScoped<IValidator<AddPictureToGameDto>, AddPictureToGameValidator>();
+        #endregion
     }
 
     private void AddIdentity(IServiceCollection services)

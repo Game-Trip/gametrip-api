@@ -167,7 +167,7 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("vote")
+                    b.Property<decimal>("Vote")
                         .HasPrecision(2, 1)
                         .HasColumnType("decimal(2,1)");
 
@@ -192,8 +192,9 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("vote")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Vote")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
 
                     b.HasKey("IdLikedLocation");
 
@@ -237,6 +238,10 @@ namespace GameTrip.EFCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -248,10 +253,7 @@ namespace GameTrip.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Path")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 

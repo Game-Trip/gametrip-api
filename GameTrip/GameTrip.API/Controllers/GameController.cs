@@ -9,6 +9,8 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
@@ -31,10 +33,17 @@ public class GameController : ControllerBase
         _updateGameValidator = (IValidator<UpdateGameDto>?)updateGameValidator;
     }
 
+    /// <summary>
+    /// Create new Game
+    /// </summary>
+    /// <param name="dto">CreateGameDto</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateGame")]
-    public async Task<ActionResult<Game>> CreateGame(CreateGameDto dto)
+    public async Task<ActionResult<MessageDto>> CreateGame(CreateGameDto dto)
     {
         ValidationResult result = _createGameValidator.Validate(dto);
         if (!result.IsValid)
@@ -51,15 +60,26 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.SuccesCreated));
     }
 
+    /// <summary>
+    /// Get All Games
+    /// </summary>
+    /// <param name="limit">Set the limit of number items return</param>
+    [ProducesResponseType(typeof(List<ListGameDto>), (int)HttpStatusCode.OK)]
     [AllowAnonymous]
     [HttpGet]
     [Route("")]
     public async Task<ActionResult<List<ListGameDto>>> GetGames([Optional][FromQuery] int limit)
     {
         IEnumerable<Game> games = await _gamePlatform.GetAllGamesAsync(limit);
-        return games.ToDtoList();
+        return games.ToList_ListGameDto();
     }
 
+    /// <summary>
+    /// Get Game by Id
+    /// </summary>
+    /// <param name="gameId">Id of Game</param>
+    [ProducesResponseType(typeof(GameDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Id/{gameId}")]
@@ -71,9 +91,15 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundById));
         }
 
-        return game.ToDto();
+        return game.ToGameDto();
     }
 
+    /// <summary>
+    /// Get Game by Name
+    /// </summary>
+    /// <param name="gameName">Name of Game</param>
+    [ProducesResponseType(typeof(GameDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Name/{gameName}")]
@@ -85,9 +111,15 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundByName));
         }
 
-        return game.ToDto();
+        return game.ToGameDto();
     }
 
+    /// <summary>
+    /// Get all Games by related location id
+    /// </summary>
+    /// <param name="locationId">Id of related location</param>
+    [ProducesResponseType(typeof(List<ListGameDto?>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Location/Id/{locationId}")]
@@ -101,9 +133,15 @@ public class GameController : ControllerBase
         if (!games.Any())
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationId));
 
-        return games.ToDtoList();
+        return games.ToList_ListGameDto();
     }
 
+    /// <summary>
+    /// Get all Games by related location name
+    /// </summary>
+    /// <param name="locationName">Name of related location</param>
+    [ProducesResponseType(typeof(List<ListGameDto?>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [AllowAnonymous]
     [HttpGet]
     [Route("Location/Name/{locationName}")]
@@ -119,9 +157,17 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundByLocationName));
         }
 
-        return game.ToDtoList();
+        return game.ToList_ListGameDto();
     }
 
+    /// <summary>
+    /// Add Game to Location by Game Id and Location Id
+    /// </summary>
+    /// <param name="gameId">Id of added Game</param>
+    /// <param name="locationId">Id of location to add Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddGameToLocation/Game/{gameId}/Location/{locationId}")]
@@ -142,6 +188,13 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.AddedToLocation));
     }
 
+    /// <summary>
+    /// Remove Game from Location by Game Id and Location Id
+    /// </summary>
+    /// <param name="gameId">Id of removed Game</param>
+    /// <param name="locationId">Id of location to remove Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RemoveGameToLocation/Game/{gameId}/Location/{locationId}")]
@@ -162,12 +215,20 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.RemovedToLocation));
     }
 
+    /// <summary>
+    /// Update Game
+    /// </summary>
+    /// <param name="gameId">Id of game to update</param>
+    /// <param name="dto">UpdateGameDto</param>
+    [ProducesResponseType(typeof(GameDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPut]
     [Route("{gameId}")]
     public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto)
     {
-        System.Security.Claims.ClaimsPrincipal uwu = HttpContext.User;
         ValidationResult result = _updateGameValidator.Validate(dto);
         if (!result.IsValid)
         {
@@ -180,12 +241,18 @@ public class GameController : ControllerBase
 
         Game? entity = await _gamePlatform.GetGameByNameAsync(dto.Name);
         if (entity is null)
-            return BadRequest(new MessageDto(GameMessage.NotFoundById));
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
 
         Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
-        return Ok(game.ToDto());
+        return Ok(game.ToGameDto());
     }
 
+    /// <summary>
+    /// Delete Game by Id
+    /// </summary>
+    /// <param name="gameId">Id of deleted Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [HttpDelete]
     [Authorize(Roles = Roles.User)]
     [Route("Delete/{gameId}")]

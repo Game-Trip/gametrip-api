@@ -15,10 +15,8 @@ public class LocationMessage : StringEnumError
     #region Validator
 
     public static LocationMessage LocationCanNotBeNull => new("LocationCanNotBeNull", "Location cannot be Null");
-    public static LocationMessage NameCanNotBeNull => new("LocationNameCanNotBeNull", "The Name field cannot be Null");
-    public static LocationMessage NameCanNotBeEmpty => new("LocationNameCanNotBeEmpty", "The Name field cannot be Empty");
-    public static LocationMessage DescriptionCanNotBeNull => new("LocationDescriptionCanNotBeNull", "The Description field cannot be Null");
-    public static LocationMessage DescriptionCanNotBeEmpty => new("LocationDescriptionCanNotBeEmpty", "The Description field cannot be Empty");
+    public static LocationMessage NameCanNotBeNullOrEmpty => new("LocationNameCanNotBeNullOrEmpty", "The Name field cannot be Null Or Empty");
+    public static LocationMessage DescriptionCanNotBeNullOrEmpty => new("LocationDescriptionCanNotBeNullOrEmpty", "The Description field cannot be Null Or Empty");
     public static LocationMessage LatitudeIncorectPrecision => new("LatitudeIncorectPrecision", "The maximal precision for latitude field is decimal(15,12)");
     public static LocationMessage LongitudeIncorectPrecision => new("LongitudeIncorectPrecision", "The maximal precision for longitude field is decimal(15,12)");
 

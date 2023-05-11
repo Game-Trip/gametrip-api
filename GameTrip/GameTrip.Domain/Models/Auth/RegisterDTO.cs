@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace GameTrip.Domain.Models.Auth;
 
-namespace GameTrip.API.Models.Auth;
-
-public class RegisterDTO
+public class RegisterDto
 {
-    public RegisterDTO(string username, string email, string password, string confirmPassword)
+    public RegisterDto(string username, string email, string password, string confirmPassword)
     {
         Username = username;
         Email = email;
@@ -12,19 +10,8 @@ public class RegisterDTO
         ConfirmPassword = confirmPassword;
     }
 
-    [Required]
     public string Username { get; }
-
-    [Required]
-    [DataType(DataType.EmailAddress)]
     public string Email { get; }
-
-    [Required]
-    [DataType(DataType.Password)]
     public string Password { get; }
-
-    [Required]
-    [DataType(DataType.Password)]
-    [Compare("Password")]
     public string ConfirmPassword { get; }
 }

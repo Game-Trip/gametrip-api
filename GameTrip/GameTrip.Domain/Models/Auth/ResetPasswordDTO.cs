@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace GameTrip.Domain.Models.Auth;
 
-namespace GameTrip.API.Models.Auth;
-
-public class ResetPasswordDTO
+public class ResetPasswordDto
 {
-    public ResetPasswordDTO(string email, string password, string passwordConfirmation, string token)
+    public ResetPasswordDto(string email, string password, string passwordConfirmation, string token)
     {
         Email = email;
         Password = password;
@@ -12,19 +10,8 @@ public class ResetPasswordDTO
         Token = token;
     }
 
-    [Required]
-    [DataType(DataType.EmailAddress)]
     public string Email { get; }
-
-    [Required]
-    [DataType(DataType.Password)]
     public string Password { get; }
-
-    [Required]
-    [DataType(DataType.Password)]
-    [Compare("Password")]
     public string PasswordConfirmation { get; }
-
-    [Required]
     public string Token { get; set; }
 }
