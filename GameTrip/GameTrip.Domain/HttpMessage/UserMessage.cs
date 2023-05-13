@@ -17,6 +17,7 @@ public class UserMessage : StringEnumError
     }
 
     #region Validator
+    public static UserMessage UpdateGameTripUserDtoNull => new("UpdateGameTripUserDtoNull", "The UpdateGameTripUserDto can not be Null");
     public static UserMessage LoginDtoNull => new("LoginDtoNull", "The LoginDto can not be Null");
     public static UserMessage RegisterDtoNull => new("RegisterDtoNull", "The RegisterDto can not be Null");
     public static UserMessage ConfirmEmailDtoNull => new("ConfirmEmailDtoNull", "The ConfirmEmailDto can not be Null");

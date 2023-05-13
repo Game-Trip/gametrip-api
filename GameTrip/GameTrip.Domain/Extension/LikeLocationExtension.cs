@@ -25,7 +25,7 @@ public static class LikeLocationExtension
         {
             LikedLocationId = ll.IdLikedLocation,
             LocationId = ll.LocationId,
-            Location = ll.Location.ToLocationNameDto(),
+            Location = ll.Location?.ToLocationNameDto(),
 
         }).AsEnumerable();
     }

@@ -20,10 +20,10 @@ public static class LocationExtension
         Description = location.Description,
         Latitude = location.Latitude,
         Longitude = location.Longitude,
-        Games = location.Games.ToList_ListGameDto(),
-        Pictures = location.Pictures.ToEnumerable_ListPictureDto(),
-        Comments = location.Comments,
-        LikedLocations = location.LikedLocations.ToEnumerable_ListLikedLocationDto(),
+        Games = location.Games?.ToList_ListGameDto(),
+        Pictures = location.Pictures?.ToEnumerable_ListPictureDto(),
+        Comments = location.Comments ??= null,
+        LikedLocations = location.LikedLocations?.ToEnumerable_ListLikedLocationDto(),
     };
 
     public static LocationNameDto ToLocationNameDto(this Location location) => new()
