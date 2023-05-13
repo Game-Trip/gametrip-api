@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using GameTrip.API.Validator.AuthValidator;
+using GameTrip.API.Validator.CommentValidator;
 using GameTrip.API.Validator.GameValidator;
 using GameTrip.API.Validator.LikeValidator;
 using GameTrip.API.Validator.LocationValidator;
@@ -8,6 +9,7 @@ using GameTrip.API.Validator.PictureValidator;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.Auth;
+using GameTrip.Domain.Models.Comment;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LikeModels.Game;
 using GameTrip.Domain.Models.LikeModels.Location;
@@ -234,6 +236,7 @@ internal class Startup
         services.AddScoped<IGamePlatform, GamePlatform>();
         services.AddScoped<ILikePlatform, LikePlatform>();
         services.AddScoped<IPicturePlatfrom, PicturePlatfrom>();
+        services.AddScoped<ICommentPlatform, CommentPlatform>();
 
         #endregion Platform
 
@@ -291,6 +294,12 @@ internal class Startup
         #region PictureValidator
         services.AddScoped<IValidator<AddPictureToLocationDto>, AddPictureToLocationValidator>();
         services.AddScoped<IValidator<AddPictureToGameDto>, AddPictureToGameValidator>();
+        #endregion
+
+        #region CommentValidator
+        services.AddScoped<IValidator<AddCommentToLocationDto>, AddCommentToLocationValidator>();
+        services.AddScoped<IValidator<UpdateCommentDto>, UpdateCommentValidator>();
+
         #endregion
     }
 

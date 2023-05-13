@@ -1,4 +1,4 @@
-﻿using GameTrip.Domain.Entities;
+﻿using GameTrip.Domain.Models.Comment;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LikeModels.Location;
 using GameTrip.Domain.Models.PictureModels;
@@ -18,6 +18,6 @@ public class GetLocationDto
 
     public IEnumerable<ListPictureDto>? Pictures { get; set; }
     public IEnumerable<ListGameDto>? Games { get; set; }
-    public IEnumerable<Comment>? Comments { get; set; }
+    public IEnumerable<ListCommentDto>? Comments { get; set; }
     public IEnumerable<ListLikedLocationDto>? LikedLocations { get; set; }
 }
