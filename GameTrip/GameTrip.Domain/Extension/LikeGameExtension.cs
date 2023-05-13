@@ -24,7 +24,7 @@ public static class LikeGameExtension
         {
             LikedGameId = lg.IdLikedGame,
             GameId = lg.GameId,
-            Game = lg.Game.ToGameNameDto(),
+            Game = lg.Game?.ToGameNameDto(),
         }).AsEnumerable();
     }
 }

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Errors;
+using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.Email;
@@ -159,7 +160,7 @@ public class AuthController : ControllerBase
 
         await _mailPlatform.SendMailAsync(mailDTO);
 
-        return Ok(user.ToDTO());
+        return Ok(user.ToGameTripUserDto());
     }
 
     /// <summary>

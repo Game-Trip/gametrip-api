@@ -159,7 +159,7 @@ public class LikeController : ControllerBase
             LikedLocationDto likedLocationDto = new()
             {
                 LocationId = group.Key,
-                Location = group.First().Location.ToLocationNameDto(),
+                Location = group.First().Location?.ToLocationNameDto(),
                 UsersIds = group.Select(ll => ll.UserId).AsEnumerable(),
                 NbVote = group.Count(),
                 MaxValue = group.OrderBy(ll => ll.Vote).First().Vote,
@@ -288,7 +288,7 @@ public class LikeController : ControllerBase
             LikedGameDto likedGameDto = new()
             {
                 GameId = group.Key,
-                Game = group.First().Game.ToGameNameDto(),
+                Game = group.First().Game?.ToGameNameDto(),
                 UsersIds = group.Select(ll => ll.UserId).AsEnumerable(),
                 NbVote = group.Count(),
                 MaxValue = group.OrderBy(ll => ll.Vote).First().Vote,

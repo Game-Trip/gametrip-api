@@ -58,6 +58,12 @@
     <Compile Update="Interfaces\IUnitOfWork.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Models\Auth\GameTripUserDto.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Models\Auth\UpdateGameTripUserDto.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Models\Email\MailData.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>

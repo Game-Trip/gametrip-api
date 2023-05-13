@@ -265,6 +265,7 @@ internal class Startup
         services.AddScoped<IValidator<ConfirmMailDto>, ConfirmEmailValidator>();
         services.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
         services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
+        services.AddScoped<IValidator<UpdateGameTripUserDto>, UpdateGameTripUserValidator>();
 
         #endregion Auth&UserValidator
 
