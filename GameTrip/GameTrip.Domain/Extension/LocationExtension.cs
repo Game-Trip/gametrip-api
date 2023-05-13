@@ -22,7 +22,7 @@ public static class LocationExtension
         Longitude = location.Longitude,
         Games = location.Games?.ToList_ListGameDto(),
         Pictures = location.Pictures?.ToEnumerable_ListPictureDto(),
-        Comments = location.Comments ??= null,
+        Comments = location.Comments?.ToEnumerable_ListCommentDto(),
         LikedLocations = location.LikedLocations?.ToEnumerable_ListLikedLocationDto(),
     };
 
