@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GameTrip.API.Controllers;
 
-[Consumes("application/json")]
-[Produces("application/json")]
 [Route("[controller]")]
 [Authorize]
 [ApiController]

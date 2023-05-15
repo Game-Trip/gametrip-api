@@ -14,8 +14,6 @@ using System.Net;
 
 namespace GameTrip.API.Controllers;
 
-[Consumes("application/json")]
-[Produces("application/json")]
 [Route("[controller]")]
 [Authorize]
 [ApiController]
