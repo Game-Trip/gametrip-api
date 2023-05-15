@@ -32,6 +32,7 @@ public static class LocationExtension
         Name = location.Name
     };
     public static IEnumerable<LocationNameDto> ToEnumerable_LocationNameDto(this ICollection<Location> locations) => locations.Select(l => l.ToLocationNameDto());
+    public static IEnumerable<LocationNameDto> ToEnumerable_LocationNameDto(this IEnumerable<Location> locations) => locations.Select(l => l.ToLocationNameDto());
 
     public static LocationDto ToLocationDto(this Location location) => new()
     {
