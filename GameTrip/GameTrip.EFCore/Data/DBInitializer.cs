@@ -107,24 +107,24 @@ public class DBInitializer
         List<LocationDto> locations = new()
         {
             new LocationDto("Tour Eiffel", "Monument emblématique de Paris, France", 48.8588443m, 2.2943506m),
-            new LocationDto("Statue de la Liberté", "Symbole de liberté à New York, États-Unis", 48.8588443m, 2.2943506m),
-            new LocationDto("Colisée", "Ancien amphithéâtre romain à Rome, Italie", 48.8588443m, 2.2943506m),
-            new LocationDto("Grande Muraille de Chine", "Merveille architecturale à Pékin, Chine", 48.8588443m, 2.2943506m),
-            new LocationDto("Opéra de Sydney", "Icone moderne de l'Australie à Sydney, Australie", 48.8588443m, 2.2943506m),
-            new LocationDto("Machu Picchu", "Site archéologique incas au Pérou", 48.8588443m, 2.2943506m),
-            new LocationDto("Pyramides de Gizeh", "Anciens monuments égyptiens près du Caire, Égypte", 48.8588443m, 2.2943506m),
-            new LocationDto("Cristo Redentor", "Statue du Christ rédempteur à Rio de Janeiro, Brésil", 48.8588443m, 2.2943506m),
-            new LocationDto("Acropole d'Athènes", "Site archéologique en Grèce", 48.8588443m, 2.2943506m),
-            new LocationDto("Mont Saint-Michel", "Monastère fortifié en France", 48.8588443m, 2.2943506m),
-            new LocationDto("Taj Mahal", "Mausolée à Agra, Inde", 48.8588443m, 2.2943506m),
-            new LocationDto("Mur de Berlin", "Ancienne frontière divisant Berlin, Allemagne", 48.8588443m, 2.2943506m),
-            new LocationDto("Tour de Londres", "Château historique à Londres, Royaume-Uni", 48.8588443m, 2.2943506m),
-            new LocationDto("Place Rouge", "Place emblématique de Moscou, Russie", 48.8588443m, 2.2943506m),
-            new LocationDto("Château de Versailles", "Palais royal à Versailles, France", 48.8588443m, 2.2943506m),
-            new LocationDto("Central Park", "Parc emblématique de New York, États-Unis", 48.8588443m, 2.2943506m),
-            new LocationDto("Tour CN", "Gratte-ciel emblématique de Toronto, Canada", 48.8588443m, 2.2943506m),
-            new LocationDto("Angkor Wat", "Temple au Cambodge", 48.8588443m, 2.2943506m),
-            new LocationDto("Mont Everest", "Plus haute montagne du monde à la frontière du Népal et du Tibet", 48.8588443m, 2.2943506m)
+            new LocationDto("Statue de la Liberté", "Symbole de liberté à New York, États-Unis", 40.6892494m, -74.0445004m),
+            new LocationDto("Colisée", "Ancien amphithéâtre romain à Rome, Italie", 41.8902102m, 12.4922309m),
+            new LocationDto("Grande Muraille de Chine", "Merveille architecturale à Pékin, Chine", 40.4319089m, 116.570374m),
+            new LocationDto("Opéra de Sydney", "Icone moderne de l'Australie à Sydney, Australie", -33.8567844m, 151.213108m),
+            new LocationDto("Machu Picchu", "Site archéologique incas au Pérou", -13.1631412m, -72.5449637m),
+            new LocationDto("Pyramides de Gizeh", "Anciens monuments égyptiens près du Caire, Égypte", 29.9792345m, 31.1342019m),
+            new LocationDto("Cristo Redentor", "Statue du Christ rédempteur à Rio de Janeiro, Brésil", -22.951916m, -43.2104872m),
+            new LocationDto("Acropole d'Athènes", "Site archéologique en Grèce", 37.9715327m, 23.7257493m),
+            new LocationDto("Mont Saint-Michel", "Monastère fortifié en France", 48.635935m, -1.510712m),
+            new LocationDto("Taj Mahal", "Mausolée à Agra, Inde", 27.1750151m, 78.0421552m),
+            new LocationDto("Mur de Berlin", "Ancienne frontière divisant Berlin, Allemagne", 52.5200066m, 13.404954m),
+            new LocationDto("Tour de Londres", "Château historique à Londres, Royaume-Uni", 51.5081126m, -0.0759493m),
+            new LocationDto("Place Rouge", "Place emblématique de Moscou, Russie", 55.7539303m, 37.620795m),
+            new LocationDto("Château de Versailles", "Palais royal à Versailles, France", 48.8048649m, 2.1203555m),
+            new LocationDto("Central Park", "Parc emblématique de New York, États-Unis", 40.7828647m, -73.9653551m),
+            new LocationDto("Tour CN", "Gratte-ciel emblématique de Toronto, Canada", 43.642567m, -79.387054m),
+            new LocationDto("Angkor Wat", "Temple au Cambodge", 13.412469m, 103.866986m),
+            new LocationDto("Mont Everest", "Plus haute montagne du monde à la frontière du Népal et du Tibet", 27.988119m, 86.925277m)
         };
         foreach (LocationDto loc in locations)
         {
