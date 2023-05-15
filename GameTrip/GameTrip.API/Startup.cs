@@ -237,6 +237,7 @@ internal class Startup
         services.AddScoped<ILikePlatform, LikePlatform>();
         services.AddScoped<IPicturePlatfrom, PicturePlatfrom>();
         services.AddScoped<ICommentPlatform, CommentPlatform>();
+        services.AddScoped<ISearchPlatform, SearchPlatform>();
 
         #endregion Platform
 

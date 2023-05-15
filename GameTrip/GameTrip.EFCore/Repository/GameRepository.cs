@@ -1,6 +1,7 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.SearchModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore.Repository;
@@ -39,4 +40,13 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
         await _context.SaveChangesAsync();
         return entity;
     }
+
+    public async Task<IEnumerable<Game>> SearchGameAsync(SearchGameDto dto) => await _context.Game.Include(g => g.Locations)
+                                                                                                  .Include(g => g.Pictures)
+                                                                                                  .Include(g => g.LikedGames)
+                                                                                                  .Where(g => string.IsNullOrEmpty(dto.Name) || g.Name.Contains(dto.Name))
+                                                                                                  .Where(g => string.IsNullOrEmpty(dto.Description) || g.Description.Contains(dto.Description))
+                                                                                                  .Where(g => string.IsNullOrEmpty(dto.Editor) || g.Editor.Contains(dto.Editor))
+                                                                                                  .Where(g => dto.ReleaseDate == null || g.ReleaseDate == dto.ReleaseDate)
+                                                                                                  .ToListAsync();
 }
