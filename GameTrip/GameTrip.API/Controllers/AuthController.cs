@@ -25,8 +25,6 @@ namespace GameTrip.API.Controllers;
 /// The auth controller.
 /// </summary>
 
-[Consumes("application/json")]
-[Produces("application/json")]
 [Route("[controller]")]
 [Authorize]
 [ApiController]
@@ -103,7 +101,6 @@ public class AuthController : ControllerBase
             return Unauthorized(new MessageDto(UserMessage.FailedLogin));
     }
 
-    //TODO VOIR CE QUE JE PEUT FAIRE POUR LES 3 MODEL DE BADREQUEST
     /// <summary>
     /// Register a user
     /// </summary>
