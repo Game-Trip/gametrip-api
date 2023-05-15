@@ -39,6 +39,8 @@ public static class GameExtension
         };
     }
 
+    public static IEnumerable<GameNameDto> ToEnumerable_GameNameDto(this IEnumerable<Game> games) => games.Select(g => g.ToGameNameDto());
+
     public static List<ListGameDto> ToList_ListGameDto(this IEnumerable<Game> games)
     {
         return games.Select(game => new ListGameDto

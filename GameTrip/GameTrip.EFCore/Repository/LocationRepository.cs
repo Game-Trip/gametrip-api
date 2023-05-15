@@ -1,6 +1,7 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.LocationModels;
+using GameTrip.Domain.Models.SearchModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTrip.EFCore.Repository;
@@ -36,6 +37,16 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
                                                                                                .Include(l => l.LikedLocations)
                                                                                                .FirstOrDefaultAsync(l => l.Latitude == latitude && l.Longitude == longitude);
     public void RemoveGameToLocation(Game game, Location location) => location.Games!.Remove(game);
+    public async Task<IEnumerable<Location>> SearchLocationAsync(SearchLocationDto dto) => await _context.Location.Include(l => l.Pictures)
+                                                                                                                  .Include(l => l.Games)
+                                                                                                                  .Include(l => l.Comments)
+                                                                                                                  .Include(l => l.LikedLocations)
+                                                                                                                  .Where(l => string.IsNullOrWhiteSpace(dto.Name) || l.Name.Contains(dto.Name))
+                                                                                                                  .Where(l => string.IsNullOrWhiteSpace(dto.Description) || l.Description.Contains(dto.Description))
+                                                                                                                  .Where(l => dto.Latitude == null || l.Latitude == dto.Latitude)
+                                                                                                                  .Where(l => dto.Longitude == null || l.Longitude == dto.Longitude)
+                                                                                                                  .ToListAsync();
+
     public async Task<Location> UpdateLocationAsync(Location entity, UpdateLocationDto dto)
     {
         entity.Name = dto.Name;
