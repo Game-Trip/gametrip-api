@@ -11,4 +11,5 @@ public interface IPicturePlatfrom
     Task<Picture?> GetPictureByIdAsync(Guid pictureId);
     Task<IEnumerable<Picture>> GetPicturesByGameIdAsync(Game game);
     Task<IEnumerable<Picture>> GetPicturesByLocationIdAsync(Location location);
+    Task SwitchValidateStatusPictureAsync(Picture picture);
 }

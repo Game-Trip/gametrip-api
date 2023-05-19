@@ -29,4 +29,9 @@ public class GameMessage : StringEnumError
     public static GameMessage AddedToLocation => new("GameAddedToLocation", "The provided Game has been added to provided location");
     public static GameMessage RemovedToLocation => new("GameRemovedToLocation", "The provided Game has been removed to provided location");
     public static GameMessage IdWithQueryAndDtoAreDifferent => new("GameIdWithQueryAndDtoAreDifferent", "The provided gameId in route and provided gameId in Dto are not equals");
+    public static GameMessage UserNotAuthor => new("UserNotAuthor", "The user provided by Id is not the author of game");
+    public static GameMessage AlreadyValidate => new("AlreadyValidate", "The game already validated");
+    public static GameMessage AlreadyNotValidate => new("AlreadyUnValidate", "The game already not validated");
+    public static GameMessage NowValidate => new("NowValidate", "The game is now validate");
+    public static GameMessage NowNotValidate => new("NowNotValidate", "The game is now not validate");
 }

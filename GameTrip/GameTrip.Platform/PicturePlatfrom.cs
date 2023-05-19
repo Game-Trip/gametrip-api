@@ -31,4 +31,9 @@ public class PicturePlatfrom : IPicturePlatfrom
     public async Task<Picture> GetPictureByIdAsync(Guid pictureId) => await _unitOfWork.Pictures.GetPictureByIdAsync(pictureId);
     public async Task<IEnumerable<Picture>> GetPicturesByGameIdAsync(Game game) => await _unitOfWork.Pictures.getAllByGameIdAsync(game);
     public async Task<IEnumerable<Picture>> GetPicturesByLocationIdAsync(Location location) => await _unitOfWork.Pictures.getAllByLocationIdAsync(location);
+    public async Task SwitchValidateStatusPictureAsync(Picture picture)
+    {
+        await _unitOfWork.Pictures.SwitchValidateStatePictureAsync(picture);
+        await _unitOfWork.CompletAsync();
+    }
 }

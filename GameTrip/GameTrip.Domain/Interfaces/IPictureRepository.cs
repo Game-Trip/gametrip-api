@@ -12,4 +12,5 @@ public interface IPictureRepository : IGenericRepository<Picture>
     Task<IEnumerable<Picture>> getAllByGameIdAsync(Game game);
     Task<IEnumerable<Picture>> getAllByLocationIdAsync(Location location);
     Task<Picture> GetPictureByIdAsync(Guid pictureId);
+    Task SwitchValidateStatePictureAsync(Picture picture);
 }

@@ -12,12 +12,13 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
     {
     }
 
-    public async Task<Game?> GetGameByIdAsync(Guid gameId) => await _context.Game.Include(g => g.Locations)
+    public async Task<Game?> GetGameByIdAsync(Guid gameId) => await _context.Game.Include(g => g.Author)
+                                                                                 .Include(g => g.Locations)
                                                                                  .Include(g => g.Pictures)
                                                                                  .Include(g => g.LikedGames)
                                                                                  .FirstOrDefaultAsync(g => g.IdGame == gameId);
 
-    public async Task<Game?> GetGameByNameAsync(string name) => await _context.Game.Include(g => g.Locations)
+    public async Task<Game?> GetGameByNameAsync(string name) => await _context.Game.Include(g => g.Author).Include(g => g.Locations)
                                                                        .Include(g => g.Pictures)
                                                                        .Include(g => g.LikedGames)
                                                                        .FirstOrDefaultAsync(g => g.Name == name);
@@ -44,9 +45,15 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
     public async Task<IEnumerable<Game>> SearchGameAsync(SearchGameDto dto) => await _context.Game.Include(g => g.Locations)
                                                                                                   .Include(g => g.Pictures)
                                                                                                   .Include(g => g.LikedGames)
+                                                                                                  .Include(g => g.Author)
                                                                                                   .Where(g => string.IsNullOrEmpty(dto.Name) || g.Name.Contains(dto.Name))
                                                                                                   .Where(g => string.IsNullOrEmpty(dto.Description) || g.Description.Contains(dto.Description))
                                                                                                   .Where(g => string.IsNullOrEmpty(dto.Editor) || g.Editor.Contains(dto.Editor))
                                                                                                   .Where(g => dto.ReleaseDate == null || g.ReleaseDate == dto.ReleaseDate)
                                                                                                   .ToListAsync();
+    public async Task SwitchValidateStateGameAsync(Game game)
+    {
+        game.IsValidate = !game.IsValidate;
+        await _context.SaveChangesAsync();
+    }
 }

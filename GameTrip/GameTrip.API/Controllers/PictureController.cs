@@ -34,6 +34,7 @@ public class PictureController : ControllerBase
         _addPictureToGameValidator = addPictureToGameValidator;
     }
 
+    //TODO : how to make validation for this
     //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
     #region Picture and Location
     /// <summary>
@@ -99,13 +100,14 @@ public class PictureController : ControllerBase
         return Ok(pictures.ToEnumerable_ListPictureDto());
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Get picture by id
     /// </summary>
     /// <param name="pictureId">Id of deleted Picture</param>
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete]
     [Route("DeletePicture/{pictureId}")]
     public async Task<IActionResult> DeletePictureById([FromRoute] Guid pictureId)
@@ -119,6 +121,7 @@ public class PictureController : ControllerBase
     }
     #endregion
 
+    //TODO : how to make validation for this
     //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
     /// <summary>
     /// Create and Add picture to Game

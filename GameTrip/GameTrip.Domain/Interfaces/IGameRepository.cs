@@ -14,5 +14,6 @@ public interface IGameRepository : IGenericRepository<Game>
 
     Task<Game?> GetGameByNameAsync(string name);
     Task<IEnumerable<Game>> SearchGameAsync(SearchGameDto dto);
+    Task SwitchValidateStateGameAsync(Game game);
     Task<Game> UpdateGameAsync(Game entity, UpdateGameDto dto);
 }

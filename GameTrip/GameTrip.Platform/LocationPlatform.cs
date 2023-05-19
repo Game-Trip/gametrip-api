@@ -40,4 +40,9 @@ public class LocationPlatform : ILocationPlarform
     }
 
     public async Task<IEnumerable<Location>> GetAllLocationAsync([Optional] int limit) => await _unitOfWork.Locations.GetAllAsync(limit);
+    public async Task SwitchValidateStatusLocationAsync(Location location)
+    {
+        await _unitOfWork.Locations.SwitchStateValidateLocationAsync(location);
+        await _unitOfWork.CompletAsync();
+    }
 }

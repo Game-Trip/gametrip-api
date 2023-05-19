@@ -45,7 +45,12 @@ public class PictureRepository : GenericRepository<Picture>, IPictureRepository
     }
 
     public void Delete(Picture picture) => _context.Picture.Remove(picture);
-    public async Task<IEnumerable<Picture>> getAllByGameIdAsync(Game game) => await _context.Picture.Include(p => p.Game).Where(p => p.Game == game).ToListAsync();
-    public async Task<Picture> GetPictureByIdAsync(Guid pictureId) => await _context.Picture.Include(p => p.Game).Include(p => p.Location).FirstOrDefaultAsync(p => p.IdPicture == pictureId);
+    public async Task<IEnumerable<Picture>> getAllByGameIdAsync(Game game) => await _context.Picture.Include(p => p.Game).Include(p => p.Author).Where(p => p.Game == game).ToListAsync();
+    public async Task<Picture> GetPictureByIdAsync(Guid pictureId) => await _context.Picture.Include(p => p.Game).Include(p => p.Location).Include(p => p.Author).FirstOrDefaultAsync(p => p.IdPicture == pictureId);
+    public async Task SwitchValidateStatePictureAsync(Picture picture)
+    {
+        picture.IsValidate = !picture.IsValidate;
+        await _context.SaveChangesAsync();
+    }
     async Task<IEnumerable<Picture>> IPictureRepository.getAllByLocationIdAsync(Location location) => await _context.Picture.Include(p => p.Location).Where(p => p.Location == location).ToListAsync();
 }

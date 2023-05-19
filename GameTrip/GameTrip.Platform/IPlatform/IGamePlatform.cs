@@ -15,5 +15,6 @@ public interface IGamePlatform
     Task<IEnumerable<Game?>> GetGamesByLocationIdAsync(Guid locationId);
     Task<IEnumerable<Game?>> GetGamesByLocationNameAsync(string locationName);
     Task RemoveGameToLocationByIdAsync(Game game, Location location);
+    Task SwitchValidateStatusGameAsync(Game game);
     Task<Game> UpdateGameAsync(Game entity, UpdateGameDto dto);
 }
