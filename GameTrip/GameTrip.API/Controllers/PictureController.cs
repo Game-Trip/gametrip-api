@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
 
@@ -49,14 +50,15 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
-    [Route("AddPictureToLocation/{locationId}")]
-    public async Task<IActionResult> AddPictureToLocation(IFormFile pictureData, [FromRoute] Guid locationId, [FromQuery] string name, string description)
+    [Route("AddPictureToLocation/{locationId}/{userId}")]
+    public async Task<IActionResult> AddPictureToLocation(IFormFile pictureData, [FromRoute] Guid locationId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
     {
         AddPictureToLocationDto dto = new()
         {
             LocationId = locationId,
             Name = name,
-            Description = description
+            Description = description,
+            AuthorId = userId
         };
         ValidationResult validationResult = _addPictureToLocationValidator.Validate(dto);
         if (!validationResult.IsValid)
@@ -69,7 +71,7 @@ public class PictureController : ControllerBase
         if (location is null)
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
 
-        await _picturePlatfrom.AddPictureToLocationAsync(pictureData, dto, location);
+        await _picturePlatfrom.AddPictureToLocationAsync(pictureData, dto, location, force);
         return Ok(new MessageDto(PictureMessage.SucessAddToLocation));
     }
 
@@ -135,14 +137,15 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [Authorize(Roles = Roles.User)]
     [HttpPost]
-    [Route("AddPictureToGame/{gameId}")]
-    public async Task<IActionResult> AddPictureToGame(IFormFile pictureData, [FromRoute] Guid gameId, [FromQuery] string name, string description)
+    [Route("AddPictureToGame/{gameId}/{userId}")]
+    public async Task<IActionResult> AddPictureToGame(IFormFile pictureData, [FromRoute] Guid gameId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
     {
         AddPictureToGameDto dto = new()
         {
             GameId = gameId,
             Name = name,
-            Description = description
+            Description = description,
+            AuthorId = userId
         };
         ValidationResult validationResult = _addPictureToGameValidator.Validate(dto);
         if (!validationResult.IsValid)
@@ -155,7 +158,7 @@ public class PictureController : ControllerBase
         if (game is null)
             return NotFound(new MessageDto(GameMessage.NotFoundById));
 
-        await _picturePlatfrom.AddPictureToGameAsync(pictureData, dto, game);
+        await _picturePlatfrom.AddPictureToGameAsync(pictureData, dto, game, force);
         return Ok(new MessageDto(PictureMessage.SucessAddToGame));
     }
 
