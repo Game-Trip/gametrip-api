@@ -52,4 +52,10 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.CompletAsync();
         return game;
     }
+
+    public async Task SwitchValidateStatusGameAsync(Game game)
+    {
+        await _unitOfWork.Games.SwitchValidateStateGameAsync(game);
+        await _unitOfWork.CompletAsync();
+    }
 }

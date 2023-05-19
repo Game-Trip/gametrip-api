@@ -37,4 +37,10 @@ public class CommentRepository : GenericRepository<Comment>, ICommentRepository
         entity.Text = dto.Text;
         await _context.SaveChangesAsync();
     }
+
+    public async Task SwitchValidateStatusCommentAsync(Comment comment)
+    {
+        comment.IsValidate = !comment.IsValidate;
+        await _context.SaveChangesAsync();
+    }
 }

@@ -10,4 +10,5 @@ public interface ICommentRepository : IGenericRepository<Comment>
     IEnumerable<Comment>? GetAllCommentsByUserId(Guid id);
     Task<Comment?> GetCommentByIdAsync(Guid commentId);
     Task UpdateCommentAsync(Comment entity, UpdateCommentDto dto);
+    Task SwitchValidateStatusCommentAsync(Comment comment);
 }

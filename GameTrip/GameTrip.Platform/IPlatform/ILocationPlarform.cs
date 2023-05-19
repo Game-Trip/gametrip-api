@@ -14,5 +14,6 @@ public interface ILocationPlarform
     Task<Location?> GetLocationByIdAsync(Guid locationId);
     Task<Location?> GetLocationByNameAsync(string name);
     Task<Location?> GetLocationByPositionAsync(decimal latitude, decimal longitude);
+    Task SwitchValidateStatusLocationAsync(Location location);
     Task<Location> UpdateLocationAsync(Location entity, UpdateLocationDto dto);
 }

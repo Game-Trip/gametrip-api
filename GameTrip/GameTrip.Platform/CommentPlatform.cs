@@ -26,9 +26,16 @@ public class CommentPlatform : ICommentPlatform
     public IEnumerable<Comment>? GetCommentAllByLocationId(Guid locationId) => _unitOfWork.Comments.GetAllCommentsByLocationId(locationId);
     public IEnumerable<Comment>? GetCommentAllByUserId(Guid id) => _unitOfWork.Comments.GetAllCommentsByUserId(id);
     public async Task<Comment?> GetCommentByIdAsync(Guid commentId) => await _unitOfWork.Comments.GetCommentByIdAsync(commentId);
+
     public async Task UpdateCommentAsync(Comment entity, UpdateCommentDto dto)
     {
         await _unitOfWork.Comments.UpdateCommentAsync(entity, dto);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task SwitchValidateStatusCommentAsync(Comment comment)
+    {
+        await _unitOfWork.Comments.SwitchValidateStatusCommentAsync(comment);
         await _unitOfWork.CompletAsync();
     }
 }
