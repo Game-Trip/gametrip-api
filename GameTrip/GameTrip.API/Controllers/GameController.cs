@@ -43,7 +43,7 @@ public class GameController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateGame")]
-    public async Task<ActionResult<MessageDto>> CreateGame(CreateGameDto dto)
+    public async Task<ActionResult<MessageDto>> CreateGame([FromBody] CreateGameDto dto, [Optional][FromQuery] bool force)
     {
         ValidationResult result = _createGameValidator.Validate(dto);
         if (!result.IsValid)
@@ -56,7 +56,7 @@ public class GameController : ControllerBase
         if (game is not null)
             return BadRequest(new MessageDto(GameMessage.AlreadyExist));
 
-        await _gamePlatform.CreateGameAsync(dto.ToEntity());
+        await _gamePlatform.CreateGameAsync(dto.ToEntity(force));
         return Ok(new MessageDto(GameMessage.SuccesCreated));
     }
 
@@ -103,7 +103,7 @@ public class GameController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("Name/{gameName}")]
-    public async Task<ActionResult<GameDto>> GetLocationByName([FromRoute] string gameName)
+    public async Task<ActionResult<GameDto>> GetGameByName([FromRoute] string gameName)
     {
         Game? game = await _gamePlatform.GetGameByNameAsync(gameName);
         if (game is null)
@@ -160,6 +160,7 @@ public class GameController : ControllerBase
         return game.ToList_ListGameDto();
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Add Game to Location by Game Id and Location Id
     /// </summary>
@@ -188,6 +189,7 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.AddedToLocation));
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Remove Game from Location by Game Id and Location Id
     /// </summary>
@@ -215,6 +217,7 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.RemovedToLocation));
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Update Game
     /// </summary>
@@ -247,6 +250,7 @@ public class GameController : ControllerBase
         return Ok(game.ToGameDto());
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Delete Game by Id
     /// </summary>
@@ -254,7 +258,7 @@ public class GameController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [HttpDelete]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [Route("Delete/{gameId}")]
     public async Task<IActionResult> DeleteGameById([FromRoute] Guid gameId)
     {

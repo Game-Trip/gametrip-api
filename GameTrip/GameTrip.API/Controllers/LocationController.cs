@@ -43,7 +43,7 @@ public class LocationController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateLocation")]
-    public async Task<IActionResult> CreateLocation(CreateLocationDto dto)
+    public async Task<IActionResult> CreateLocation([FromBody] CreateLocationDto dto, [Optional][FromQuery] bool force)
     {
         ValidationResult result = _createLocationValidator.Validate(dto);
         if (!result.IsValid)
@@ -60,7 +60,7 @@ public class LocationController : ControllerBase
         if (location is not null)
             return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
 
-        await _locationPlatform.CreateLocationAsync(dto.ToEntity());
+        await _locationPlatform.CreateLocationAsync(dto.ToEntity(force));
         return Ok();
     }
 
@@ -164,6 +164,7 @@ public class LocationController : ControllerBase
         return locations.ToList_LocationDto();
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Update location
     /// </summary>
@@ -195,6 +196,7 @@ public class LocationController : ControllerBase
         return Ok(location.ToGetLocationDto());
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Delete location by id
     /// </summary>
@@ -202,7 +204,7 @@ public class LocationController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [HttpDelete]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [Route("Delete/{locationId}")]
     public async Task<IActionResult> DeleteLocationByIdAsync([FromRoute] Guid locationId)
     {

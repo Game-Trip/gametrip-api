@@ -2,6 +2,7 @@
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.Comment;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.EFCore.Repository;
 
@@ -11,7 +12,7 @@ public class CommentRepository : GenericRepository<Comment>, ICommentRepository
     {
     }
 
-    public async Task AddCommentTolocationAsync(Location location, GameTripUser user, AddCommentToLocationDto dto)
+    public async Task AddCommentTolocationAsync(Location location, GameTripUser user, AddCommentToLocationDto dto, [Optional] bool force)
     {
         await _context.Comment.AddAsync(new Comment()
         {
@@ -22,6 +23,8 @@ public class CommentRepository : GenericRepository<Comment>, ICommentRepository
             UserId = dto.UserId,
 
             Text = dto.Text,
+
+            IsValidate = force
         });
         await _context.SaveChangesAsync();
     }
