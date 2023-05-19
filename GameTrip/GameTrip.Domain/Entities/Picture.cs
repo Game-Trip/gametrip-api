@@ -10,4 +10,8 @@ public class Picture
     public Location? Location { get; set; }
     public Guid? GameId { get; set; }
     public Game? Game { get; set; }
+    public bool IsValidate { get; set; }
+
+    public Guid AuthorId { get; set; }
+    public GameTripUser? Author { get; set; }
 }
