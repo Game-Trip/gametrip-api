@@ -36,14 +36,14 @@ public class DBInitializer
     public async Task<bool> Initialize()
     {
         _context.Database.EnsureCreated();
-        await _context.LikedGame.ExecuteDeleteAsync();
-        await _context.LikedLocation.ExecuteDeleteAsync();
-        await _context.Comment.ExecuteDeleteAsync();
-        await _context.Picture.ExecuteDeleteAsync();
-        await _context.Game.ExecuteDeleteAsync();
-        await _context.Location.ExecuteDeleteAsync();
-        await _context.Users.ExecuteDeleteAsync();
-        await _context.Roles.ExecuteDeleteAsync();
+        //await _context.LikedGame.ExecuteDeleteAsync();
+        //await _context.LikedLocation.ExecuteDeleteAsync();
+        //await _context.Comment.ExecuteDeleteAsync();
+        //await _context.Picture.ExecuteDeleteAsync();
+        //await _context.Game.ExecuteDeleteAsync();
+        //await _context.Location.ExecuteDeleteAsync();
+        //await _context.Users.ExecuteDeleteAsync();
+        //await _context.Roles.ExecuteDeleteAsync();
 
         if (_context.Roles.Any() || _context.Users.Any())
             return false;

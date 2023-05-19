@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
 
@@ -39,6 +40,7 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="locationId">Id of location where add comment</param>
     /// <param name="dto">AddCommentToLocationDto</param>
+    /// <param name="froce">Force Validation for this comment</param>
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
@@ -46,7 +48,7 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("Add/{locationId}")]
-    public async Task<IActionResult> AddCommentToLocation([FromRoute] Guid locationId, [FromBody] AddCommentToLocationDto dto)
+    public async Task<IActionResult> AddCommentToLocation([FromRoute] Guid locationId, [FromBody] AddCommentToLocationDto dto, [Optional][FromQuery] bool froce)
     {
         ValidationResult validationResult = _addCommentToLocationValidator.Validate(dto);
         if (!validationResult.IsValid)
@@ -67,7 +69,7 @@ public class CommentController : ControllerBase
             return NotFound(new MessageDto(UserMessage.NotFoundById));
 
         await _commentPlatform.AddCommentToLocationAsync
-            (location, user, dto);
+            (location, user, dto, froce);
         return Ok(new MessageDto(CommentMessage.SucessCreate));
     }
 
