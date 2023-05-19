@@ -35,6 +35,7 @@ public class CommentController : ControllerBase
         _updateCommentValidator = updateCommentValidator;
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Add Comment To location
     /// </summary>
@@ -73,6 +74,7 @@ public class CommentController : ControllerBase
         return Ok(new MessageDto(CommentMessage.SucessCreate));
     }
 
+    //TODO : how to make validation for this
     /// <summary>
     /// Remove Comment By Id
     /// </summary>
@@ -152,7 +154,7 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("{commentId}")]
-    public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetCommentById([FromRoute] Guid commentId)
+    public async Task<ActionResult<CommentDto>> GetCommentById([FromRoute] Guid commentId)
     {
         Comment? comment = await _commentPlatform.GetCommentByIdAsync(commentId);
         if (comment is null)
@@ -167,7 +169,7 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPut]
     [Route("{commentId}")]
-    public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetCommentById([FromRoute] Guid commentId, [FromBody] UpdateCommentDto dto)
+    public async Task<ActionResult<CommentDto>> GetCommentById([FromRoute] Guid commentId, [FromBody] UpdateCommentDto dto)
     {
         ValidationResult validationResult = _updateCommentValidator.Validate(dto);
         if (!validationResult.IsValid)

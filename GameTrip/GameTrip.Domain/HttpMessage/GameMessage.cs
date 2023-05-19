@@ -15,6 +15,7 @@ public class GameMessage : StringEnumError
     public static GameMessage DescriptionCanNotBeNullOrEmpty => new("GameDescriptionCanNotBeNullOrEmpty", "Game description cannot be Null Or Empty");
     public static GameMessage EditorCanNotBeNullOrEmpty => new("GameEditorCanNotBeNullOrEmpty", "Game editor cannot be Null Or Empty");
     public static GameMessage ReleaseCanNotBeNullOrEmpty => new("GameReleaseCanNotBeNullOrEmpty", "Game release cannot be Null Or Empty");
+    public static GameMessage AuthorIdCanNotBeNullOrEmpty => new("AuthorIdCanNotBeNullOrEmpty", "Game AuthorId cannot be Null Or Empty");
 
     #endregion Validator
 

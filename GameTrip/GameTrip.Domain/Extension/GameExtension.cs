@@ -1,11 +1,12 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.GameModels;
+using System.Runtime.InteropServices;
 
 namespace GameTrip.Domain.Extension;
 
 public static class GameExtension
 {
-    public static Game ToEntity(this CreateGameDto dto)
+    public static Game ToEntity(this CreateGameDto dto, [Optional] bool froce)
     {
         return new Game
         {
@@ -13,6 +14,8 @@ public static class GameExtension
             Description = dto.Description,
             Editor = dto.Editor,
             ReleaseDate = dto.ReleaseDate ?? null,
+            AuthorId = dto.AuthorId,
+            IsValidate = froce,
         };
     }
 
@@ -27,6 +30,7 @@ public static class GameExtension
             Locations = game.Locations.ToEnumerable_LocationNameDto(),
             Pictures = game.Pictures.ToEnumerable_ListPictureDto(),
             LikedGames = game.LikedGames.ToEnumerable_ListLikedGameDto(),
+            IsValidate = game.IsValidate,
         };
     }
 
@@ -36,6 +40,7 @@ public static class GameExtension
         {
             Id = game.IdGame,
             Name = game.Name,
+            IsValidate = game.IsValidate,
         };
     }
 
@@ -50,6 +55,7 @@ public static class GameExtension
             Description = game.Description,
             Editor = game.Editor,
             ReleaseDate = game.ReleaseDate,
+            IsValidate = game.IsValidate,
         }).ToList();
     }
 }
