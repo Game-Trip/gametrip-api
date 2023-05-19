@@ -36,6 +36,14 @@ public class DBInitializer
     public async Task<bool> Initialize()
     {
         _context.Database.EnsureCreated();
+        await _context.LikedGame.ExecuteDeleteAsync();
+        await _context.LikedLocation.ExecuteDeleteAsync();
+        await _context.Comment.ExecuteDeleteAsync();
+        await _context.Picture.ExecuteDeleteAsync();
+        await _context.Game.ExecuteDeleteAsync();
+        await _context.Location.ExecuteDeleteAsync();
+        await _context.Users.ExecuteDeleteAsync();
+        await _context.Roles.ExecuteDeleteAsync();
 
         if (_context.Roles.Any() || _context.Users.Any())
             return false;
@@ -79,6 +87,7 @@ public class DBInitializer
         if (!resultAddRoleToUser.Succeeded)
             throw new ApplicationException("Adding user '" + admin.UserName + "' to role '" + Roles.User + "' failed with error(s): " + resultAddRoleToUser.Errors);
         await _context.SaveChangesAsync();
+        admin = await _userManager.FindByNameAsync(admin.UserName);
         #endregion
 
         #region AddUser
@@ -135,7 +144,10 @@ public class DBInitializer
                     Name = loc.Name,
                     Description = loc.Description,
                     Latitude = loc.Latitude,
-                    Longitude = loc.Longitude
+                    Longitude = loc.Longitude,
+                    AuthorId = admin.Id,
+                    Author = admin,
+                    IsValid = true
                 });
             }
         }
@@ -143,7 +155,7 @@ public class DBInitializer
 
         //Adding Games
         #region AddGames
-        DateTime date = new(2023, 5, 5); // The date you want to get the timestamp of
+        DateTime date = new(2023, 5, 19); // The date you want to get the timestamp of
         DateTime unixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc); // The Unix epoch
         TimeSpan timeSpan = date.ToUniversalTime() - unixEpoch; // Get the time span between the date and the Unix epoch
         long timestamp = (long)timeSpan.TotalSeconds; // Get the total number of seconds as a long integer
@@ -217,7 +229,10 @@ public class DBInitializer
                     Name = gam.Name,
                     Description = gam.Description,
                     Editor = gam.Editor,
-                    ReleaseDate = gam.ReleaseDate
+                    ReleaseDate = gam.ReleaseDate,
+                    AuthorId = admin.Id,
+                    Author = admin,
+                    IsValidate = true
                 });
             }
         }

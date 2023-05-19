@@ -40,6 +40,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             c.HasKey(c => c.IdComment);
 
             c.Property(c => c.Text).HasMaxLength(255);
+            c.HasOne(c => c.User).WithMany(u => u.Comments).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Game>(g =>
@@ -89,6 +90,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             p.Property(p => p.Name).IsRequired().HasMaxLength(255);
             p.Property(p => p.Description).HasMaxLength(255);
             p.Property(p => p.Data).IsRequired().HasColumnType("varbinary(max)");
+
         });
 
         builder.Entity<GameTripUser>(u =>
@@ -98,6 +100,11 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             u.HasMany(u => u.Comments).WithOne(c => c.User).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
             u.HasMany(u => u.LikedLocations).WithOne(lg => lg.User).HasForeignKey(lg => lg.UserId).OnDelete(DeleteBehavior.Cascade);
             u.HasMany(u => u.LikedGames).WithOne(ll => ll.User).HasForeignKey(ll => ll.UserId).OnDelete(DeleteBehavior.Cascade);
+
+            u.HasMany(u => u.CreatedGame).WithOne(g => g.Author).HasForeignKey(g => g.AuthorId).OnDelete(DeleteBehavior.NoAction);
+            u.HasMany(u => u.CreatedLocation).WithOne(l => l.Author).HasForeignKey(l => l.AuthorId).OnDelete(DeleteBehavior.NoAction);
+            u.HasMany(u => u.CreatedPictures).WithOne(p => p.Author).HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.NoAction);
+
         });
     }
 
