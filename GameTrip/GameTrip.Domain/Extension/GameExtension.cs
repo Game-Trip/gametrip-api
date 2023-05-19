@@ -30,6 +30,7 @@ public static class GameExtension
             Locations = game.Locations.ToEnumerable_LocationNameDto(),
             Pictures = game.Pictures.ToEnumerable_ListPictureDto(),
             LikedGames = game.LikedGames.ToEnumerable_ListLikedGameDto(),
+            AuthorId = game.AuthorId,
             IsValidate = game.IsValidate,
         };
     }
@@ -40,6 +41,7 @@ public static class GameExtension
         {
             Id = game.IdGame,
             Name = game.Name,
+            AuthorId = game.AuthorId,
             IsValidate = game.IsValidate,
         };
     }
@@ -55,6 +57,7 @@ public static class GameExtension
             Description = game.Description,
             Editor = game.Editor,
             ReleaseDate = game.ReleaseDate,
+            AuthorId = game.AuthorId,
             IsValidate = game.IsValidate,
         }).ToList();
     }
