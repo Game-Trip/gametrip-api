@@ -14,7 +14,7 @@ public class CommentMessage : StringEnumError
     public static CommentMessage NotFoundById => new("NotFoundById", "No Comment found with the provied Id");
     public static CommentMessage LocationIdNullOrEmpty => new("LocationIdNullOrEmpty", "The field LocationId can not be Null or Empty");
     public static CommentMessage UserIdNullOrEmpty => new("UserIdNullOrEmpty", "The field UserId can not be Null or Empty");
-    public static CommentMessage SucessCreate => new("SucessCreate", "The provided comment have been created");
+    public static CommentMessage SuccessCreate => new("SucessCreate", "The provided comment have been created");
     public static CommentMessage LocationIdAndIdInDtoNotEqual => new("LocationIdAndIdInDtoNotEqual", "The provided LocationId are not equals in Route param and Dto");
     public static CommentMessage UserNotAuthor => new("UserNotAuthor", "The user provided by Id is not the author of message");
     public static CommentMessage AlreadyValidate => new("AlreadyValidate", "The message already validated");
