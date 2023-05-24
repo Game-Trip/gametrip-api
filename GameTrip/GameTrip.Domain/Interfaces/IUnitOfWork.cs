@@ -7,6 +7,7 @@ public interface IUnitOfWork : IDisposable
     ILikedGameRepository LikedGames { get; }
     ILikedLocationRepository LikedLocations { get; }
     ILocationRepository Locations { get; }
+    IRequestLocationUpdateRepository RequestLocationUpdate { get; }
     IPictureRepository Pictures { get; }
 
     int Complet();

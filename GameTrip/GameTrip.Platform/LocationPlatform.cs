@@ -45,4 +45,18 @@ public class LocationPlatform : ILocationPlarform
         await _unitOfWork.Locations.SwitchStateValidateLocationAsync(location);
         await _unitOfWork.CompletAsync();
     }
+
+    public async Task CreateUpdateRequestAsync(RequestLocationUpdate requestUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Add(requestUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task DeleteUpdateRequestAsync(Guid locationId)
+    {
+        await _unitOfWork.RequestLocationUpdate.DeleteAllUpdateRequestAsync(locationId);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationWithRequestUpdateAsync(locationId);
 }

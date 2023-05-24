@@ -41,6 +41,7 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
                                                                                                .Include(l => l.LikedLocations)
                                                                                                .Include(l => l.Author)
                                                                                                .FirstOrDefaultAsync(l => l.Latitude == latitude && l.Longitude == longitude);
+    public async Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId) => await _context.Location.Include(l => l.RequestLocationUpdates).FirstOrDefaultAsync(l => l.IdLocation == locationId);
     public void RemoveGameToLocation(Game game, Location location) => location.Games!.Remove(game);
     public async Task<IEnumerable<Location>> SearchLocationAsync(SearchLocationDto dto) => await _context.Location.Include(l => l.Pictures)
                                                                                                                   .Include(l => l.Games)

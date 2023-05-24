@@ -164,19 +164,61 @@ public class LocationController : ControllerBase
         return locations.ToList_LocationDto();
     }
 
-    //TODO : how to make validation for this
     /// <summary>
-    /// Update location
+    /// Make a request to update a location
+    /// </summary>
+    /// <param name="locationId">Id of location to request an update</param>
+    /// <param name="dto">LocationUpdateRequestDto</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    [Route("{locationId}")]
+    public async Task<ActionResult<MessageDto>> CreateUpdateRequest([FromRoute] Guid locationId, [FromBody] LocationUpdateRequestDto dto)
+    {
+
+        if (locationId != dto.LocationId)
+            return BadRequest(new MessageDto(LocationMessage.IdWithQueryAndDtoAreDifferent));
+
+        Location? entity = await _locationPlatform.GetLocationByIdAsync(dto.LocationId);
+        if (entity is null)
+            return BadRequest(new MessageDto(LocationMessage.NotFoundById));
+
+        await _locationPlatform.CreateUpdateRequestAsync(dto.ToEntity());
+        return new MessageDto(LocationMessage.LocationUpdateRequestSuccess);
+    }
+
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    [Route("Request_Update/{locationId}")]
+    public async Task<ActionResult<ListLocationUpdateRequest>> GetLocationAllWithRequestUpdate([FromRoute] Guid locationId)
+    {
+        Location? location = await _locationPlatform.GetLocationWithRequestUpdateAsync(locationId);
+        if (location is null)
+            return BadRequest(new MessageDto(LocationMessage.NotFoundById));
+        if (location.RequestLocationUpdates is null || !location.RequestLocationUpdates.Any())
+            return BadRequest(new MessageDto(LocationMessage.NotFoundUpdateRequest));
+
+        return location.ToListLocationUpdateRequest();
+    }
+
+    /// <summary>
+    /// Update location -> For Admin only
     /// </summary>
     /// <param name="locationId">Id of location to update</param>
     /// <param name="dto">UpdateLocationDto</param>
-    [ProducesResponseType(typeof(LocationDto), (int)HttpStatusCode.OK)]
+    /// <param name="IsRequestUpdate">Bool -> Define if the update is due to an update request or not</param>
+    [ProducesResponseType(typeof(GetLocationDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut]
     [Route("{locationId}")]
-    public async Task<ActionResult<LocationDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto)
+    public async Task<ActionResult<GetLocationDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto, [FromQuery] bool IsRequestUpdate = true)
     {
         ValidationResult result = _updateLocationValidator.Validate(dto);
         if (!result.IsValid)
@@ -193,10 +235,13 @@ public class LocationController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.NotFoundById));
 
         Location location = await _locationPlatform.UpdateLocationAsync(entity, dto);
-        return Ok(location.ToGetLocationDto());
+
+        if (IsRequestUpdate)
+            await _locationPlatform.DeleteUpdateRequestAsync(dto.LocationId);
+
+        return location.ToGetLocationDto();
     }
 
-    //TODO : how to make validation for this
     /// <summary>
     /// Delete location by id
     /// </summary>
