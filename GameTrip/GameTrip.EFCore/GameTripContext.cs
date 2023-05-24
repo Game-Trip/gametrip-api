@@ -15,6 +15,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
     public DbSet<LikedLocation> LikedLocation { get; set; }
     public DbSet<LikedGame> LikedGame { get; set; }
     public DbSet<Location> Location { get; set; }
+    public DbSet<RequestLocationUpdate> RequestLocationUpdate { get; set; }
     public DbSet<Picture> Picture { get; set; }
 
     #endregion Properties
@@ -85,7 +86,16 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             l.HasMany(l => l.Pictures).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
             l.HasMany(l => l.Games).WithMany(g => g.Locations);
             l.HasMany(l => l.LikedLocations).WithOne(ll => ll.Location).HasForeignKey(ll => ll.LocationId).OnDelete(DeleteBehavior.Cascade);
+            l.HasMany(l => l.RequestLocationUpdates).WithOne(rl => rl.Location).HasForeignKey(rl => rl.LocationId).OnDelete(DeleteBehavior.Cascade);
 
+        });
+
+        builder.Entity<RequestLocationUpdate>(rl =>
+        {
+            rl.HasKey(rl => rl.IdRequestLocationUpdate);
+
+            rl.Property(rl => rl.Latitude).HasPrecision(18, 12);
+            rl.Property(rl => rl.Longitude).HasPrecision(18, 12);
         });
 
         builder.Entity<Picture>(p =>

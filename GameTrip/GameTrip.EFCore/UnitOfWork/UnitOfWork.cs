@@ -12,6 +12,7 @@ public class UnitOfWork : IUnitOfWork
     public ILikedGameRepository LikedGames { get; private set; }
     public ILikedLocationRepository LikedLocations { get; private set; }
     public ILocationRepository Locations { get; private set; }
+    public IRequestLocationUpdateRepository RequestLocationUpdate { get; private set; }
     public IPictureRepository Pictures { get; private set; }
 
     public UnitOfWork(GameTripContext context)
@@ -23,6 +24,7 @@ public class UnitOfWork : IUnitOfWork
         LikedLocations = new LikedLocationRepository(_context);
         Locations = new LocationRepository(_context);
         Pictures = new PictureRepository(_context);
+        RequestLocationUpdate = new RequestLocationUpdateRepository(_context);
     }
 
     public int Complet() => _context.SaveChanges();

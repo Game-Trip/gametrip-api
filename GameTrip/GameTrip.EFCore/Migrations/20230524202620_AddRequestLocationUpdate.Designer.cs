@@ -4,6 +4,7 @@ using GameTrip.EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameTrip.EFCore.Migrations
 {
     [DbContext(typeof(GameTripContext))]
-    partial class GameTripContextModelSnapshot : ModelSnapshot
+    [Migration("20230524202620_AddRequestLocationUpdate")]
+    partial class AddRequestLocationUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -382,9 +385,9 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Longitude")
+                    b.Property<double?>("Longitude")
                         .HasPrecision(18, 12)
-                        .HasColumnType("decimal(18,12)");
+                        .HasColumnType("float(18)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
