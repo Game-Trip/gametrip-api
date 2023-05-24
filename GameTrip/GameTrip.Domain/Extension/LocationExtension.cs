@@ -27,7 +27,7 @@ public static class LocationExtension
         IsValidate = location.IsValid,
         Games = location.Games?.ToList_ListGameDto(),
         Pictures = location.Pictures?.ToEnumerable_ListPictureDto(),
-        Comments = location.Comments?.ToEnumerable_ListCommentDto(),
+        Comments = location.Comments?.ToList_ListCommentDto(),
         LikedLocations = location.LikedLocations?.ToEnumerable_ListLikedLocationDto(),
     };
 

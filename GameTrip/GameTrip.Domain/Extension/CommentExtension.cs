@@ -18,7 +18,7 @@ public static class CommentExtension
         };
     }
 
-    public static IEnumerable<ListCommentDto> ToEnumerable_ListCommentDto(this IEnumerable<Comment> comments)
+    public static List<ListCommentDto> ToList_ListCommentDto(this IEnumerable<Comment> comments)
     {
         return comments.Select(c => new ListCommentDto()
         {
@@ -27,6 +27,6 @@ public static class CommentExtension
             UserId = c.UserId,
             LocationId = c.LocationId,
             IsValidate = c.IsValidate,
-        });
+        }).ToList();
     }
 }

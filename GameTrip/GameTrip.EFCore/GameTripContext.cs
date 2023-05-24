@@ -45,6 +45,8 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
 
         builder.Entity<Game>(g =>
         {
+            g.ToTable(g => g.IsTemporal());
+
             g.HasKey(g => g.IdGame);
 
             g.Property(g => g.Name).HasMaxLength(255);
@@ -70,6 +72,8 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
 
         builder.Entity<Location>(l =>
         {
+            l.ToTable(t => t.IsTemporal());
+
             l.HasKey(l => l.IdLocation);
 
             l.Property(l => l.Name).HasMaxLength(255);
@@ -81,6 +85,7 @@ public class GameTripContext : IdentityDbContext<GameTripUser, IdentityRole<Guid
             l.HasMany(l => l.Pictures).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
             l.HasMany(l => l.Games).WithMany(g => g.Locations);
             l.HasMany(l => l.LikedLocations).WithOne(ll => ll.Location).HasForeignKey(ll => ll.LocationId).OnDelete(DeleteBehavior.Cascade);
+
         });
 
         builder.Entity<Picture>(p =>
