@@ -3,4 +3,5 @@
 namespace GameTrip.Domain.Interfaces;
 public interface IRequestGameUpdateRepository : IGenericRepository<RequestGameUpdate>
 {
+    Task DeleteAllUpdateRequestAsync(Guid gameId);
 }

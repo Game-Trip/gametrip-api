@@ -37,6 +37,6 @@ public class LocationMessage : StringEnumError
     public static LocationMessage AlreadyNotValidate => new("AlreadyUnValidate", "The location already not validated");
     public static LocationMessage NowValidate => new("NowValidate", "The location is now validate");
     public static LocationMessage NowNotValidate => new("NowNotValidate", "The location is now not validate");
-    public static LocationMessage LocationUpdateRequestSuccess => new("LocationUpdateRequestSuccess", "The request to update the location has been registered, it will soon be processed by the administrator");
+    public static LocationMessage LocationUpdateRequestSuccess => new("LocationUpdateRequestSuccess", "The request to update location has been registered, it will soon be processed by the administrator");
     public static LocationMessage NotFoundUpdateRequest => new("NotFoundUpdateRequest", "This location haven't update request");
 }

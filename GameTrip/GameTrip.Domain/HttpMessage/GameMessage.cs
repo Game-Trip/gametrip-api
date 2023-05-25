@@ -34,4 +34,6 @@ public class GameMessage : StringEnumError
     public static GameMessage AlreadyNotValidate => new("AlreadyUnValidate", "The game already not validated");
     public static GameMessage NowValidate => new("NowValidate", "The game is now validate");
     public static GameMessage NowNotValidate => new("NowNotValidate", "The game is now not validate");
+    public static GameMessage GameUpdateRequestSuccess => new("GameUpdateRequestSuccess", "The request to update game has been registered, it will soon be processed by the administrator");
+    public static GameMessage NotFoundUpdateRequest => new("NotFoundUpdateRequest", "This game haven't update request");
 }

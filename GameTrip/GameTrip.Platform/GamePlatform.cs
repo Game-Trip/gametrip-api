@@ -58,4 +58,18 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.Games.SwitchValidateStateGameAsync(game);
         await _unitOfWork.CompletAsync();
     }
+
+    public async Task DeleteUpdateGameRequestAsync(Guid gameId)
+    {
+        await _unitOfWork.RequestGameUpdate.DeleteAllUpdateRequestAsync(gameId);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task CreateUpdateRequestAsync(RequestGameUpdate requestGameUpdate)
+    {
+        _unitOfWork.RequestGameUpdate.Add(requestGameUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId) => await _unitOfWork.Games.GetGameWithRequestUpdateAsync(gameId);
 }

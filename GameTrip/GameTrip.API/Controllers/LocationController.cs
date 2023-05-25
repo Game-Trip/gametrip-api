@@ -8,6 +8,7 @@ using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -172,7 +173,7 @@ public class LocationController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("{locationId}")]
     public async Task<ActionResult<MessageDto>> CreateUpdateRequest([FromRoute] Guid locationId, [FromBody] LocationUpdateRequestDto dto)
@@ -189,17 +190,22 @@ public class LocationController : ControllerBase
         return new MessageDto(LocationMessage.LocationUpdateRequestSuccess);
     }
 
-    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
-    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    /// <summary>
+    /// Get location with all request update
+    /// </summary>
+    /// <param name="locationId">Id of location</param>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ListLocationUpdateRequest), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(NotFound), (int)HttpStatusCode.BadRequest)]
     [Authorize(Roles = Roles.Admin)]
-    [HttpPost]
+    [HttpGet]
     [Route("Request_Update/{locationId}")]
-    public async Task<ActionResult<ListLocationUpdateRequest>> GetLocationAllWithRequestUpdate([FromRoute] Guid locationId)
+    public async Task<ActionResult<ListLocationUpdateRequest>> GetLocationWithAllRequestUpdate([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlatform.GetLocationWithRequestUpdateAsync(locationId);
         if (location is null)
-            return BadRequest(new MessageDto(LocationMessage.NotFoundById));
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
         if (location.RequestLocationUpdates is null || !location.RequestLocationUpdates.Any())
             return BadRequest(new MessageDto(LocationMessage.NotFoundUpdateRequest));
 

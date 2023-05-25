@@ -8,6 +8,7 @@ using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -217,20 +218,68 @@ public class GameController : ControllerBase
         return Ok(new MessageDto(GameMessage.RemovedToLocation));
     }
 
-    //TODO : how to make validation for this
+    /// <summary>
+    /// Make a request to update a game
+    /// </summary>
+    /// <param name="gameId">Id of game to request an update</param>
+    /// <param name="dto">GameUpdateRequestDto</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("{gameId}")]
+    public async Task<ActionResult<MessageDto>> CreateUpdateRequest([FromRoute] Guid gameId, [FromBody] GameUpdateRequestDto dto)
+    {
+        if (gameId != dto.GameId)
+            return BadRequest(new MessageDto(GameMessage.IdWithQueryAndDtoAreDifferent));
+
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return BadRequest(new MessageDto(GameMessage.NotFoundById));
+
+        await _gamePlatform.CreateUpdateRequestAsync(dto.ToEntity());
+        return new MessageDto(GameMessage.GameUpdateRequestSuccess);
+    }
+
+    /// <summary>
+    /// Get game with all request update
+    /// </summary>
+    /// <param name="gameId">Id of game wanted</param>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(NotFound), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.Admin)]
+    [HttpGet]
+    [Route("Request_Update/{gameId}")]
+    public async Task<ActionResult<ListGameUpdateRequest>> GetGameWithAllRequestUpdate([FromRoute] Guid gameId)
+    {
+        Game? game = await _gamePlatform.GetGameWithRequestUpdateAsync(gameId);
+
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        if (game.RequestGameUpdates is null || !game.RequestGameUpdates.Any())
+            return BadRequest(new MessageDto(GameMessage.NotFoundUpdateRequest));
+
+        return game.ToListGameUpdateRequest();
+    }
+
     /// <summary>
     /// Update Game
     /// </summary>
     /// <param name="gameId">Id of game to update</param>
     /// <param name="dto">UpdateGameDto</param>
+    /// <param name="IsRequestUpdate">Bool -> Define if the update is due to an update request or not</param>
     [ProducesResponseType(typeof(GameDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut]
     [Route("{gameId}")]
-    public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto)
+    public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto, [FromQuery] bool IsRequestUpdate = true)
     {
         ValidationResult result = _updateGameValidator.Validate(dto);
         if (!result.IsValid)
@@ -247,10 +296,12 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundById));
 
         Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
-        return Ok(game.ToGameDto());
+
+        if (IsRequestUpdate)
+            await _gamePlatform.DeleteUpdateGameRequestAsync(dto.gameId);
+        return game.ToGameDto();
     }
 
-    //TODO : how to make validation for this
     /// <summary>
     /// Delete Game by Id
     /// </summary>
