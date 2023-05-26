@@ -9,7 +9,7 @@ public interface ILocationPlarform
     Task CreateLocationAsync(Location location);
     Task CreateUpdateRequestAsync(RequestLocationUpdate dto);
     Task DeleteLocationAsync(Location location);
-    Task DeleteUpdateRequestAsync(Guid locationId);
+    Task DeleteUpdateRequestAsync(Guid? requestUpdateId);
     Task<IEnumerable<Location>> GetAllLocationAsync([Optional] int limit);
     Task<IEnumerable<Location?>> GetLocationByGameIdAsync(Guid idGame);
     Task<IEnumerable<Location?>> GetLocationByGameNameAsync(string gameName);

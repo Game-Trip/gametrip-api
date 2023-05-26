@@ -9,6 +9,10 @@ public class RequestGameUpdate
     public string? Editor { get; set; }
     public long? ReleaseDate { get; set; }
 
-    public ICollection<Location>? Locations { get; set; }
-    public ICollection<Picture>? Pictures { get; set; }
+    public Guid? IdLocation { get; set; }
+    public Location? Location { get; set; }
+    public bool? isAddedLocation { get; set; }
+    public Guid? IdPicture { get; set; }
+    public Picture? Picture { get; set; }
+    public bool? isAddedPicture { get; set; }
 }

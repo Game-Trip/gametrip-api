@@ -52,11 +52,10 @@ public class LocationPlatform : ILocationPlarform
         await _unitOfWork.CompletAsync();
     }
 
-    public async Task DeleteUpdateRequestAsync(Guid locationId)
+    public async Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationWithRequestUpdateAsync(locationId);
+    public async Task DeleteUpdateRequestAsync(Guid? requestUpdateId)
     {
-        await _unitOfWork.RequestLocationUpdate.DeleteAllUpdateRequestAsync(locationId);
+        await _unitOfWork.RequestLocationUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
         await _unitOfWork.CompletAsync();
     }
-
-    public async Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationWithRequestUpdateAsync(locationId);
 }

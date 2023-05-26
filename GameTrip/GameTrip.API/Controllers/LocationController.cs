@@ -217,14 +217,14 @@ public class LocationController : ControllerBase
     /// </summary>
     /// <param name="locationId">Id of location to update</param>
     /// <param name="dto">UpdateLocationDto</param>
-    /// <param name="IsRequestUpdate">Bool -> Define if the update is due to an update request or not</param>
+    /// <param name="requestUpdateId">If used, this means that the update is performed following validation of a request</param>
     [ProducesResponseType(typeof(GetLocationDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [Authorize(Roles = Roles.Admin)]
     [HttpPut]
     [Route("{locationId}")]
-    public async Task<ActionResult<GetLocationDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto, [FromQuery] bool IsRequestUpdate = true)
+    public async Task<ActionResult<GetLocationDto>> UpdateLocation([FromRoute] Guid locationId, [FromBody] UpdateLocationDto dto, [Optional][FromQuery] Guid? requestUpdateId)
     {
         ValidationResult result = _updateLocationValidator.Validate(dto);
         if (!result.IsValid)
@@ -242,8 +242,8 @@ public class LocationController : ControllerBase
 
         Location location = await _locationPlatform.UpdateLocationAsync(entity, dto);
 
-        if (IsRequestUpdate)
-            await _locationPlatform.DeleteUpdateRequestAsync(dto.LocationId);
+        if (requestUpdateId is not null)
+            await _locationPlatform.DeleteUpdateRequestAsync(requestUpdateId);
 
         return location.ToGetLocationDto();
     }

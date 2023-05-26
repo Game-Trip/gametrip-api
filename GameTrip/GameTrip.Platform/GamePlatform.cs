@@ -59,12 +59,6 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.CompletAsync();
     }
 
-    public async Task DeleteUpdateGameRequestAsync(Guid gameId)
-    {
-        await _unitOfWork.RequestGameUpdate.DeleteAllUpdateRequestAsync(gameId);
-        await _unitOfWork.CompletAsync();
-    }
-
     public async Task CreateUpdateRequestAsync(RequestGameUpdate requestGameUpdate)
     {
         _unitOfWork.RequestGameUpdate.Add(requestGameUpdate);
@@ -72,4 +66,15 @@ public class GamePlatform : IGamePlatform
     }
 
     public async Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId) => await _unitOfWork.Games.GetGameWithRequestUpdateAsync(gameId);
+    public async Task RequestToAddOrRemoveGameToLocationByIdAsync(RequestLocationUpdate requestLocationUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Add(requestLocationUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task DeleteUpdateGameRequestAsync(Guid? requestUpdateId)
+    {
+        await _unitOfWork.RequestGameUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
+        await _unitOfWork.CompletAsync();
+    }
 }

@@ -15,4 +15,11 @@ public class RequestLocationUpdateRepository : GenericRepository<RequestLocation
         _context.RequestLocationUpdate.RemoveRange(requestLocationUpdates);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteUpdateRequestByIdAsync(Guid? requestUpdateId)
+    {
+        RequestLocationUpdate requestLocationUpdate = await _context.RequestLocationUpdate.FirstOrDefaultAsync(rl => rl.IdRequestLocationUpdate == requestUpdateId);
+        _context.RequestLocationUpdate.Remove(requestLocationUpdate);
+        await _context.SaveChangesAsync();
+    }
 }

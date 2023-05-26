@@ -9,6 +9,8 @@ public class GameUpdateRequestNameDto
     public string? NewDescription { get; set; }
     public string? NewEditor { get; set; }
     public long? NewReleaseDate { get; set; }
-    public IEnumerable<LocationNameDto>? NewLocations { get; set; }
-    public IEnumerable<PictureDto>? NewPictures { get; set; }
+    public LocationNameDto? Location { get; set; }
+    public bool? IsAddedLocation { get; set; }
+    public PictureDto? Picture { get; set; }
+    public bool? IsAddedPicture { get; set; }
 }

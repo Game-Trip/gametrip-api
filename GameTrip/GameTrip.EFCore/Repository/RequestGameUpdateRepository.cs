@@ -16,4 +16,13 @@ public class RequestGameUpdateRepository : GenericRepository<RequestGameUpdate>,
         _context.RequestGameUpdate.RemoveRange(requestGameUpdates);
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteUpdateRequestByIdAsync(Guid? requestUpdateId)
+    {
+        RequestGameUpdate? requestGameUpdate = await _context.RequestGameUpdate.FirstOrDefaultAsync(rg => rg.IdRequestGameUpdate == requestUpdateId);
+        if (requestGameUpdate is not null)
+            _context.RequestGameUpdate.Remove(requestGameUpdate);
+
+        await _context.SaveChangesAsync();
+    }
 }

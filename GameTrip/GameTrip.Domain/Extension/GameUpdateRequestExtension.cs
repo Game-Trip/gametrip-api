@@ -25,8 +25,10 @@ public static class GameUpdateRequestExtension
             NewDescription = requestGameUpdate.Description ?? null,
             NewEditor = requestGameUpdate.Editor ?? null,
             NewReleaseDate = requestGameUpdate.ReleaseDate ?? null,
-            NewPictures = requestGameUpdate.Pictures?.ToEnumerable_PictureDto(),
-            NewLocations = requestGameUpdate.Locations?.ToEnumerable_LocationNameDto()
+            Picture = requestGameUpdate.Picture?.ToPictureDto(),
+            IsAddedPicture = requestGameUpdate.isAddedPicture ?? null,
+            Location = requestGameUpdate.Location?.ToLocationNameDto(),
+            IsAddedLocation = requestGameUpdate.isAddedLocation ?? null
         };
     }
 
