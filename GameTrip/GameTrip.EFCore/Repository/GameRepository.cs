@@ -56,4 +56,11 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
         game.IsValidate = !game.IsValidate;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId) => await _context.Game.Include(g => g.RequestGameUpdates)
+                                                                                              .Include(g => g.Locations)
+                                                                                              .Include(g => g.Pictures)
+                                                                                              .Include(g => g.LikedGames)
+                                                                                              .Include(g => g.Author)
+                                                                                              .FirstOrDefaultAsync(g => g.IdGame == gameId);
 }

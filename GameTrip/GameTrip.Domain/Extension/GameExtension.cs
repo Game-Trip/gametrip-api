@@ -35,6 +35,23 @@ public static class GameExtension
         };
     }
 
+    public static GetGameDto ToGetGameDto(this Game game)
+    {
+        return new()
+        {
+            GameId = game.IdGame,
+            Name = game.Name,
+            Description = game.Description,
+            Editor = game.Editor,
+            ReleaseDate = game.ReleaseDate,
+            Locations = game.Locations.ToList_LocationDto(),
+            Pictures = game.Pictures.ToCollection_ListPictureDto(),
+            LikedGames = game.LikedGames.ToCollection_ListLikedGameDto(),
+            AuthorId = game.AuthorId,
+            IsValidate = game.IsValidate,
+        };
+    }
+
     public static GameNameDto ToGameNameDto(this Game game)
     {
         return new()

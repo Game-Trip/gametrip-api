@@ -13,6 +13,9 @@ public static class LocationUpdateRequestExtension
             Description = dto.Description ?? null,
             Latitude = dto.Latitude ?? null,
             Longitude = dto.Longitude ?? null,
+            IdGame = dto.IdGame ?? null,
+            Game = dto.Game ?? null,
+            isAddedGame = dto.isAddedGame ?? null
         };
     }
 
@@ -25,8 +28,12 @@ public static class LocationUpdateRequestExtension
             NewDescription = requestLocationUpdate.Description ?? null,
             NewLatitude = requestLocationUpdate.Latitude ?? null,
             NewLongitude = requestLocationUpdate.Longitude ?? null,
-            NewPictures = requestLocationUpdate.Pictures?.ToEnumerable_PictureDto(),
-            NewGames = requestLocationUpdate.Games?.ToEnumerable_GameNameDto()
+            PictureId = requestLocationUpdate.IdPicture ?? null,
+            Picture = requestLocationUpdate.Picture?.ToPictureDto(),
+            IsAddedPicture = requestLocationUpdate.isAddedPicture ?? null,
+            GameId = requestLocationUpdate.IdGame ?? null,
+            Game = requestLocationUpdate.Game?.ToGameNameDto(),
+            IsAddedGame = requestLocationUpdate.isAddedGame ?? null
         };
     }
 

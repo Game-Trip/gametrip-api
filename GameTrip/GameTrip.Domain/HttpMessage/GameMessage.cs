@@ -27,6 +27,8 @@ public class GameMessage : StringEnumError
     public static GameMessage SuccesDeleted => new("GameDeleted", "Game deleted");
     public static GameMessage SuccesCreated => new("GameDeleted", "Game created");
     public static GameMessage AddedToLocation => new("GameAddedToLocation", "The provided Game has been added to provided location");
+    public static GameMessage RequestAddToLocationSuccess => new("RequestAddToLocationSuccess", "The request to add game to location has been created");
+    public static GameMessage RequestRemoveToLocationSuccess => new("RequestRemoveToLocationSuccess", "The request to remove game to location has been created");
     public static GameMessage RemovedToLocation => new("GameRemovedToLocation", "The provided Game has been removed to provided location");
     public static GameMessage IdWithQueryAndDtoAreDifferent => new("GameIdWithQueryAndDtoAreDifferent", "The provided gameId in route and provided gameId in Dto are not equals");
     public static GameMessage UserNotAuthor => new("UserNotAuthor", "The user provided by Id is not the author of game");
@@ -34,4 +36,8 @@ public class GameMessage : StringEnumError
     public static GameMessage AlreadyNotValidate => new("AlreadyUnValidate", "The game already not validated");
     public static GameMessage NowValidate => new("NowValidate", "The game is now validate");
     public static GameMessage NowNotValidate => new("NowNotValidate", "The game is now not validate");
+    public static GameMessage GameUpdateRequestSuccess => new("GameUpdateRequestSuccess", "The request to update game has been registered, it will soon be processed by the administrator");
+    public static GameMessage NotFoundUpdateRequest => new("NotFoundUpdateRequest", "This game haven't update request");
+    public static GameMessage RequestUpdateSuccesDeleted => new("RequestUpdateSuccesDeleted", "The Request Game Update with provided Id has been deleted");
+    public static GameMessage RequestUpdateNotFoundById => new("RequestUpdateNotFoundById", "Request Game Update with provided Id is Not Found");
 }

@@ -5,9 +5,11 @@ using GameTrip.Domain.Entities;
 using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -160,7 +162,42 @@ public class GameController : ControllerBase
         return game.ToList_ListGameDto();
     }
 
-    //TODO : how to make validation for this
+    /// <summary>
+    /// Create request to Add Game to Location by Game Id and Location Id
+    /// </summary>
+    /// <param name="gameId">Id of added Game</param>
+    /// <param name="locationId">Id of location to add Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
+    [Authorize(Roles = Roles.Admin)]
+    [HttpPost]
+    [Route("RequestAddGameToLocation/Game/{gameId}/Location/{locationId}")]
+    public async Task<ActionResult<MessageDto>> CreateRequestToAddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    {
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
+        if (location is null)
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+
+        if (location.Games!.Contains(game))
+            return BadRequest(new MessageDto(LocationMessage.AlreadyContainGameById));
+
+        LocationUpdateRequestDto locationUpdateRequestDto = new()
+        {
+            LocationId = locationId,
+            IdGame = gameId,
+            Game = game,
+            isAddedGame = true,
+        };
+
+        await _gamePlatform.RequestToAddOrRemoveGameToLocationByIdAsync(locationUpdateRequestDto.ToEntity());
+        return new MessageDto(GameMessage.RequestAddToLocationSuccess);
+    }
+
     /// <summary>
     /// Add Game to Location by Game Id and Location Id
     /// </summary>
@@ -169,10 +206,10 @@ public class GameController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPost]
     [Route("AddGameToLocation/Game/{gameId}/Location/{locationId}")]
-    public async Task<IActionResult> AddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    public async Task<ActionResult<MessageDto>> AddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -186,10 +223,46 @@ public class GameController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.AlreadyContainGameById));
 
         await _gamePlatform.AddGameToLocationByIdAsync(game, location);
-        return Ok(new MessageDto(GameMessage.AddedToLocation));
+        return new MessageDto(GameMessage.AddedToLocation);
     }
 
-    //TODO : how to make validation for this
+    /// <summary>
+    /// Create request to remove Game from Location by Game Id and Location Id
+    /// </summary>
+    /// <param name="gameId">Id of removed Game</param>
+    /// <param name="locationId">Id of location to remove Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("RequestToRemoveGameToLocation/Game/{gameId}/Location/{locationId}")]
+    public async Task<ActionResult<MessageDto>> CreateRequestRemoveGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    {
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
+        if (location is null)
+            return NotFound(new MessageDto(LocationMessage.NotFoundById));
+
+        if (!location.Games!.Contains(game))
+            return BadRequest(new MessageDto(LocationMessage.NotContainGameById));
+
+        ICollection<Game> newGameList = location.Games;
+        newGameList.Remove(game);
+
+        LocationUpdateRequestDto locationUpdateRequestDto = new()
+        {
+            LocationId = locationId,
+            IdGame = gameId,
+            Game = game,
+            isAddedGame = false
+        };
+        await _gamePlatform.RequestToAddOrRemoveGameToLocationByIdAsync(locationUpdateRequestDto.ToEntity());
+        return new MessageDto(GameMessage.RequestRemoveToLocationSuccess);
+    }
+
     /// <summary>
     /// Remove Game from Location by Game Id and Location Id
     /// </summary>
@@ -200,7 +273,7 @@ public class GameController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RemoveGameToLocation/Game/{gameId}/Location/{locationId}")]
-    public async Task<IActionResult> RemoveGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
+    public async Task<ActionResult<MessageDto>> RemoveGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -214,23 +287,71 @@ public class GameController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.NotContainGameById));
 
         await _gamePlatform.RemoveGameToLocationByIdAsync(game, location);
-        return Ok(new MessageDto(GameMessage.RemovedToLocation));
+        return new MessageDto(GameMessage.RemovedToLocation);
     }
 
-    //TODO : how to make validation for this
+    /// <summary>
+    /// Make a request to update a game
+    /// </summary>
+    /// <param name="gameId">Id of game to request an update</param>
+    /// <param name="dto">GameUpdateRequestDto</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("{gameId}")]
+    public async Task<ActionResult<MessageDto>> CreateUpdateRequest([FromRoute] Guid gameId, [FromBody] GameUpdateRequestDto dto)
+    {
+        if (gameId != dto.GameId)
+            return BadRequest(new MessageDto(GameMessage.IdWithQueryAndDtoAreDifferent));
+
+        Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
+        if (game is null)
+            return BadRequest(new MessageDto(GameMessage.NotFoundById));
+
+        await _gamePlatform.CreateUpdateRequestAsync(dto.ToEntity());
+        return new MessageDto(GameMessage.GameUpdateRequestSuccess);
+    }
+
+    /// <summary>
+    /// Get game with all request update
+    /// </summary>
+    /// <param name="gameId">Id of game wanted</param>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(NotFound), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.Admin)]
+    [HttpGet]
+    [Route("Request_Update/{gameId}")]
+    public async Task<ActionResult<ListGameUpdateRequest>> GetGameWithAllRequestUpdate([FromRoute] Guid gameId)
+    {
+        Game? game = await _gamePlatform.GetGameWithRequestUpdateAsync(gameId);
+
+        if (game is null)
+            return NotFound(new MessageDto(GameMessage.NotFoundById));
+
+        if (game.RequestGameUpdates is null || !game.RequestGameUpdates.Any())
+            return BadRequest(new MessageDto(GameMessage.NotFoundUpdateRequest));
+
+        return game.ToListGameUpdateRequest();
+    }
+
     /// <summary>
     /// Update Game
     /// </summary>
     /// <param name="gameId">Id of game to update</param>
     /// <param name="dto">UpdateGameDto</param>
+    /// <param name="requestUpdateId">If used, this means that the update is performed following validation of a request</param>
     [ProducesResponseType(typeof(GameDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut]
     [Route("{gameId}")]
-    public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto)
+    public async Task<ActionResult<GameDto>> UpdateGame([FromRoute] Guid gameId, [FromBody] UpdateGameDto dto, [Optional][FromQuery] Guid? requestUpdateId)
     {
         ValidationResult result = _updateGameValidator.Validate(dto);
         if (!result.IsValid)
@@ -247,10 +368,12 @@ public class GameController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundById));
 
         Game game = await _gamePlatform.UpdateGameAsync(entity, dto);
-        return Ok(game.ToGameDto());
+
+        if (requestUpdateId is not null)
+            await _gamePlatform.DeleteUpdateGameRequestAsync(requestUpdateId);
+        return game.ToGameDto();
     }
 
-    //TODO : how to make validation for this
     /// <summary>
     /// Delete Game by Id
     /// </summary>
@@ -271,5 +394,27 @@ public class GameController : ControllerBase
         await _gamePlatform.DeleteGameAsync(game);
 
         return Ok(new MessageDto(GameMessage.SuccesDeleted));
+    }
+
+    /// <summary>
+    /// Request Update Game by Id
+    /// </summary>
+    /// <param name="requestUpdateId">Id of request UpdateId Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
+    [HttpDelete]
+    [Authorize(Roles = Roles.Admin)]
+    [Route("DeleteRequestUpdate/{requestUpdateId}")]
+    public async Task<ActionResult<MessageDto>> DeleteRequestUpdateIdGameById([FromRoute] Guid requestUpdateId)
+    {
+        RequestGameUpdate? requestGameUpdate = await _gamePlatform.GetRequestUpdateGameByIdAsync(requestUpdateId);
+        if (requestGameUpdate is null)
+        {
+            return NotFound(new MessageDto(GameMessage.RequestUpdateNotFoundById));
+        }
+
+        await _gamePlatform.DeleteRequestGameUpdateAsync(requestGameUpdate);
+
+        return new MessageDto(GameMessage.RequestUpdateSuccesDeleted);
     }
 }

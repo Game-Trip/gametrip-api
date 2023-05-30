@@ -58,4 +58,30 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.Games.SwitchValidateStateGameAsync(game);
         await _unitOfWork.CompletAsync();
     }
+
+    public async Task CreateUpdateRequestAsync(RequestGameUpdate requestGameUpdate)
+    {
+        _unitOfWork.RequestGameUpdate.Add(requestGameUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId) => await _unitOfWork.Games.GetGameWithRequestUpdateAsync(gameId);
+    public async Task RequestToAddOrRemoveGameToLocationByIdAsync(RequestLocationUpdate requestLocationUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Add(requestLocationUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task DeleteUpdateGameRequestAsync(Guid? requestUpdateId)
+    {
+        await _unitOfWork.RequestGameUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public Task<RequestGameUpdate?> GetRequestUpdateGameByIdAsync(Guid requestUpdateId) => _unitOfWork.RequestGameUpdate.GetRequestGameUpdateByIdAsync(requestUpdateId);
+    public async Task DeleteRequestGameUpdateAsync(RequestGameUpdate requestGameUpdate)
+    {
+        _unitOfWork.RequestGameUpdate.Remove(requestGameUpdate);
+        await _unitOfWork.CompletAsync();
+    }
 }

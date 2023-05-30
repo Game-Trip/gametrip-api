@@ -8,6 +8,10 @@ public class RequestLocationUpdate
     public string? Description { get; set; }
     public decimal? Latitude { get; set; }
     public decimal? Longitude { get; set; }
-    public ICollection<Picture>? Pictures { get; set; }
-    public ICollection<Game>? Games { get; set; }
+    public Guid? IdPicture { get; set; }
+    public Picture? Picture { get; set; }
+    public bool? isAddedPicture { get; set; }
+    public Guid? IdGame { get; set; }
+    public Game? Game { get; set; }
+    public bool? isAddedGame { get; set; }
 }

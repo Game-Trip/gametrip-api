@@ -15,4 +15,5 @@ public class Game
     public ICollection<Location>? Locations { get; set; }
     public ICollection<Picture>? Pictures { get; set; }
     public ICollection<LikedGame>? LikedGames { get; set; }
+    public ICollection<RequestGameUpdate>? RequestGameUpdates { get; set; }
 }
