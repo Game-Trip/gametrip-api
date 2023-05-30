@@ -13,18 +13,20 @@ public static class CommentExtension
             UserId = comment.UserId,
             User = comment.User?.ToGameTripUserDtoName(),
             LocationId = comment.LocationId,
-            Location = comment.Location?.ToLocationNameDto()
+            Location = comment.Location?.ToLocationNameDto(),
+            IsValidate = comment.IsValidate
         };
     }
 
-    public static IEnumerable<ListCommentDto> ToEnumerable_ListCommentDto(this IEnumerable<Comment> comments)
+    public static List<ListCommentDto> ToList_ListCommentDto(this IEnumerable<Comment> comments)
     {
         return comments.Select(c => new ListCommentDto()
         {
             CommentId = c.IdComment,
             Text = c.Text,
             UserId = c.UserId,
-            LocationId = c.LocationId
-        });
+            LocationId = c.LocationId,
+            IsValidate = c.IsValidate,
+        }).ToList();
     }
 }

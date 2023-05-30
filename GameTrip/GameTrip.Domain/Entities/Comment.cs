@@ -10,4 +10,6 @@ public class Comment
 
     public Guid LocationId { get; set; }
     public Location? Location { get; set; }
+
+    public bool IsValidate { get; set; }
 }

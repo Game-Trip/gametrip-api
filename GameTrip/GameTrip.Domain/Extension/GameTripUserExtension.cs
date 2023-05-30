@@ -12,7 +12,7 @@ public static class GameTripUserExtension
             Email = user.Email,
             UserId = user.Id,
 
-            Comments = user.Comments?.ToEnumerable_ListCommentDto(),
+            Comments = user.Comments?.ToList_ListCommentDto(),
             LikedGames = user.LikedGames?.ToEnumerable_ListLikedGameDto(),
             LikedLocations = user.LikedLocations?.ToEnumerable_ListLikedLocationDto()
         };
