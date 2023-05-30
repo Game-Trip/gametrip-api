@@ -8,5 +8,4 @@ public class AddPictureToLocationDto
     public string? Description { get; set; }
     public Guid? LocationId { get; set; }
     public IFormFile? pictureData { get; set; }
-    public Guid AuthorId { get; set; }
 }

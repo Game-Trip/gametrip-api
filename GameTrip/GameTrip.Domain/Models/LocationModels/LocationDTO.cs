@@ -6,14 +6,12 @@ public class LocationDto
     {
 
     }
-    public LocationDto(string? name, string? description, decimal latitude, decimal longitude, Guid authorId, bool isValidate)
+    public LocationDto(string? name, string? description, decimal latitude, decimal longitude)
     {
         Name = name;
         Description = description;
         Latitude = latitude;
         Longitude = longitude;
-        AuthorId = authorId;
-        IsValidate = isValidate;
     }
 
     public Guid? Id { get; set; }
@@ -24,6 +22,4 @@ public class LocationDto
     public decimal Latitude { get; set; }
 
     public decimal Longitude { get; set; }
-    public Guid AuthorId { get; set; }
-    public bool IsValidate { get; set; }
 }

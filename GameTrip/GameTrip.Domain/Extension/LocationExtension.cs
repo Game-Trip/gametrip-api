@@ -1,19 +1,16 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.LocationModels;
-using System.Runtime.InteropServices;
 
 namespace GameTrip.Domain.Extension;
 
 public static class LocationExtension
 {
-    public static Location ToEntity(this CreateLocationDto dto, [Optional] bool force) => new()
+    public static Location ToEntity(this CreateLocationDto dto) => new()
     {
         Name = dto.Name,
         Description = dto.Description,
         Latitude = dto.Latitude,
-        Longitude = dto.Longitude,
-        AuthorId = dto.AuthorId,
-        IsValid = force,
+        Longitude = dto.Longitude
     };
 
     public static GetLocationDto ToGetLocationDto(this Location location) => new()
@@ -23,20 +20,16 @@ public static class LocationExtension
         Description = location.Description,
         Latitude = location.Latitude,
         Longitude = location.Longitude,
-        AuthorId = location.AuthorId,
-        IsValidate = location.IsValid,
         Games = location.Games?.ToList_ListGameDto(),
         Pictures = location.Pictures?.ToEnumerable_ListPictureDto(),
-        Comments = location.Comments?.ToList_ListCommentDto(),
+        Comments = location.Comments?.ToEnumerable_ListCommentDto(),
         LikedLocations = location.LikedLocations?.ToEnumerable_ListLikedLocationDto(),
     };
 
     public static LocationNameDto ToLocationNameDto(this Location location) => new()
     {
         Id = location.IdLocation,
-        Name = location.Name,
-        AuthorId = location.AuthorId,
-        IsValidate = location.IsValid
+        Name = location.Name
     };
     public static IEnumerable<LocationNameDto> ToEnumerable_LocationNameDto(this ICollection<Location> locations) => locations.Select(l => l.ToLocationNameDto());
     public static IEnumerable<LocationNameDto> ToEnumerable_LocationNameDto(this IEnumerable<Location> locations) => locations.Select(l => l.ToLocationNameDto());
@@ -47,9 +40,7 @@ public static class LocationExtension
         Name = location.Name,
         Description = location.Description,
         Latitude = location.Latitude,
-        Longitude = location.Longitude,
-        AuthorId = location.AuthorId,
-        IsValidate = location.IsValid
+        Longitude = location.Longitude
     };
 
     public static List<LocationDto> ToList_LocationDto(this IEnumerable<Location> location)
@@ -62,9 +53,7 @@ public static class LocationExtension
                 Name = l.Name,
                 Description = l.Description,
                 Latitude = l.Latitude,
-                Longitude = l.Longitude,
-                AuthorId = l.AuthorId,
-                IsValidate = l.IsValid
+                Longitude = l.Longitude
             };
         }).ToList();
     }

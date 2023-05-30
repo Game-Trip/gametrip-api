@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Runtime.InteropServices;
 
 namespace GameTrip.API.Controllers;
 
@@ -40,7 +39,6 @@ public class CommentController : ControllerBase
     /// </summary>
     /// <param name="locationId">Id of location where add comment</param>
     /// <param name="dto">AddCommentToLocationDto</param>
-    /// <param name="froce">Force Validation for this comment</param>
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
@@ -48,7 +46,7 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("Add/{locationId}")]
-    public async Task<ActionResult<MessageDto>> AddCommentToLocation([FromRoute] Guid locationId, [FromBody] AddCommentToLocationDto dto, [Optional][FromQuery] bool froce)
+    public async Task<IActionResult> AddCommentToLocation([FromRoute] Guid locationId, [FromBody] AddCommentToLocationDto dto)
     {
         ValidationResult validationResult = _addCommentToLocationValidator.Validate(dto);
         if (!validationResult.IsValid)
@@ -69,8 +67,8 @@ public class CommentController : ControllerBase
             return NotFound(new MessageDto(UserMessage.NotFoundById));
 
         await _commentPlatform.AddCommentToLocationAsync
-            (location, user, dto, froce);
-        return new MessageDto(CommentMessage.SuccessCreate);
+            (location, user, dto);
+        return Ok(new MessageDto(CommentMessage.SucessCreate));
     }
 
     /// <summary>
@@ -116,20 +114,20 @@ public class CommentController : ControllerBase
         if (!comments.Any())
             return NoContent();
 
-        return comments.ToList_ListCommentDto();
+        return Ok(comments.ToEnumerable_ListCommentDto());
     }
 
     /// <summary>
     /// Get All Comment By User
     /// </summary>
     /// <param name="userId">Id of User related of Comment</param>
-    [ProducesResponseType(typeof(List<ListCommentDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<ListCommentDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("User/{userId}")]
-    public async Task<ActionResult<List<ListCommentDto>>> GetAllCommentByUser([FromRoute] Guid userId)
+    public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetAllCommentByUser([FromRoute] Guid userId)
     {
         GameTripUser? user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
@@ -139,7 +137,7 @@ public class CommentController : ControllerBase
         if (!comments.Any())
             return NoContent();
 
-        return comments.ToList_ListCommentDto();
+        return Ok(comments.ToEnumerable_ListCommentDto());
     }
 
     /// <summary>
@@ -152,13 +150,13 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("{commentId}")]
-    public async Task<ActionResult<CommentDto>> GetCommentById([FromRoute] Guid commentId)
+    public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetCommentById([FromRoute] Guid commentId)
     {
         Comment? comment = await _commentPlatform.GetCommentByIdAsync(commentId);
         if (comment is null)
             return NotFound(new MessageDto(CommentMessage.NotFoundById));
 
-        return comment.ToCommentDto();
+        return Ok(comment.ToCommentDto());
     }
 
     [ProducesResponseType(typeof(IEnumerable<ListCommentDto>), (int)HttpStatusCode.OK)]
@@ -167,7 +165,7 @@ public class CommentController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPut]
     [Route("{commentId}")]
-    public async Task<ActionResult<CommentDto>> GetCommentById([FromRoute] Guid commentId, [FromBody] UpdateCommentDto dto)
+    public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetCommentById([FromRoute] Guid commentId, [FromBody] UpdateCommentDto dto)
     {
         ValidationResult validationResult = _updateCommentValidator.Validate(dto);
         if (!validationResult.IsValid)
@@ -184,6 +182,6 @@ public class CommentController : ControllerBase
 
         Comment? comment = await _commentPlatform.GetCommentByIdAsync(commentId);
 
-        return comment.ToCommentDto();
+        return Ok(comment.ToCommentDto());
     }
 }

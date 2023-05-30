@@ -18,15 +18,6 @@ public static class LikeGameExtension
         };
     }
 
-    public static ICollection<ListLikedGameDto> ToCollection_ListLikedGameDto(this IEnumerable<LikedGame> likedGames)
-    {
-        return likedGames.Select(lg => new ListLikedGameDto()
-        {
-            LikedGameId = lg.IdLikedGame,
-            GameId = lg.GameId,
-            Game = lg.Game?.ToGameNameDto(),
-        }).ToList();
-    }
     public static IEnumerable<ListLikedGameDto> ToEnumerable_ListLikedGameDto(this IEnumerable<LikedGame> likedGames)
     {
         return likedGames.Select(lg => new ListLikedGameDto()

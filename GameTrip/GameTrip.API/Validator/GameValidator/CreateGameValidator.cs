@@ -40,14 +40,5 @@ public class CreateGameValidator : AbstractValidator<CreateGameDto>
             .WithErrorCode(GameMessage.EditorCanNotBeNullOrEmpty.Key)
             .WithMessage(GameMessage.EditorCanNotBeNullOrEmpty.Message);
         #endregion
-
-        #region AuthorId
-        RuleFor(game => game.AuthorId)
-            .NotNull()
-            .NotEmpty()
-            .Unless(location => location is null)
-            .WithErrorCode(GameMessage.AuthorIdCanNotBeNullOrEmpty.Key)
-            .WithMessage(GameMessage.AuthorIdCanNotBeNullOrEmpty.Message);
-        #endregion
     }
 }

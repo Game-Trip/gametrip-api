@@ -30,32 +30,11 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("LocationsIdLocation")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
-
                     b.HasKey("GamesIdGame", "LocationsIdLocation");
 
                     b.HasIndex("LocationsIdLocation");
 
                     b.ToTable("GameLocation");
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                            {
-                                ttb.UseHistoryTable("GameLocationHistory");
-                                ttb
-                                    .HasPeriodStart("PeriodStart")
-                                    .HasColumnName("PeriodStart");
-                                ttb
-                                    .HasPeriodEnd("PeriodEnd")
-                                    .HasColumnName("PeriodEnd");
-                            }));
                 });
 
             modelBuilder.Entity("GameTrip.Domain.Entities.Comment", b =>
@@ -63,9 +42,6 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid>("IdComment")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsValidate")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uniqueidentifier");
@@ -92,9 +68,6 @@ namespace GameTrip.EFCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -103,22 +76,9 @@ namespace GameTrip.EFCore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<bool>("IsValidate")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
 
                     b.Property<long?>("ReleaseDate")
                         .HasPrecision(9)
@@ -126,20 +86,7 @@ namespace GameTrip.EFCore.Migrations
 
                     b.HasKey("IdGame");
 
-                    b.HasIndex("AuthorId");
-
                     b.ToTable("Game");
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                            {
-                                ttb.UseHistoryTable("GameHistory");
-                                ttb
-                                    .HasPeriodStart("PeriodStart")
-                                    .HasColumnName("PeriodStart");
-                                ttb
-                                    .HasPeriodEnd("PeriodEnd")
-                                    .HasColumnName("PeriodEnd");
-                            }));
                 });
 
             modelBuilder.Entity("GameTrip.Domain.Entities.GameTripUser", b =>
@@ -264,15 +211,9 @@ namespace GameTrip.EFCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
 
                     b.Property<decimal>("Latitude")
                         .HasPrecision(18, 12)
@@ -286,41 +227,15 @@ namespace GameTrip.EFCore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
-
                     b.HasKey("IdLocation");
 
-                    b.HasIndex("AuthorId");
-
                     b.ToTable("Location");
-
-                    b.ToTable(tb => tb.IsTemporal(ttb =>
-                            {
-                                ttb.UseHistoryTable("LocationHistory");
-                                ttb
-                                    .HasPeriodStart("PeriodStart")
-                                    .HasColumnName("PeriodStart");
-                                ttb
-                                    .HasPeriodEnd("PeriodEnd")
-                                    .HasColumnName("PeriodEnd");
-                            }));
                 });
 
             modelBuilder.Entity("GameTrip.Domain.Entities.Picture", b =>
                 {
                     b.Property<Guid>("IdPicture")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Data")
@@ -334,9 +249,6 @@ namespace GameTrip.EFCore.Migrations
                     b.Property<Guid?>("GameId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsValidate")
-                        .HasColumnType("bit");
-
                     b.Property<Guid?>("LocationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -347,115 +259,11 @@ namespace GameTrip.EFCore.Migrations
 
                     b.HasKey("IdPicture");
 
-                    b.HasIndex("AuthorId");
-
                     b.HasIndex("GameId");
 
                     b.HasIndex("LocationId");
 
                     b.ToTable("Picture");
-                });
-
-            modelBuilder.Entity("GameTrip.Domain.Entities.RequestGameUpdate", b =>
-                {
-                    b.Property<Guid>("IdRequestGameUpdate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Editor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdLocation")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdPicture")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("LocationIdLocation")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PictureIdPicture")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long?>("ReleaseDate")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool?>("isAddedLocation")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("isAddedPicture")
-                        .HasColumnType("bit");
-
-                    b.HasKey("IdRequestGameUpdate");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("LocationIdLocation");
-
-                    b.HasIndex("PictureIdPicture");
-
-                    b.ToTable("RequestGameUpdate");
-                });
-
-            modelBuilder.Entity("GameTrip.Domain.Entities.RequestLocationUpdate", b =>
-                {
-                    b.Property<Guid>("IdRequestLocationUpdate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("GameIdGame")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdGame")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("IdPicture")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("Latitude")
-                        .HasPrecision(18, 12)
-                        .HasColumnType("decimal(18,12)");
-
-                    b.Property<Guid>("LocationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasPrecision(18, 12)
-                        .HasColumnType("decimal(18,12)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("PictureIdPicture")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool?>("isAddedGame")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("isAddedPicture")
-                        .HasColumnType("bit");
-
-                    b.HasKey("IdRequestLocationUpdate");
-
-                    b.HasIndex("GameIdGame");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("PictureIdPicture");
-
-                    b.ToTable("RequestLocationUpdate");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -623,17 +431,6 @@ namespace GameTrip.EFCore.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GameTrip.Domain.Entities.Game", b =>
-                {
-                    b.HasOne("GameTrip.Domain.Entities.GameTripUser", "Author")
-                        .WithMany("CreatedGame")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-                });
-
             modelBuilder.Entity("GameTrip.Domain.Entities.LikedGame", b =>
                 {
                     b.HasOne("GameTrip.Domain.Entities.Game", "Game")
@@ -672,25 +469,8 @@ namespace GameTrip.EFCore.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GameTrip.Domain.Entities.Location", b =>
-                {
-                    b.HasOne("GameTrip.Domain.Entities.GameTripUser", "Author")
-                        .WithMany("CreatedLocation")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-                });
-
             modelBuilder.Entity("GameTrip.Domain.Entities.Picture", b =>
                 {
-                    b.HasOne("GameTrip.Domain.Entities.GameTripUser", "Author")
-                        .WithMany("CreatedPictures")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("GameTrip.Domain.Entities.Game", "Game")
                         .WithMany("Pictures")
                         .HasForeignKey("GameId")
@@ -701,57 +481,9 @@ namespace GameTrip.EFCore.Migrations
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("Author");
-
                     b.Navigation("Game");
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("GameTrip.Domain.Entities.RequestGameUpdate", b =>
-                {
-                    b.HasOne("GameTrip.Domain.Entities.Game", "Game")
-                        .WithMany("RequestGameUpdates")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GameTrip.Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationIdLocation");
-
-                    b.HasOne("GameTrip.Domain.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureIdPicture");
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Picture");
-                });
-
-            modelBuilder.Entity("GameTrip.Domain.Entities.RequestLocationUpdate", b =>
-                {
-                    b.HasOne("GameTrip.Domain.Entities.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameIdGame");
-
-                    b.HasOne("GameTrip.Domain.Entities.Location", "Location")
-                        .WithMany("RequestLocationUpdates")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GameTrip.Domain.Entities.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureIdPicture");
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Picture");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -810,19 +542,11 @@ namespace GameTrip.EFCore.Migrations
                     b.Navigation("LikedGames");
 
                     b.Navigation("Pictures");
-
-                    b.Navigation("RequestGameUpdates");
                 });
 
             modelBuilder.Entity("GameTrip.Domain.Entities.GameTripUser", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("CreatedGame");
-
-                    b.Navigation("CreatedLocation");
-
-                    b.Navigation("CreatedPictures");
 
                     b.Navigation("LikedGames");
 
@@ -836,8 +560,6 @@ namespace GameTrip.EFCore.Migrations
                     b.Navigation("LikedLocations");
 
                     b.Navigation("Pictures");
-
-                    b.Navigation("RequestLocationUpdates");
                 });
 #pragma warning restore 612, 618
         }

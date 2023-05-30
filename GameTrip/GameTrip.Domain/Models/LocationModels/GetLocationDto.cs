@@ -15,8 +15,6 @@ public class GetLocationDto
     public decimal Latitude { get; set; }
 
     public decimal Longitude { get; set; }
-    public Guid AuthorId { get; set; }
-    public bool IsValidate { get; set; }
 
     public IEnumerable<ListPictureDto>? Pictures { get; set; }
     public IEnumerable<ListGameDto>? Games { get; set; }

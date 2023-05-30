@@ -29,7 +29,6 @@ public static class PictureLocationExtension
         };
     }
 
-    public static ICollection<ListPictureDto> ToCollection_ListPictureDto(this ICollection<Picture> pictures) => pictures.Select(p => p.ToList_ListPictureDto()).ToList();
     public static IEnumerable<ListPictureDto> ToEnumerable_ListPictureDto(this ICollection<Picture> pictures) => pictures.Select(p => p.ToList_ListPictureDto()).AsEnumerable();
     public static IEnumerable<ListPictureDto> ToEnumerable_ListPictureDto(this IEnumerable<Picture> pictures) => pictures.Select(p => p.ToList_ListPictureDto()).AsEnumerable();
 }
