@@ -77,4 +77,11 @@ public class GamePlatform : IGamePlatform
         await _unitOfWork.RequestGameUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
         await _unitOfWork.CompletAsync();
     }
+
+    public Task<RequestGameUpdate?> GetRequestUpdateGameByIdAsync(Guid requestUpdateId) => _unitOfWork.RequestGameUpdate.GetRequestGameUpdateByIdAsync(requestUpdateId);
+    public async Task DeleteRequestGameUpdateAsync(RequestGameUpdate requestGameUpdate)
+    {
+        _unitOfWork.RequestGameUpdate.Remove(requestGameUpdate);
+        await _unitOfWork.CompletAsync();
+    }
 }

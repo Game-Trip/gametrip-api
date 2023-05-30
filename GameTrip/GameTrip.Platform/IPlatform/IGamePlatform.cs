@@ -10,6 +10,7 @@ public interface IGamePlatform
     Task CreateGameAsync(Game value);
     Task CreateUpdateRequestAsync(RequestGameUpdate requestGameUpdate);
     Task DeleteGameAsync(Game game);
+    Task DeleteRequestGameUpdateAsync(RequestGameUpdate requestGameUpdate);
     Task DeleteUpdateGameRequestAsync(Guid? requestUpdateId);
     Task<IEnumerable<Game>> GetAllGamesAsync([Optional] int limit);
     Task<Game?> GetGameByIdAsync(Guid gameId);
@@ -17,6 +18,7 @@ public interface IGamePlatform
     Task<IEnumerable<Game?>> GetGamesByLocationIdAsync(Guid locationId);
     Task<IEnumerable<Game?>> GetGamesByLocationNameAsync(string locationName);
     Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId);
+    Task<RequestGameUpdate?> GetRequestUpdateGameByIdAsync(Guid requestUpdateId);
     Task RemoveGameToLocationByIdAsync(Game game, Location location);
     Task RequestToAddOrRemoveGameToLocationByIdAsync(RequestLocationUpdate requestLocationUpdate);
     Task SwitchValidateStatusGameAsync(Game game);

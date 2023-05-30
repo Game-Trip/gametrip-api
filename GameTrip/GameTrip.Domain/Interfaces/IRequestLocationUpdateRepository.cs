@@ -5,4 +5,5 @@ public interface IRequestLocationUpdateRepository : IGenericRepository<RequestLo
 {
     Task DeleteAllUpdateRequestAsync(Guid locationId);
     Task DeleteUpdateRequestByIdAsync(Guid? requestUpdateId);
+    Task<RequestLocationUpdate?> GetRequestUpdateLocationByIdAsync(Guid requestUpdateId);
 }

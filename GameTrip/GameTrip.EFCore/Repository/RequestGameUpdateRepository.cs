@@ -25,4 +25,6 @@ public class RequestGameUpdateRepository : GenericRepository<RequestGameUpdate>,
 
         await _context.SaveChangesAsync();
     }
+
+    public Task<RequestGameUpdate?> GetRequestGameUpdateByIdAsync(Guid requestUpdateId) => _context.RequestGameUpdate.FirstOrDefaultAsync(rgu => rgu.IdRequestGameUpdate == requestUpdateId);
 }

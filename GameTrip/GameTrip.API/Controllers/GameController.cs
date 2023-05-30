@@ -395,4 +395,26 @@ public class GameController : ControllerBase
 
         return Ok(new MessageDto(GameMessage.SuccesDeleted));
     }
+
+    /// <summary>
+    /// Request Update Game by Id
+    /// </summary>
+    /// <param name="requestUpdateId">Id of request UpdateId Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
+    [HttpDelete]
+    [Authorize(Roles = Roles.Admin)]
+    [Route("DeleteRequestUpdate/{requestUpdateId}")]
+    public async Task<ActionResult<MessageDto>> DeleteRequestUpdateIdGameById([FromRoute] Guid requestUpdateId)
+    {
+        RequestGameUpdate? requestGameUpdate = await _gamePlatform.GetRequestUpdateGameByIdAsync(requestUpdateId);
+        if (requestGameUpdate is null)
+        {
+            return NotFound(new MessageDto(GameMessage.RequestUpdateNotFoundById));
+        }
+
+        await _gamePlatform.DeleteRequestGameUpdateAsync(requestGameUpdate);
+
+        return new MessageDto(GameMessage.RequestUpdateSuccesDeleted);
+    }
 }

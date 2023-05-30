@@ -5,4 +5,5 @@ public interface IRequestGameUpdateRepository : IGenericRepository<RequestGameUp
 {
     Task DeleteAllUpdateRequestAsync(Guid gameId);
     Task DeleteUpdateRequestByIdAsync(Guid? requestUpdateId);
+    Task<RequestGameUpdate?> GetRequestGameUpdateByIdAsync(Guid requestUpdateId);
 }

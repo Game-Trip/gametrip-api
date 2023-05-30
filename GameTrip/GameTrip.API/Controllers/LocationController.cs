@@ -269,4 +269,26 @@ public class LocationController : ControllerBase
 
         return Ok(new MessageDto(LocationMessage.SuccesDeleted));
     }
+
+    /// <summary>
+    /// Request Update Game by Id
+    /// </summary>
+    /// <param name="requestUpdateId">Id of request UpdateId Game</param>
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
+    [HttpDelete]
+    [Authorize(Roles = Roles.Admin)]
+    [Route("DeleteRequestUpdate/{requestUpdateId}")]
+    public async Task<ActionResult<MessageDto>> DeleteRequestUpdateLocationById([FromRoute] Guid requestUpdateId)
+    {
+        RequestLocationUpdate? requestLocationUpdate = await _locationPlatform.GetRequestUpdateLocationByIdAsync(requestUpdateId);
+        if (requestLocationUpdate is null)
+        {
+            return NotFound(new MessageDto(LocationMessage.RequestUpdateNotFoundById));
+        }
+
+        await _locationPlatform.DeleteRequestLocationUpdateAsync(requestLocationUpdate);
+
+        return new MessageDto(LocationMessage.RequestUpdateSuccesDeleted);
+    }
 }

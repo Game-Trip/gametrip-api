@@ -58,4 +58,11 @@ public class LocationPlatform : ILocationPlarform
         await _unitOfWork.RequestLocationUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
         await _unitOfWork.CompletAsync();
     }
+
+    public async Task DeleteRequestLocationUpdateAsync(RequestLocationUpdate requestLocationUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Remove(requestLocationUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+    public async Task<RequestLocationUpdate?> GetRequestUpdateLocationByIdAsync(Guid requestUpdateId) => await _unitOfWork.RequestLocationUpdate.GetRequestUpdateLocationByIdAsync(requestUpdateId);
 }
