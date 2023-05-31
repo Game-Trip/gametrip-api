@@ -257,7 +257,7 @@ public class LocationController : ControllerBase
     [HttpDelete]
     [Authorize(Roles = Roles.Admin)]
     [Route("Delete/{locationId}")]
-    public async Task<IActionResult> DeleteLocationByIdAsync([FromRoute] Guid locationId)
+    public async Task<ActionResult<MessageDto>> DeleteLocationByIdAsync([FromRoute] Guid locationId)
     {
         Location? location = await _locationPlatform.GetLocationByIdAsync(locationId);
         if (location is null)
@@ -267,7 +267,7 @@ public class LocationController : ControllerBase
 
         await _locationPlatform.DeleteLocationAsync(location);
 
-        return Ok(new MessageDto(LocationMessage.SuccesDeleted));
+        return new MessageDto(LocationMessage.SuccesDeleted);
     }
 
     /// <summary>

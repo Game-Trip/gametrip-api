@@ -59,7 +59,7 @@ public class GameController : ControllerBase
             return BadRequest(new MessageDto(GameMessage.AlreadyExist));
 
         await _gamePlatform.CreateGameAsync(dto.ToEntity(force));
-        return Ok(new MessageDto(GameMessage.SuccesCreated));
+        return new MessageDto(GameMessage.SuccesCreated);
     }
 
     /// <summary>
@@ -383,7 +383,7 @@ public class GameController : ControllerBase
     [HttpDelete]
     [Authorize(Roles = Roles.Admin)]
     [Route("Delete/{gameId}")]
-    public async Task<IActionResult> DeleteGameById([FromRoute] Guid gameId)
+    public async Task<ActionResult<MessageDto>> DeleteGameById([FromRoute] Guid gameId)
     {
         Game? game = await _gamePlatform.GetGameByIdAsync(gameId);
         if (game is null)
@@ -393,7 +393,7 @@ public class GameController : ControllerBase
 
         await _gamePlatform.DeleteGameAsync(game);
 
-        return Ok(new MessageDto(GameMessage.SuccesDeleted));
+        return new MessageDto(GameMessage.SuccesDeleted);
     }
 
     /// <summary>

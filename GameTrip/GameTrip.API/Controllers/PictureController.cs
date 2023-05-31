@@ -138,7 +138,7 @@ public class PictureController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddPictureToGame/{gameId}/{userId}")]
-    public async Task<IActionResult> AddPictureToGame(IFormFile pictureData, [FromRoute] Guid gameId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
+    public async Task<ActionResult<MessageDto>> AddPictureToGame(IFormFile pictureData, [FromRoute] Guid gameId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
     {
         AddPictureToGameDto dto = new()
         {
@@ -159,7 +159,7 @@ public class PictureController : ControllerBase
             return NotFound(new MessageDto(GameMessage.NotFoundById));
 
         await _picturePlatfrom.AddPictureToGameAsync(pictureData, dto, game, force);
-        return Ok(new MessageDto(PictureMessage.SucessAddToGame));
+        return new MessageDto(PictureMessage.SucessAddToGame);
     }
 
     /// <summary>
