@@ -77,7 +77,7 @@ public class DBInitializer
             EmailConfirmed = true,
         };
 
-        string pwd = "NMdRx$HqyT8jX6";
+        string pwd = "7@9sq*59$6adwxd1l350P8&j";
 
         IdentityResult? resultAddUser = await _userManager.CreateAsync(admin, pwd);
         if (!resultAddUser.Succeeded)
@@ -405,8 +405,8 @@ public class DBInitializer
             }
         }
         #endregion
-        //Add Comment
 
+        //Add Comment
         #region AddComment
         Faker faker = new();
         int nbComment = await _context.Location.CountAsync() / 2 * await _context.Users.CountAsync();
