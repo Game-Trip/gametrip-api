@@ -159,6 +159,7 @@ public class LikeController : ControllerBase
             LikedLocationDto likedLocationDto = new()
             {
                 LocationId = group.Key,
+                LikedLocationId = group.First().IdLikedLocation,
                 Location = group.First().Location?.ToLocationNameDto(),
                 UsersIds = group.Select(ll => ll.UserId).AsEnumerable(),
                 NbVote = group.Count(),
