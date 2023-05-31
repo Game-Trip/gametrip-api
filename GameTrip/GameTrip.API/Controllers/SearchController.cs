@@ -22,18 +22,18 @@ public class SearchController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("SearchLocation")]
-    public async Task<ActionResult<IEnumerable<LocationNameDto>>> SearchLocation([FromQuery] SearchLocationDto dto)
+    public async Task<IEnumerable<LocationNameDto>> SearchLocation([FromQuery] SearchLocationDto dto)
     {
         IEnumerable<Location> locations = await _searchPlatform.SearchLocationAsync(dto);
-        return Ok(locations.ToEnumerable_LocationNameDto());
+        return locations.ToEnumerable_LocationNameDto();
     }
 
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("SearchGame")]
-    public async Task<ActionResult<IEnumerable<GameNameDto>>> SearchGame([FromQuery] SearchGameDto dto)
+    public async Task<IEnumerable<GameNameDto>> SearchGame([FromQuery] SearchGameDto dto)
     {
         IEnumerable<Game> games = await _searchPlatform.SearchGameAsync(dto);
-        return Ok(games.ToEnumerable_GameNameDto());
+        return games.ToEnumerable_GameNameDto();
     }
 }

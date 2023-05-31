@@ -10,4 +10,5 @@ public class CommentDto
     public GameTripUserDtoName User { get; set; }
     public Guid LocationId { get; set; }
     public LocationNameDto Location { get; set; }
+    public bool IsValidate { get; set; }
 }

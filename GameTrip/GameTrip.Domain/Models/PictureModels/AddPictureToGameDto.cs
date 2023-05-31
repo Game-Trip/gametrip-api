@@ -8,4 +8,5 @@ public class AddPictureToGameDto
     public string? Description { get; set; }
     public Guid? GameId { get; set; }
     public IFormFile? pictureData { get; set; }
+    public Guid AuthorId { get; set; }
 }

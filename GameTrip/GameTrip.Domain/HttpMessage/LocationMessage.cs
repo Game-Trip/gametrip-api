@@ -32,4 +32,13 @@ public class LocationMessage : StringEnumError
     public static LocationMessage NotContainGameById => new("LocationNotContainLocationById", "Location provided do not contain Game provided with id");
     public static LocationMessage AlreadyContainGameById => new("LocationAlreadyContainLocationById", "Location provided already have Game provided with id");
     public static LocationMessage IdWithQueryAndDtoAreDifferent => new("LocationIdWithQueryAndDtoAreDifferent", "The provided locationId in route and provided locationId in Dto are not equals");
+    public static LocationMessage UserNotAuthor => new("UserNotAuthor", "The user provided by Id is not the author of location");
+    public static LocationMessage AlreadyValidate => new("AlreadyValidate", "The location already validated");
+    public static LocationMessage AlreadyNotValidate => new("AlreadyUnValidate", "The location already not validated");
+    public static LocationMessage NowValidate => new("NowValidate", "The location is now validate");
+    public static LocationMessage NowNotValidate => new("NowNotValidate", "The location is now not validate");
+    public static LocationMessage LocationUpdateRequestSuccess => new("LocationUpdateRequestSuccess", "The request to update location has been registered, it will soon be processed by the administrator");
+    public static LocationMessage NotFoundUpdateRequest => new("NotFoundUpdateRequest", "This location haven't update request");
+    public static LocationMessage RequestUpdateSuccesDeleted => new("RequestUpdateSuccesDeleted", "The request update with provided ID has been deleted");
+    public static LocationMessage RequestUpdateNotFoundById => new("RequestUpdateNotFoundById", "The request Update with provided Id will not found");
 }

@@ -9,9 +9,11 @@ public class UnitOfWork : IUnitOfWork
 
     public ICommentRepository Comments { get; private set; }
     public IGameRepository Games { get; private set; }
+    public IRequestGameUpdateRepository RequestGameUpdate { get; private set; }
     public ILikedGameRepository LikedGames { get; private set; }
     public ILikedLocationRepository LikedLocations { get; private set; }
     public ILocationRepository Locations { get; private set; }
+    public IRequestLocationUpdateRepository RequestLocationUpdate { get; private set; }
     public IPictureRepository Pictures { get; private set; }
 
     public UnitOfWork(GameTripContext context)
@@ -19,9 +21,11 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         Comments = new CommentRepository(_context);
         Games = new GameRepository(_context);
+        RequestGameUpdate = new RequestGameUpdateRepository(_context);
         LikedGames = new LikedGameRepository(_context);
         LikedLocations = new LikedLocationRepository(_context);
         Locations = new LocationRepository(_context);
+        RequestLocationUpdate = new RequestLocationUpdateRepository(_context);
         Pictures = new PictureRepository(_context);
     }
 

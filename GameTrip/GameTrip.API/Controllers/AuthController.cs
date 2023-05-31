@@ -95,7 +95,7 @@ public class AuthController : ControllerBase
         {
             JwtSecurityTokenHandler tokenHandler = new();
             SecurityToken token = await _authPlatform.CreateTokenAsync(user);
-            return Ok(new TokenDto(tokenHandler.WriteToken(token), token.ValidTo));
+            return new TokenDto(tokenHandler.WriteToken(token), token.ValidTo);
         }
         else
             return Unauthorized(new MessageDto(UserMessage.FailedLogin));
@@ -157,7 +157,7 @@ public class AuthController : ControllerBase
 
         await _mailPlatform.SendMailAsync(mailDTO);
 
-        return Ok(user.ToGameTripUserDto());
+        return user.ToGameTripUserDto();
     }
 
     /// <summary>

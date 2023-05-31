@@ -14,7 +14,9 @@ public interface ILocationRepository : IGenericRepository<Location>
     Task<Location?> GetLocationByNameAsync(string name);
 
     Task<Location?> GetLocationByPosAsync(decimal latitude, decimal longitude);
+    Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId);
     void RemoveGameToLocation(Game game, Location location);
     Task<IEnumerable<Location>> SearchLocationAsync(SearchLocationDto dto);
+    Task SwitchStateValidateLocationAsync(Location location);
     Task<Location> UpdateLocationAsync(Location entity, UpdateLocationDto dto);
 }

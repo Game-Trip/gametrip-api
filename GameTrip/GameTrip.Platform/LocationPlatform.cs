@@ -40,4 +40,29 @@ public class LocationPlatform : ILocationPlarform
     }
 
     public async Task<IEnumerable<Location>> GetAllLocationAsync([Optional] int limit) => await _unitOfWork.Locations.GetAllAsync(limit);
+    public async Task SwitchValidateStatusLocationAsync(Location location)
+    {
+        await _unitOfWork.Locations.SwitchStateValidateLocationAsync(location);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task CreateUpdateRequestAsync(RequestLocationUpdate requestUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Add(requestUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task<Location?> GetLocationWithRequestUpdateAsync(Guid locationId) => await _unitOfWork.Locations.GetLocationWithRequestUpdateAsync(locationId);
+    public async Task DeleteUpdateRequestAsync(Guid? requestUpdateId)
+    {
+        await _unitOfWork.RequestLocationUpdate.DeleteUpdateRequestByIdAsync(requestUpdateId);
+        await _unitOfWork.CompletAsync();
+    }
+
+    public async Task DeleteRequestLocationUpdateAsync(RequestLocationUpdate requestLocationUpdate)
+    {
+        _unitOfWork.RequestLocationUpdate.Remove(requestLocationUpdate);
+        await _unitOfWork.CompletAsync();
+    }
+    public async Task<RequestLocationUpdate?> GetRequestUpdateLocationByIdAsync(Guid requestUpdateId) => await _unitOfWork.RequestLocationUpdate.GetRequestUpdateLocationByIdAsync(requestUpdateId);
 }
