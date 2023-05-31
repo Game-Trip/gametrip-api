@@ -47,9 +47,9 @@ public class ValidationController : ControllerBase
         await _commentPlatform.SwitchValidateStatusCommentAsync(comment);
 
         if (comment.IsValidate)
-            return Ok(new MessageDto(CommentMessage.NowValidate));
+            return new MessageDto(CommentMessage.NowValidate);
         else
-            return Ok(new MessageDto(CommentMessage.NowNotValidate));
+            return new MessageDto(CommentMessage.NowNotValidate);
     }
 
     [Authorize(Roles = Roles.Admin)]
@@ -71,9 +71,9 @@ public class ValidationController : ControllerBase
         await _gamePlatform.SwitchValidateStatusGameAsync(game);
 
         if (game.IsValidate)
-            return Ok(new MessageDto(GameMessage.NowValidate));
+            return new MessageDto(GameMessage.NowValidate);
         else
-            return Ok(new MessageDto(GameMessage.NowNotValidate));
+            return new MessageDto(GameMessage.NowNotValidate);
     }
 
     [Authorize(Roles = Roles.Admin)]
@@ -95,9 +95,9 @@ public class ValidationController : ControllerBase
         await _locationPlatform.SwitchValidateStatusLocationAsync(location);
 
         if (location.IsValid)
-            return Ok(new MessageDto(LocationMessage.NowValidate));
+            return new MessageDto(LocationMessage.NowValidate);
         else
-            return Ok(new MessageDto(LocationMessage.NowNotValidate));
+            return new MessageDto(LocationMessage.NowNotValidate);
     }
 
     [Authorize(Roles = Roles.Admin)]
@@ -119,8 +119,8 @@ public class ValidationController : ControllerBase
         await _picturePlatfrom.SwitchValidateStatusPictureAsync(picture);
 
         if (picture.IsValidate)
-            return Ok(new MessageDto(PictureMessage.NowValidate));
+            return new MessageDto(PictureMessage.NowValidate);
         else
-            return Ok(new MessageDto(PictureMessage.NowNotValidate));
+            return new MessageDto(PictureMessage.NowNotValidate);
     }
 }

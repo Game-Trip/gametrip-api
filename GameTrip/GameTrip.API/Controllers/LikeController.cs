@@ -147,7 +147,7 @@ public class LikeController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("AllLikedLocations")]
-    public async Task<ActionResult<IEnumerable<LikedLocationDto>>> GetAllLikedLocation()
+    public async Task<IEnumerable<LikedLocationDto>> GetAllLikedLocation()
     {
         IEnumerable<LikedLocation> likedLocations = await _likePlatform.GetAllLikedLocationIncludeAllAsync();
 
@@ -170,7 +170,7 @@ public class LikeController : ControllerBase
             likedLocationDtos.Add(likedLocationDto);
         }
 
-        return Ok(likedLocationDtos.AsEnumerable());
+        return likedLocationDtos.AsEnumerable();
     }
     #endregion
 
@@ -277,7 +277,7 @@ public class LikeController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpGet]
     [Route("AllLikedGames")]
-    public async Task<ActionResult<IEnumerable<LikedGameDto>>> GetAllLikedGames()
+    public async Task<IEnumerable<LikedGameDto>> GetAllLikedGames()
     {
         IEnumerable<LikedGame> likedGames = await _likePlatform.GetAllLikedGameIncludeAllAsync();
 
@@ -289,6 +289,7 @@ public class LikeController : ControllerBase
             LikedGameDto likedGameDto = new()
             {
                 GameId = group.Key,
+                LikedGameId = group.First().IdLikedGame,
                 Game = group.First().Game?.ToGameNameDto(),
                 UsersIds = group.Select(ll => ll.UserId).AsEnumerable(),
                 NbVote = group.Count(),
@@ -299,7 +300,7 @@ public class LikeController : ControllerBase
             likedGameDtos.Add(likedGameDto);
         }
 
-        return Ok(likedGameDtos.AsEnumerable());
+        return likedGameDtos.AsEnumerable();
     }
     #endregion
 }
