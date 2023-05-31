@@ -68,12 +68,6 @@ public class AuthController : ControllerBase
     /// Authenticate a user
     /// </summary>
     /// <param name="dto">LoginDto</param>
-    /// <remarks>
-    /// {
-    ///   "username": "Dercraker",
-    ///   "password": "NMdRx$HqyT8jX6"
-    /// }
-    /// </remarks>
     [ProducesResponseType(typeof(TokenDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.Unauthorized)]
     [AllowAnonymous]
