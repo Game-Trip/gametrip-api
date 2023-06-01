@@ -1,14 +1,45 @@
-using Microsoft.AspNetCore;
+using FluentValidation.AspNetCore;
+using GameTrip.API.Extension;
+using GameTrip.EFCore.IOC;
 
-namespace GameTrip.API;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-public class Program
+builder.Services.AddControllers();
+builder.Services.AddFluentValidation();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddGameTripDbContext(builder.Configuration);
+
+builder.Services.AddCORS(builder.Configuration);
+builder.Services.AddJWT(builder.Configuration);
+builder.Services.ConfigureIdentity();
+builder.Services.AddSwagger();
+
+builder.Services.AddServices(builder.Configuration);
+builder.Services.AddValidators();
+
+WebApplication app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
-
-    private static IWebHostBuilder CreateHostBuilder(string[] args)
-    {
-        return WebHost.CreateDefaultBuilder(args)
-                    .UseStartup<Startup>();
-    }
+    app.Services.ConfigureDatabase();
 }
+
+if (builder.Configuration.GetValue<bool>("UseSwagger"))
+    app.ConfigureSwagger();
+
+app.ConfigureExceptionHandler();
+
+app.UseRouting();
+
+app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+app.Run();
+
+public partial class Program { }

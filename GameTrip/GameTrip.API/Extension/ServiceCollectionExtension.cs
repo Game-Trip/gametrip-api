@@ -1,0 +1,279 @@
+﻿using FluentValidation;
+using GameTrip.API.Validator.AuthValidator;
+using GameTrip.API.Validator.CommentValidator;
+using GameTrip.API.Validator.GameValidator;
+using GameTrip.API.Validator.LikeValidator;
+using GameTrip.API.Validator.LocationValidator;
+using GameTrip.API.Validator.PictureValidator;
+using GameTrip.Domain.Entities;
+using GameTrip.Domain.Interfaces;
+using GameTrip.Domain.Models.Auth;
+using GameTrip.Domain.Models.Comment;
+using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.LikeModels.Game;
+using GameTrip.Domain.Models.LikeModels.Location;
+using GameTrip.Domain.Models.LocationModels;
+using GameTrip.Domain.Models.PictureModels;
+using GameTrip.Domain.Settings;
+using GameTrip.EFCore;
+using GameTrip.EFCore.Data;
+using GameTrip.EFCore.Repository;
+using GameTrip.EFCore.UnitOfWork;
+using GameTrip.Platform;
+using GameTrip.Platform.IPlatform;
+using GameTrip.Provider;
+using GameTrip.Provider.IProvider;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text;
+
+namespace GameTrip.API.Extension;
+public static class ServiceCollectionExtension
+{
+    public static void AddCORS(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        List<string> originsAllowed = configuration.GetSection("CallsOrigins").Get<List<string>>()!;
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder
+                       .WithOrigins(originsAllowed.ToArray())
+                       .WithMethods("PUT", "DELETE", "GET", "OPTIONS", "POST")
+                       .AllowAnyHeader()
+                       .Build();
+            });
+        });
+    }
+
+    public static void AddJWT(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        JWTSettings? jwtSettings = configuration.GetSection("JWTSettings").Get<JWTSettings>();
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireAudience = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+                ValidateLifetime = true,
+                RoleClaimType = "Roles",
+                NameClaimType = "User",
+            };
+        });
+        services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .AddAuthenticationSchemes("Bearer")
+                .Build();
+        });
+
+        services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(1));
+    }
+
+    public static void ConfigureIdentity(this IServiceCollection services)
+    {
+        services.AddIdentity<GameTripUser, IdentityRole<Guid>>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true;
+
+            options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+            options.ClaimsIdentity.UserIdClaimType = "Id";
+            options.ClaimsIdentity.UserNameClaimType = "UserName";
+            options.ClaimsIdentity.EmailClaimType = ClaimTypes.Email;
+
+            //Password requirement
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 4; //Determine le nombre de caract�re unnique minimum requis
+
+            //Lockout si mdp fail 5 fois alors compte bloquer 10 min
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(60);
+            options.Lockout.AllowedForNewUsers = true;
+
+            //User
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            options.User.RequireUniqueEmail = true;
+
+            //Sign
+            options.SignIn.RequireConfirmedAccount = true;
+        })
+        .AddDefaultTokenProviders()
+        .AddRoles<IdentityRole<Guid>>()
+        .AddEntityFrameworkStores<GameTripContext>();
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+        });
+    }
+    public static void AddSwagger(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            string? API_NAME = Assembly.GetExecutingAssembly().GetName().Name;
+            string xmlPath = $"{AppContext.BaseDirectory}{API_NAME}.xml";
+
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = API_NAME,
+                Description = "GameTrip API",
+                Contact = new OpenApiContact
+                {
+                    Name = "Dercraker",
+                    Url = new Uri("https://github.com/Dercraker")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "MIT License",
+                    Url = new Uri("https://opensource.org/licenses/MIT")
+                }
+            });
+            c.IncludeXmlComments(xmlPath);
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme.",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Scheme = "bearer",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT"
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                    },
+                    new string [] {}
+                }
+            });
+        });
+    }
+
+    public static void AddServices(this IServiceCollection services, ConfigurationManager configuration)
+    {
+        #region UnitOfWork
+
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+        #endregion UnitOfWork
+
+        #region Repository
+
+        services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddTransient<ICommentRepository, CommentRepository>();
+        services.AddTransient<IGameRepository, GameRepository>();
+        services.AddTransient<ILikedGameRepository, LikedGameRepository>();
+        services.AddTransient<ILikedLocationRepository, LikedLocationRepository>();
+        services.AddTransient<ILocationRepository, LocationRepository>();
+        services.AddTransient<IPictureRepository, PictureRepository>();
+
+        #endregion Repository
+
+        #region Platform
+
+        services.AddScoped<IAuthPlatform, AuthPlatform>();
+        services.AddScoped<IMailPlatform, MailPlatform>();
+        services.AddScoped<ILocationPlarform, LocationPlatform>();
+        services.AddScoped<IGamePlatform, GamePlatform>();
+        services.AddScoped<ILikePlatform, LikePlatform>();
+        services.AddScoped<IPicturePlatfrom, PicturePlatfrom>();
+        services.AddScoped<ICommentPlatform, CommentPlatform>();
+        services.AddScoped<ISearchPlatform, SearchPlatform>();
+
+        #endregion Platform
+
+        #region Provider
+
+        services.AddScoped<IEmailProvider, EmailProvider>();
+
+        #endregion Provider
+
+        #region Settings
+
+        //génération du swagger.json from dll buger tkt
+        JWTSettings JWTSettings = configuration.GetSection("JWTSettings").Get<JWTSettings>() ?? new();
+        services.AddSingleton(JWTSettings);
+        //génération du swagger.json from dll buger tkt
+        MailSettings mailSettings = configuration.GetSection("MailSettings").Get<MailSettings>() ?? new();
+        services.AddSingleton(mailSettings);
+        //génération du swagger.json from dll buger tkt
+        RegisterSettings registerSettings = configuration.GetSection("RegisterSettings").Get<RegisterSettings>() ?? new();
+        services.AddSingleton(registerSettings);
+        services.AddScoped<DBInitializer>();
+
+        #endregion Settings
+    }
+
+    public static void AddValidators(this IServiceCollection services)
+    {
+        #region Auth&UserValidator
+
+        services.AddScoped<IValidator<LoginDto>, LoginValidator>();
+        services.AddScoped<IValidator<RegisterDto>, RegisterValidator>();
+        services.AddScoped<IValidator<ConfirmMailDto>, ConfirmEmailValidator>();
+        services.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
+        services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
+        services.AddScoped<IValidator<UpdateGameTripUserDto>, UpdateGameTripUserValidator>();
+
+        #endregion Auth&UserValidator
+
+        #region LocationValidator
+
+        services.AddScoped<IValidator<CreateLocationDto>, CreateLocationValidator>();
+        services.AddScoped<IValidator<UpdateLocationDto>, UpdateLocationValidator>();
+
+        #endregion LocationValidator
+
+        #region GameValidator
+
+        services.AddScoped<IValidator<CreateGameDto>, CreateGameValidator>();
+        services.AddScoped<IValidator<UpdateGameDto>, UpdateGameValidator>();
+
+        #endregion GameValidator
+
+        #region LikeValidator
+        services.AddScoped<IValidator<AddLikeLocationDto>, AddLikeLocationValidator>();
+        services.AddScoped<IValidator<AddLikeGameDto>, AddLikeGameValidator>();
+        #endregion
+
+        #region PictureValidator
+        services.AddScoped<IValidator<AddPictureToLocationDto>, AddPictureToLocationValidator>();
+        services.AddScoped<IValidator<AddPictureToGameDto>, AddPictureToGameValidator>();
+        #endregion
+
+        #region CommentValidator
+        services.AddScoped<IValidator<AddCommentToLocationDto>, AddCommentToLocationValidator>();
+        services.AddScoped<IValidator<UpdateCommentDto>, UpdateCommentValidator>();
+
+        #endregion
+    }
+}
