@@ -1,7 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Interfaces;
 using GameTrip.Domain.Models.PictureModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 
@@ -13,17 +12,15 @@ public class PictureRepository : GenericRepository<Picture>, IPictureRepository
     {
     }
 
-    public async Task AddPictureToGameAsync(IFormFile pictureData, AddPictureToGameDto dto, Game game, [Optional] bool force)
+    public async Task AddPictureToGameAsync(AddPictureToGameDto dto, Game game, [Optional] bool force)
     {
-        using MemoryStream stream = new();
-        await pictureData.CopyToAsync(stream);
         Picture picture = new()
         {
             Name = dto.Name,
             Description = dto.Description,
             GameId = game.IdGame,
             Game = game,
-            Data = stream.ToArray(),
+            Data = dto.pictureData,
             AuthorId = dto.AuthorId,
             IsValidate = force,
         };
@@ -31,17 +28,15 @@ public class PictureRepository : GenericRepository<Picture>, IPictureRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task AddPictureToLocationAsync(IFormFile pictureData, AddPictureToLocationDto dto, Location location, [Optional] bool force)
+    public async Task AddPictureToLocationAsync(AddPictureToLocationDto dto, Location location, [Optional] bool force)
     {
-        using MemoryStream stream = new();
-        await pictureData.CopyToAsync(stream);
         Picture picture = new()
         {
             Name = dto.Name,
             Description = dto.Description,
             LocationId = location.IdLocation,
             Location = location,
-            Data = stream.ToArray(),
+            Data = dto.pictureData,
             AuthorId = dto.AuthorId,
             IsValidate = force
         };
