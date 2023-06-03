@@ -108,7 +108,6 @@ internal class Startup
                     new string [] {}
                 }
             });
-            c.OperationFilter<FileUploadFilter>();
         });
 
         AddIdentity(services);
