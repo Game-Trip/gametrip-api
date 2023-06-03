@@ -36,7 +36,6 @@ public class PictureController : ControllerBase
     }
 
     //TODO : how to make validation for this
-    //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
     #region Picture and Location
     /// <summary>
     /// Create and add picture to location
@@ -51,15 +50,8 @@ public class PictureController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddPictureToLocation/{locationId}/{userId}")]
-    public async Task<IActionResult> AddPictureToLocation(IFormFile pictureData, [FromRoute] Guid locationId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
+    public async Task<IActionResult> AddPictureToLocation([FromBody] AddPictureToLocationDto dto, [Optional][FromQuery] bool force)
     {
-        AddPictureToLocationDto dto = new()
-        {
-            LocationId = locationId,
-            Name = name,
-            Description = description,
-            AuthorId = userId
-        };
         ValidationResult validationResult = _addPictureToLocationValidator.Validate(dto);
         if (!validationResult.IsValid)
         {
@@ -71,7 +63,7 @@ public class PictureController : ControllerBase
         if (location is null)
             return NotFound(new MessageDto(LocationMessage.NotFoundById));
 
-        await _picturePlatfrom.AddPictureToLocationAsync(pictureData, dto, location, force);
+        await _picturePlatfrom.AddPictureToLocationAsync(dto, location, force);
         return Ok(new MessageDto(PictureMessage.SucessAddToLocation));
     }
 
@@ -124,7 +116,6 @@ public class PictureController : ControllerBase
     #endregion
 
     //TODO : how to make validation for this
-    //TODO IN PROD : Changer toute cette merde par un seul DTO avec un Array de byte pour la picture data
     /// <summary>
     /// Create and Add picture to Game
     /// </summary>
@@ -138,15 +129,8 @@ public class PictureController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddPictureToGame/{gameId}/{userId}")]
-    public async Task<ActionResult<MessageDto>> AddPictureToGame(IFormFile pictureData, [FromRoute] Guid gameId, Guid userId, [FromQuery] string name, string description, [Optional][FromQuery] bool force)
+    public async Task<ActionResult<MessageDto>> AddPictureToGame([FromBody] AddPictureToGameDto dto, [Optional][FromQuery] bool force)
     {
-        AddPictureToGameDto dto = new()
-        {
-            GameId = gameId,
-            Name = name,
-            Description = description,
-            AuthorId = userId
-        };
         ValidationResult validationResult = _addPictureToGameValidator.Validate(dto);
         if (!validationResult.IsValid)
         {
@@ -158,7 +142,7 @@ public class PictureController : ControllerBase
         if (game is null)
             return NotFound(new MessageDto(GameMessage.NotFoundById));
 
-        await _picturePlatfrom.AddPictureToGameAsync(pictureData, dto, game, force);
+        await _picturePlatfrom.AddPictureToGameAsync(dto, game, force);
         return new MessageDto(PictureMessage.SucessAddToGame);
     }
 
