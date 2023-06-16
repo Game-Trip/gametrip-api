@@ -85,7 +85,7 @@ public class UserController : ControllerBase
     /// <param name="userId">Id of user</param>
     [ProducesResponseType(typeof(GameTripUserDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpDelete]
     [Route("{userId}")]
     public async Task<IActionResult> DeleteUserById([FromRoute] Guid userId)
@@ -106,7 +106,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(GameTripUserDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [Authorize(Roles = Roles.Admin)]
     [HttpPut]
     [Route("{userId}")]
     public async Task<ActionResult<GameTripUserDto>> UpdateUser([FromRoute] Guid userId, [FromBody] UpdateGameTripUserDto dto)

@@ -3,7 +3,6 @@ using GameTrip.Domain.Extension;
 using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Models.SearchModels;
-using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,7 @@ public class SearchController : ControllerBase
 
     public SearchController(ISearchPlatform searchPlatform) => _searchPlatform = searchPlatform;
 
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("SearchLocation")]
     public async Task<IEnumerable<LocationNameDto>> SearchLocation([FromQuery] SearchLocationDto dto)
@@ -28,7 +27,7 @@ public class SearchController : ControllerBase
         return locations.ToEnumerable_LocationNameDto();
     }
 
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("SearchGame")]
     public async Task<IEnumerable<GameNameDto>> SearchGame([FromQuery] SearchGameDto dto)
