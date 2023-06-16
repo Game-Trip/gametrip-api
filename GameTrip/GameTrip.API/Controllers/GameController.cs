@@ -170,7 +170,7 @@ public class GameController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("RequestAddGameToLocation/Game/{gameId}/Location/{locationId}")]
     public async Task<ActionResult<MessageDto>> CreateRequestToAddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)
@@ -206,7 +206,7 @@ public class GameController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("AddGameToLocation/Game/{gameId}/Location/{locationId}")]
     public async Task<ActionResult<MessageDto>> AddGameToLocationById([FromRoute] Guid gameId, [FromRoute] Guid locationId)

@@ -103,7 +103,7 @@ public class CommentController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ListCommentDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("Location/{locationId}")]
     public async Task<ActionResult<IEnumerable<ListCommentDto>>> GetAllCommentByLocation([FromRoute] Guid locationId)

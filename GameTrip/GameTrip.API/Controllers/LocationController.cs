@@ -277,7 +277,7 @@ public class LocationController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
     [HttpDelete]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize(Roles = Roles.User)]
     [Route("DeleteRequestUpdate/{requestUpdateId}")]
     public async Task<ActionResult<MessageDto>> DeleteRequestUpdateLocationById([FromRoute] Guid requestUpdateId)
     {

@@ -144,7 +144,7 @@ public class LikeController : ControllerBase
     /// Get all liked location
     /// </summary>
     [ProducesResponseType(typeof(IEnumerable<ListLikedLocationDto>), (int)HttpStatusCode.OK)]
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("AllLikedLocations")]
     public async Task<IEnumerable<LikedLocationDto>> GetAllLikedLocation()
@@ -274,7 +274,7 @@ public class LikeController : ControllerBase
     /// Get all liked games
     /// </summary>
     [ProducesResponseType(typeof(IEnumerable<LikedGameDto>), (int)HttpStatusCode.OK)]
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("AllLikedGames")]
     public async Task<IEnumerable<LikedGameDto>> GetAllLikedGames()

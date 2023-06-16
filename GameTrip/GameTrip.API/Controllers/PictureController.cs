@@ -73,7 +73,7 @@ public class PictureController : ControllerBase
     /// <param name="locationId">Id of location</param>
     [ProducesResponseType(typeof(IEnumerable<ListPictureDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("GetPicturesByLocationId/{locationId}")]
     public async Task<ActionResult<IEnumerable<ListPictureDto>>> GetPicturesByLocationId([FromRoute] Guid locationId)
@@ -101,7 +101,7 @@ public class PictureController : ControllerBase
     /// <param name="pictureId">Id of deleted Picture</param>
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.Admin)]
+    [AllowAnonymous]
     [HttpDelete]
     [Route("DeletePicture/{pictureId}")]
     public async Task<IActionResult> DeletePictureById([FromRoute] Guid pictureId)
@@ -152,7 +152,7 @@ public class PictureController : ControllerBase
     /// <param name="gameId">Id of game</param>
     [ProducesResponseType(typeof(IEnumerable<ListPictureDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpGet]
     [Route("GetPicturesByGameId/{gameId}")]
     public async Task<ActionResult<IEnumerable<ListPictureDto>>> GetPicturesByGameId([FromRoute] Guid gameId)
