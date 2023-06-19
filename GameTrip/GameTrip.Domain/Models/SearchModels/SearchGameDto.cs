@@ -5,4 +5,5 @@ public class SearchGameDto
     public string? Description { get; set; }
     public string? Editor { get; set; }
     public long? ReleaseDate { get; set; }
+    public IEnumerable<SearchLocationDto>? Locations { get; set; }
 }
