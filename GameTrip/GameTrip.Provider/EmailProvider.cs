@@ -1,5 +1,4 @@
-﻿using GameTrip.Domain.Models.Email.Template;
-using GameTrip.Domain.Settings;
+﻿using GameTrip.Domain.Settings;
 using GameTrip.Provider.IProvider;
 using MailKit.Net.Smtp;
 using MimeKit;
@@ -22,9 +21,9 @@ public class EmailProvider : IEmailProvider
         smtpClient.Dispose();
     }
 
-    public string? GetTemplate(TemplatePath path)
+    public string? GetTemplate(string path)
     {
-        string filePath = Directory.GetCurrentDirectory() + @$"/Models/Template/{path}";
+        string filePath = Directory.GetCurrentDirectory() + @$"/Models/Email/Template/{path}";
         return File.Exists(filePath) ? File.ReadAllText(filePath) : null;
     }
 }

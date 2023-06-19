@@ -1,13 +1,13 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
+using GameTrip.API.Models.Email.Template;
 using GameTrip.Domain.Entities;
 using GameTrip.Domain.Errors;
 using GameTrip.Domain.Extension;
 using GameTrip.Domain.HttpMessage;
 using GameTrip.Domain.Models.Auth;
 using GameTrip.Domain.Models.Email;
-using GameTrip.Domain.Models.Email.Template;
 using GameTrip.Domain.Settings;
 using GameTrip.EFCore.Data;
 using GameTrip.Platform.IPlatform;
@@ -129,17 +129,18 @@ public class AuthController : ControllerBase
         };
 
         IdentityResult? result = await _userManager.CreateAsync(user, dto.Password);
-        if (result.Succeeded is false)
+        if (!result.Succeeded)
             return BadRequest(result.Errors);
 
         string confirmationLink = await _authPlatform.GenerateEmailConfirmationLinkAsync(user);
 
-        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register)!;
+        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.Register.ToString());
         if (emailTemplateText is null)
             throw new FileNotFoundException(TemplateMessage.TemplateRegisterNotFound.ToString());
 
-        emailTemplateText = emailTemplateText.Replace("{0}", user.UserName);
-        emailTemplateText = emailTemplateText.Replace("{1}", confirmationLink);
+        emailTemplateText = emailTemplateText.Replace("[username]", user.UserName);
+        emailTemplateText = emailTemplateText.Replace("[email]", user.Email);
+        emailTemplateText = emailTemplateText.Replace("[ConfirmationLink]", confirmationLink);
 
         MailDTO mailDTO = new()
         {
@@ -210,7 +211,7 @@ public class AuthController : ControllerBase
 
         string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
 
-        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.ForgotPassword)!;
+        string emailTemplateText = _emailProvider.GetTemplate(TemplatePath.ForgotPassword.ToString())!;
         if (emailTemplateText is null)
             throw new FileNotFoundException(TemplateMessage.TemplateForgotPasswordNotFound.ToString());
 

@@ -1,6 +1,6 @@
 ﻿using GameTrip.Domain.Models.Enum;
 
-namespace GameTrip.Domain.Models.Email.Template;
+namespace GameTrip.API.Models.Email.Template;
 
 public class TemplatePath : StringEnum
 {
