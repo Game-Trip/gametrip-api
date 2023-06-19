@@ -1,6 +1,5 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Extension;
-using GameTrip.Domain.Models.GameModels;
 using GameTrip.Domain.Models.LocationModels;
 using GameTrip.Domain.Models.SearchModels;
 using GameTrip.Platform.IPlatform;
@@ -30,9 +29,9 @@ public class SearchController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [Route("SearchGame")]
-    public async Task<IEnumerable<GameNameDto>> SearchGame([FromQuery] SearchGameDto dto)
+    public async Task<IEnumerable<SearchedGameDto>> SearchGame([FromQuery] SearchGameDto dto)
     {
         IEnumerable<Game> games = await _searchPlatform.SearchGameAsync(dto);
-        return games.ToEnumerable_GameNameDto();
+        return games.ToEnumerable_SearchedGameDto();
     }
 }
