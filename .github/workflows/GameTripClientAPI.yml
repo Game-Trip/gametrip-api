@@ -49,7 +49,7 @@ jobs:
           node-version: lts/*
         
       - name: install Open Api Tool CLI
-        run : npm install @openapitools/openapi-generator-cli -g
+        run : npm install @openapitools/openapi-generator-cli@1.0.18-4.3.1 -g
         
       - name: App Settings Variable Substitution Staging
         uses: microsoft/variable-substitution@v1
