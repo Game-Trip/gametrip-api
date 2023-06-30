@@ -40,6 +40,7 @@ public class AuthPlatform : IAuthPlatform
         {
                 new Claim("User", user.UserName),
                 new Claim("Email", user.Email),
+                new Claim("Id", user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
