@@ -10,6 +10,7 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -24,15 +25,17 @@ public class GameController : ControllerBase
 {
     private readonly IGamePlatform _gamePlatform;
     private readonly ILocationPlarform _locationPlatform;
+    private readonly UserManager<GameTripUser> _userManager;
     private readonly IValidator<CreateGameDto> _createGameValidator;
     private readonly IValidator<UpdateGameDto> _updateGameValidator;
 
-    public GameController(IValidator<CreateGameDto> createGameValidator, IGamePlatform gamePlatform, ILocationPlarform locationPlarform, IValidator<UpdateGameDto> updateGameValidator)
+    public GameController(IValidator<CreateGameDto> createGameValidator, IGamePlatform gamePlatform, ILocationPlarform locationPlarform, IValidator<UpdateGameDto> updateGameValidator, UserManager<GameTripUser> userManager)
     {
         _createGameValidator = createGameValidator;
         _gamePlatform = gamePlatform;
         _locationPlatform = locationPlarform;
         _updateGameValidator = (IValidator<UpdateGameDto>?)updateGameValidator;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -53,6 +56,10 @@ public class GameController : ControllerBase
             result.AddToModelState(ModelState);
             return BadRequest(ModelState);
         }
+
+        GameTripUser? user = await _userManager.FindByIdAsync(dto.AuthorId.ToString());
+        if (user is null)
+            return BadRequest(new MessageDto(UserMessage.NotFoundById));
 
         Game? game = await _gamePlatform.GetGameByNameAsync(dto.Name);
         if (game is not null)
