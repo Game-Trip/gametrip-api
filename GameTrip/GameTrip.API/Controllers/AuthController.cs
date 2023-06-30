@@ -205,8 +205,9 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        GameTripUser? user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null)
+        GameTripUser? user = await _userManager.FindByNameAsync(dto.Email);
+        user ??= await _userManager.FindByEmailAsync(dto.Email);
+        if (user is null)
             return BadRequest(new MessageDto(UserMessage.NotFoundByMail));
 
         string resetPasswordLink = await _authPlatform.GeneratePasswordResetLinkAsync(user);
