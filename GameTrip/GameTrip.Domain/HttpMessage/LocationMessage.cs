@@ -28,6 +28,7 @@ public class LocationMessage : StringEnumError
     public static LocationMessage NotFoundById => new("LocationNotFoundById", "No location find with provided Id");
     public static LocationMessage NotFoundByGameId => new("LocationNotFoundByGameId", "No locations found with the game of the provided GameId");
     public static LocationMessage NotFoundByGameName => new("LocationNotFoundByGameName", "No locations found with the game of the provided GameName");
+    public static LocationMessage SuccesCreated => new("LocationSuccesCreated", "Location provided as been Created");
     public static LocationMessage SuccesDeleted => new("LocationSuccesDeleted", "Location provided as been deleted");
     public static LocationMessage NotContainGameById => new("LocationNotContainLocationById", "Location provided do not contain Game provided with id");
     public static LocationMessage AlreadyContainGameById => new("LocationAlreadyContainLocationById", "Location provided already have Game provided with id");
