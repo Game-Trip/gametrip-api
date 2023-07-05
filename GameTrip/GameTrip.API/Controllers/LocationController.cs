@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GameTrip.Domain.Entities;
@@ -69,8 +69,43 @@ public class LocationController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
 
         await _locationPlatform.CreateLocationAsync(dto.ToEntity(force));
+        location = await _locationPlatform.GetLocationByNameAsync(dto.Name);
+        if (location is not null)
+            return Ok(location.IdLocation);
         return new MessageDto(LocationMessage.SuccesCreated);
     }
+
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("CreateLocationWithGamesAndPictures")]
+    public async Task<ActionResult> CreateLocationWithGameAndPicture([FromBody] CreateLocationWithGameAndPictureDto dto, [Optional][FromQuery] bool force)
+    {
+        GameTripUser? user = await _userManager.FindByIdAsync(dto.Location.AuthorId.ToString());
+        if (user is null)
+            return BadRequest(new MessageDto(UserMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByNameAsync(dto.Location.Name);
+        if (location is not null)
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByName));
+
+        location ??= await _locationPlatform.GetLocationByPositionAsync(dto.Location.Latitude, dto.Location.Longitude);
+        if (location is not null)
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
+
+        await _locationPlatform.CreateLocationAsync(dto.Location.ToEntity(force));
+        location = await _locationPlatform.GetLocationByNameAsync(dto.Location.Name);
+
+        IEnumerable<Game> games = await _gamePlatform.GetGameRangeByIdAsync(dto.GamesIds);
+        _gamePlatform.AddGamesToLocationByIdAsync(games, location);
+
+
+        return Ok(location.IdLocation);
+    }
+
+
 
     /// <summary>
     /// Get all locations

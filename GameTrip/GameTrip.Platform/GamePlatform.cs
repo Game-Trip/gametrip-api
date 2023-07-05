@@ -84,4 +84,15 @@ public class GamePlatform : IGamePlatform
         _unitOfWork.RequestGameUpdate.Remove(requestGameUpdate);
         await _unitOfWork.CompletAsync();
     }
+
+    public async Task<IEnumerable<Game>> GetGameRangeByIdAsync(IEnumerable<Guid> gamesIds) => await _unitOfWork.Games.GetGameRangeByIdAsync(gamesIds);
+
+    public async void AddGamesToLocationByIdAsync(IEnumerable<Game> games, Location? location)
+    {
+        foreach (Game game in games)
+        {
+            _unitOfWork.Locations.AddGameToLocation(game, location);
+            await _unitOfWork.CompletAsync();
+        }
+    }
 }

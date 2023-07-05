@@ -13,6 +13,7 @@ public interface IGameRepository : IGenericRepository<Game>
     Task<IEnumerable<Game?>> GetGameByLocationNameAsync(string locationName);
 
     Task<Game?> GetGameByNameAsync(string name);
+    Task<IEnumerable<Game>> GetGameRangeByIdAsync(IEnumerable<Guid> gamesIds);
     Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId);
     Task<IEnumerable<Game>> SearchGameAsync(SearchGameDto dto);
     Task SwitchValidateStateGameAsync(Game game);

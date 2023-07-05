@@ -6,6 +6,7 @@ namespace GameTrip.Platform.IPlatform;
 
 public interface IGamePlatform
 {
+    void AddGamesToLocationByIdAsync(IEnumerable<Game> games, Location? location);
     Task AddGameToLocationByIdAsync(Game game, Location location);
     Task CreateGameAsync(Game value);
     Task CreateUpdateRequestAsync(RequestGameUpdate requestGameUpdate);
@@ -15,6 +16,7 @@ public interface IGamePlatform
     Task<IEnumerable<Game>> GetAllGamesAsync([Optional] int limit);
     Task<Game?> GetGameByIdAsync(Guid gameId);
     Task<Game?> GetGameByNameAsync(string name);
+    Task<IEnumerable<Game>> GetGameRangeByIdAsync(IEnumerable<Guid> gamesIds);
     Task<IEnumerable<Game?>> GetGamesByLocationIdAsync(Guid locationId);
     Task<IEnumerable<Game?>> GetGamesByLocationNameAsync(string locationName);
     Task<Game?> GetGameWithRequestUpdateAsync(Guid gameId);
