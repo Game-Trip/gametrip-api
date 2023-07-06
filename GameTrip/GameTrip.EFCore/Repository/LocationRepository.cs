@@ -12,7 +12,11 @@ public class LocationRepository : GenericRepository<Location>, ILocationReposito
     {
     }
 
-    public void AddGameToLocation(Game game, Location location) => location.Games!.Add(game);
+    public void AddGameToLocation(Game game, Location location)
+    {
+        location.Games!.Add(game);
+        _context.SaveChanges();
+    }
     public async Task<IEnumerable<Location?>> GetLocationByGameIdAsync(Guid idGame) => await _context.Location.Include(l => l.Games)
                                                                                                               .Include(l => l.Author)
                                                                                                               .Where(l => l.Games.Any(gl => gl.IdGame == idGame))

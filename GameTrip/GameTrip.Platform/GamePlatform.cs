@@ -92,7 +92,6 @@ public class GamePlatform : IGamePlatform
         foreach (Game game in games)
         {
             _unitOfWork.Locations.AddGameToLocation(game, location);
-            await _unitOfWork.CompletAsync();
         }
     }
 }
