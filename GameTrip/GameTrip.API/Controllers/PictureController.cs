@@ -50,7 +50,8 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpPost]
     [Route("AddPictureToLocation/{locationId}/{userId}")]
     public async Task<IActionResult> AddPictureToLocation([FromBody] AddPictureToLocationDto dto, [Optional][FromQuery] bool force)
@@ -133,7 +134,8 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpPost]
     [Route("AddPictureToGame/{gameId}/{userId}")]
     public async Task<ActionResult<MessageDto>> AddPictureToGame([FromBody] AddPictureToGameDto dto, [Optional][FromQuery] bool force)
