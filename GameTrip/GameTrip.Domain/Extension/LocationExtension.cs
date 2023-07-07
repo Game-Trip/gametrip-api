@@ -68,4 +68,20 @@ public static class LocationExtension
             };
         }).ToList();
     }
+    public static IEnumerable<LocationDto> ToEnumerable_LocationDto(this IEnumerable<Location> location)
+    {
+        return location.Select(l =>
+        {
+            return new LocationDto()
+            {
+                Id = l.IdLocation,
+                Name = l.Name,
+                Description = l.Description,
+                Latitude = l.Latitude,
+                Longitude = l.Longitude,
+                AuthorId = l.AuthorId,
+                IsValidate = l.IsValid
+            };
+        }).AsEnumerable();
+    }
 }

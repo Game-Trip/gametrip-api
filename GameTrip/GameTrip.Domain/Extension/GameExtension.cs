@@ -1,5 +1,6 @@
 ﻿using GameTrip.Domain.Entities;
 using GameTrip.Domain.Models.GameModels;
+using GameTrip.Domain.Models.SearchModels;
 using System.Runtime.InteropServices;
 
 namespace GameTrip.Domain.Extension;
@@ -62,8 +63,19 @@ public static class GameExtension
             IsValidate = game.IsValidate,
         };
     }
+    public static SearchedGameDto ToSearchedGameDto(this Game game)
+    {
+        return new()
+        {
+            Id = game.IdGame,
+            Name = game.Name,
+            AuthorId = game.AuthorId,
+            IsValidate = game.IsValidate,
+            Locations = game.Locations.ToEnumerable_LocationDto(),
+        };
+    }
 
-    public static IEnumerable<GameNameDto> ToEnumerable_GameNameDto(this IEnumerable<Game> games) => games.Select(g => g.ToGameNameDto());
+    public static IEnumerable<SearchedGameDto> ToEnumerable_SearchedGameDto(this IEnumerable<Game> games) => games.Select(g => g.ToSearchedGameDto());
 
     public static List<ListGameDto> ToList_ListGameDto(this IEnumerable<Game> games)
     {

@@ -63,4 +63,18 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
                                                                                               .Include(g => g.LikedGames)
                                                                                               .Include(g => g.Author)
                                                                                               .FirstOrDefaultAsync(g => g.IdGame == gameId);
+
+    public async Task<IEnumerable<Game>> GetGameRangeByIdAsync(IEnumerable<Guid> gamesIds)
+    {
+        IList<Game> games = new List<Game>();
+
+        foreach (Guid id in gamesIds)
+        {
+            Game? game = await GetGameByIdAsync(id);
+            if (game is not null)
+                games.Add(game);
+        }
+        return games;
+
+    }
 }

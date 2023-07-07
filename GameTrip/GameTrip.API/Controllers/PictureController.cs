@@ -8,6 +8,7 @@ using GameTrip.Domain.Models.PictureModels;
 using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -23,16 +24,18 @@ public class PictureController : ControllerBase
     private readonly IValidator<AddPictureToLocationDto> _addPictureToLocationValidator;
     private readonly IValidator<AddPictureToGameDto> _addPictureToGameValidator;
     private readonly IPicturePlatfrom _picturePlatfrom;
+    private readonly UserManager<GameTripUser> _userManager;
     private readonly ILocationPlarform _locationPlatfrom;
     private readonly IGamePlatform _gamePlatform;
 
-    public PictureController(IValidator<AddPictureToLocationDto> addPictureToLocationValidator, ILocationPlarform locationPlatfrom, IGamePlatform gamePlatform, IPicturePlatfrom picturePlatfrom, IValidator<AddPictureToGameDto> addPictureToGameValidator)
+    public PictureController(IValidator<AddPictureToLocationDto> addPictureToLocationValidator, ILocationPlarform locationPlatfrom, IGamePlatform gamePlatform, IPicturePlatfrom picturePlatfrom, IValidator<AddPictureToGameDto> addPictureToGameValidator, UserManager<GameTripUser> userManager)
     {
         _addPictureToLocationValidator = addPictureToLocationValidator;
         _locationPlatfrom = locationPlatfrom;
         _gamePlatform = gamePlatform;
         _picturePlatfrom = picturePlatfrom;
         _addPictureToGameValidator = addPictureToGameValidator;
+        _userManager = userManager;
     }
 
     //TODO : how to make validation for this
@@ -47,7 +50,8 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpPost]
     [Route("AddPictureToLocation/{locationId}/{userId}")]
     public async Task<IActionResult> AddPictureToLocation([FromBody] AddPictureToLocationDto dto, [Optional][FromQuery] bool force)
@@ -58,6 +62,10 @@ public class PictureController : ControllerBase
             validationResult.AddToModelState(ModelState);
             return BadRequest(ModelState);
         }
+
+        GameTripUser? user = await _userManager.FindByIdAsync(dto.AuthorId.ToString());
+        if (user is null)
+            return BadRequest(new MessageDto(UserMessage.NotFoundById));
 
         Location? location = await _locationPlatfrom.GetLocationByIdAsync((Guid)dto.LocationId!);
         if (location is null)
@@ -126,7 +134,8 @@ public class PictureController : ControllerBase
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.NotFound)]
-    [Authorize(Roles = Roles.User)]
+    //[Authorize(Roles = Roles.User)]
+    [AllowAnonymous]
     [HttpPost]
     [Route("AddPictureToGame/{gameId}/{userId}")]
     public async Task<ActionResult<MessageDto>> AddPictureToGame([FromBody] AddPictureToGameDto dto, [Optional][FromQuery] bool force)

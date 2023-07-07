@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using GameTrip.Domain.Entities;
@@ -9,6 +9,7 @@ using GameTrip.Domain.Settings;
 using GameTrip.Platform.IPlatform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net;
@@ -23,15 +24,17 @@ public class LocationController : ControllerBase
 {
     private readonly ILocationPlarform _locationPlatform;
     private readonly IGamePlatform _gamePlatform;
+    private readonly UserManager<GameTripUser> _userManager;
     private readonly IValidator<CreateLocationDto> _createLocationValidator;
     private readonly IValidator<UpdateLocationDto> _updateLocationValidator;
 
-    public LocationController(ILocationPlarform locationPlarform, IValidator<CreateLocationDto> locationValidator, IGamePlatform gamePlatform, IValidator<UpdateLocationDto> updateLocationValidator)
+    public LocationController(ILocationPlarform locationPlarform, IValidator<CreateLocationDto> locationValidator, IGamePlatform gamePlatform, IValidator<UpdateLocationDto> updateLocationValidator, UserManager<GameTripUser> userManager)
     {
         _locationPlatform = locationPlarform;
         _createLocationValidator = locationValidator;
         _gamePlatform = gamePlatform;
         _updateLocationValidator = updateLocationValidator;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -44,7 +47,7 @@ public class LocationController : ControllerBase
     [Authorize(Roles = Roles.User)]
     [HttpPost]
     [Route("CreateLocation")]
-    public async Task<IActionResult> CreateLocation([FromBody] CreateLocationDto dto, [Optional][FromQuery] bool force)
+    public async Task<ActionResult<MessageDto>> CreateLocation([FromBody] CreateLocationDto dto, [Optional][FromQuery] bool force)
     {
         ValidationResult result = _createLocationValidator.Validate(dto);
         if (!result.IsValid)
@@ -52,6 +55,10 @@ public class LocationController : ControllerBase
             result.AddToModelState(this.ModelState);
             return BadRequest(ModelState);
         }
+        GameTripUser? user = await _userManager.FindByIdAsync(dto.AuthorId.ToString());
+        if (user is null)
+            return BadRequest(new MessageDto(UserMessage.NotFoundById));
+
 
         Location? location = await _locationPlatform.GetLocationByNameAsync(dto.Name);
         if (location is not null)
@@ -62,8 +69,43 @@ public class LocationController : ControllerBase
             return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
 
         await _locationPlatform.CreateLocationAsync(dto.ToEntity(force));
-        return Ok();
+        location = await _locationPlatform.GetLocationByNameAsync(dto.Name);
+        if (location is not null)
+            return Ok(location.IdLocation);
+        return new MessageDto(LocationMessage.SuccesCreated);
     }
+
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ModelStateDictionary), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(MessageDto), (int)HttpStatusCode.BadRequest)]
+    [Authorize(Roles = Roles.User)]
+    [HttpPost]
+    [Route("CreateLocationWithGamesAndPictures")]
+    public async Task<ActionResult> CreateLocationWithGameAndPicture([FromBody] CreateLocationWithGameAndPictureDto dto, [Optional][FromQuery] bool force)
+    {
+        GameTripUser? user = await _userManager.FindByIdAsync(dto.Location.AuthorId.ToString());
+        if (user is null)
+            return BadRequest(new MessageDto(UserMessage.NotFoundById));
+
+        Location? location = await _locationPlatform.GetLocationByNameAsync(dto.Location.Name);
+        if (location is not null)
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByName));
+
+        location ??= await _locationPlatform.GetLocationByPositionAsync(dto.Location.Latitude, dto.Location.Longitude);
+        if (location is not null)
+            return BadRequest(new MessageDto(LocationMessage.AlreadyExistByPos));
+
+        await _locationPlatform.CreateLocationAsync(dto.Location.ToEntity(force));
+        location = await _locationPlatform.GetLocationByNameAsync(dto.Location.Name);
+
+        IEnumerable<Game> games = await _gamePlatform.GetGameRangeByIdAsync(dto.GamesIds);
+        _gamePlatform.AddGamesToLocationByIdAsync(games, location);
+
+
+        return Ok(location.IdLocation);
+    }
+
+
 
     /// <summary>
     /// Get all locations
